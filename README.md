@@ -1,5 +1,7 @@
 # Repositorio para la aplicación Web de MIX
 
+para hacer los commits hay que hacer branches separadas y al final los pull requests para unirlo a main
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
