@@ -1,11 +1,15 @@
-import Image from "next/image";
-import { Wind } from "lucide-react";
+import Sidebar from '@/components/Sidebar';
 
-export default function Home() {
+const Page = () => {
   return (
-    <div className="flex items-center space-x-2">
-      <Wind className="w-6 h-6 text-blue-500" />
-      <p>Hello!</p>
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-grow p-8">
+        <h1 className="text-2xl font-bold">Contenido Principal</h1>
+        <p>Aca va todo lo demas :v</p>
+      </div>
     </div>
   );
-}
+};
+
+export default Page;
