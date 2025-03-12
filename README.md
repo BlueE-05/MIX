@@ -14,7 +14,6 @@ To maintain repository organization and facilitate collaboration, please follow 
 Follow these steps to set up and run the application locally:
 
 1. **Clone the Repository:**
-
    ```bash
    git clone https://github.com/BlueE-05/MIX.git
    ```
@@ -23,13 +22,13 @@ Follow these steps to set up and run the application locally:
       npm i
    ```
 3. **Afterwards you can run the server normally**
-  ```bash
-    npm run dev
-    # or
-    yarn dev
-    # or
-    pnpm dev
-    # or
-    bun dev
-  ```
+   ```bash
+      npm run dev
+      # or
+      yarn dev
+      # or
+      pnpm dev
+      # or
+      bun dev
+   ```
 4. **Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.**
