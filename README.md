@@ -1,42 +1,35 @@
-# Repositorio para la aplicación Web de MIX
+# MIX Web Application Repository
 
-para hacer los commits hay que hacer branches separadas y al final los pull requests para unirlo a main
+This repository contains the source code for the MIX web application.
 
-# Pasos para usar el repo
-1. clonar repo
-2. correr el siguiente comando para tener los node_modules
-``` bash
-npm i
-```
-3. Después ya se puede correr normalmente
+## Contribution Guidelines
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+To maintain repository organization and facilitate collaboration, please follow these guidelines when contributing:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+* **Separate Branches:** Create a separate branch for each new feature or bug fix you are working on.
+* **Pull Requests:** Before merging your changes into the `main` branch, submit a Pull Request so other developers can review your code.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
------------------------------------------------------------------------
-## Learn More
+Follow these steps to set up and run the application locally:
 
-To learn more about Next.js, take a look at the following resources:
+1. **Clone the Repository:**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git clone [repository URL]
+   ```
+2. **Run the following command to obtain the `node_modules`**
+   ``` bash
+      npm i
+   ```
+3. **Afterwards you can run the server normally**
+  ```bash
+    npm run dev
+    # or
+    yarn dev
+    # or
+    pnpm dev
+    # or
+    bun dev
+  ```
+4. **Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.**
