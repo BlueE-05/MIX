@@ -16,7 +16,7 @@ Follow these steps to set up and run the application locally:
 1. **Clone the Repository:**
 
    ```bash
-   git clone [repository URL]
+   git clone https://github.com/BlueE-05/MIX.git
    ```
 2. **Run the following command to obtain the `node_modules`**
    ``` bash
