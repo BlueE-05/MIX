@@ -19,16 +19,16 @@ Follow these steps to set up and run the application locally:
    ```
 2. **Run the following command to obtain the `node_modules`**
    ``` bash
-      npm i
+   npm i
    ```
 3. **Afterwards you can run the server normally**
    ```bash
-      npm run dev
-      # or
-      yarn dev
-      # or
-      pnpm dev
-      # or
-      bun dev
+   npm run dev
+   # or
+   yarn dev
+   # or
+   pnpm dev
+   # or
+   bun dev
    ```
 4. **Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.**
