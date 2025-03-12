@@ -11,6 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        'mix-green': "#6FAC00",
+        'mix-orange': "#6FAC00",
       },
     },
   },

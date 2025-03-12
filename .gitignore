@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
+# creo que node_modules no es necesario subir
 /node_modules
 /.pnp
 .pnp.*
@@ -14,11 +15,9 @@
 /coverage
 
 # next.js
-/.next/
 /out/
 
 # production
-/build
 
 # misc
 .DS_Store
@@ -38,4 +37,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts

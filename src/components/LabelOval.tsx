@@ -3,12 +3,12 @@ interface LabelProps {
   color: string;
 }
 const LabelOval = ({ data, color }: LabelProps) => {
-    const bgcolor = `bg-${color}-100`;
+    const bgcolor = `${color}33`;
     const txtcolor = `text-${color}-700`;
     
     return (
-        <div className={`${bgcolor} rounded-full flex items-center justify-center px-4 py-2 w-24`}>
-            <p className={`${txtcolor} font-bold`}>{data}</p>
+        <div className="rounded-full flex items-center justify-center px-4 py-2 w-24" style={{ backgroundColor: bgcolor }}>
+            <p className="font-bold" style={{ color: color}}>{data}</p>
         </div>
     );
 };

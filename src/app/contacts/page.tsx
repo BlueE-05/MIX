@@ -35,7 +35,7 @@ const contactData = Array.from({ length: 25 }, (_, i) => {
   return (
     <main className="min-h-screen p-6">
       <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
-      <CustomTable headers={contactHeaders} data={contactData} color="lime-300"/> {/*por alguna razón este naranja no lo toma => #E96000/70 */}
+      <CustomTable headers={contactHeaders} data={contactData} color="green"/> {/*por alguna razón este naranja no lo toma => #E96000/70 */}
     </main>
   );
 };

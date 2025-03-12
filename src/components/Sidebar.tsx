@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const Sidebar = () => {
   return (
     <div className="flex flex-col h-screen w-64 bg-gray-800 text-white">
@@ -11,7 +13,9 @@ const Sidebar = () => {
         <ul>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">🏠</span>
-            <span>Home</span>
+            <Link href="/dashboard">
+              <span className="text-white no-underline">Home</span>
+            </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">💰</span>
@@ -27,11 +31,15 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">👥</span>
-            <span>Contacts</span>
+            <Link href="/contacts">
+              <span>Contacts</span>
+            </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">📦</span>
-            <span>Products</span>
+            <Link href="/products">
+              <span>Products</span>
+            </Link>
           </li>
         </ul>
 
