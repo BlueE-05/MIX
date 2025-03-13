@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { House, DollarSign, Boxes, UserRound, Columns3, ChartNoAxesCombined, Users, HelpCircle,   } from 'lucide-react';
 
 const Sidebar = () => {
   return (
@@ -12,31 +13,31 @@ const Sidebar = () => {
       <nav className="flex-grow mt-5">
         <ul>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">🏠</span>
+            <House className="mr-2"/>
             <Link href="/dashboard">
               <span className="text-white no-underline">Home</span>
             </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">💰</span>
+            <DollarSign className="mr-2"/>
             <span>Sales</span>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">📊</span>
+            <ChartNoAxesCombined className="mr-2"/>
             <span>Reports</span>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">📅</span>
-            <span>Calendar</span>
+            <Columns3 className="mr-2"/> 
+            <span>Kanban</span>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">👥</span>
+            <Users className="mr-2"/>
             <Link href="/contacts">
               <span>Contacts</span>
             </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">📦</span>
+            <Boxes className="mr-2"/>
             <Link href="/products">
               <span>Products</span>
             </Link>
@@ -48,16 +49,12 @@ const Sidebar = () => {
 
         <ul>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">👤</span>
+            <UserRound className="mr-2"/>
             <span>Account</span>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">❓</span>
+            <HelpCircle className="mr-2"/>
             <span>Help & Information</span>
-          </li>
-          <li className="flex items-center p-4 hover:bg-gray-700">
-            <span className="mr-2">⚙️</span>
-            <span>Settings</span>
           </li>
         </ul>
       </nav>
