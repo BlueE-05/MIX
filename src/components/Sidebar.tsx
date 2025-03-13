@@ -24,7 +24,9 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <ChartNoAxesCombined className="mr-2"/>
-            <span>Reports</span>
+            <Link href="/dashboard">
+              <span>Reports</span>
+            </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <Columns3 className="mr-2"/> 
