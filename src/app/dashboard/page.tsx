@@ -5,6 +5,7 @@ import LinesChart from "@/components/Dashboard/LinesChart";
 import PieChart from "@/components/Dashboard/PieChart";
 import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 
+
 export default function Dashboard() {
   return (
       <main className="flex flex-col items-center gap-3 p-2">
@@ -23,6 +24,7 @@ export default function Dashboard() {
         <div>
           <LinesChart/>
         </div>
+
 
       </main>
   );
