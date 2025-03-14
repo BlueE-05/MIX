@@ -19,7 +19,9 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">💰</span>
-            <span>Sales</span>
+            <Link href="/sales">
+              <span>Sales</span>
+            </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">📊</span>
