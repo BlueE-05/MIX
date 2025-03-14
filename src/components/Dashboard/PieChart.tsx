@@ -3,7 +3,7 @@ import PiechartData from "@/mock/PieChartData";
 
 export default function PieChart() {
     return (
-        <div className="w-120 h-60 bg-gray-800 text-white rounded-2xl">
+        <div className="flex flex-col items-center justify-center w-120 h-60 bg-gray-800 text-white rounded-2xl">
             <div className="p-1">
                 <p className="text-lg font-bold">Sales goal of the month</p>
             </div>

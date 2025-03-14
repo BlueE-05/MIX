@@ -25,7 +25,9 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">📊</span>
-            <span>Reports</span>
+            <Link href="/reports">
+              <span>Reports</span>
+            </Link>
           </li>
           <li className="flex items-center p-4 hover:bg-gray-700">
             <span className="mr-2">📅</span>
