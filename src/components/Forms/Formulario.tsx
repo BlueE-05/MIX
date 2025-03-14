@@ -97,9 +97,9 @@ export default function Formulario() {
       </div>
 
       <div className="text-right">
-        <button className="bg-green-500 text-white p-2 rounded cursor-pointer">
+        <Link className="bg-green-500 text-white p-2 rounded cursor-pointer" href={'/sales'}>
           Done
-        </button>
+        </Link>
       </div>
 
     </main>

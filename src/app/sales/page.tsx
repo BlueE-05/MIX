@@ -43,7 +43,7 @@ export default function SalesPage() {
       <h1 className="font-bold text-3xl mb-5">Active Sales</h1>
       <CustomTable headers={salesHeaders} data={salesData} color="green" />
       <div className="fixed bottom-6 right-6">
-        <RoundedButton color="green" text="New Sale" Icon={CirclePlus} link="/contacts/newcontact" />
+        <RoundedButton color="green" text="New Sale" Icon={CirclePlus} link="/sales/newsale" />
       </div>
     </main>
   );
