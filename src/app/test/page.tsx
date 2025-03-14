@@ -1,5 +1,5 @@
 import { BarChart, LineChart, Plus, CirclePlus } from "lucide-react";
-import RoundedButton from '@/components/RoundedButton';
+import RoundedButton from '@/components/Buttons/RoundedButton';
 
 
 export default function Page() {

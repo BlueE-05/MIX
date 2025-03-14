@@ -2,10 +2,10 @@
 
 import { CirclePlus } from "lucide-react";
 
-import CustomTable from '@/components/CustomTable';
-import LabelOval from '@/components/LabelOval';
-import PointsButton from '@/components/PointsButton';
-import RoundedButton from '@/components/RoundedButton';
+import CustomTable from '@/components/Tables/CustomTable';
+import LabelOval from '@/components/Buttons/LabelOval';
+import PointsButton from '@/components/Buttons/PointsButton';
+import RoundedButton from '@/components/Buttons/RoundedButton';
 
 const ProductPage = () => {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Billing Frecuency", "Product Type", "Product Sheet", ""];

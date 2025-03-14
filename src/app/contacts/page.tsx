@@ -1,8 +1,8 @@
 'use client'
 
-import CustomTable from '@/components/CustomTable';
-import LabelOval from '@/components/LabelOval';
-import PointsButton from '@/components/PointsButton';
+import CustomTable from '@/components/Tables/CustomTable';
+import LabelOval from '@/components/Buttons/LabelOval';
+import PointsButton from '@/components/Buttons/PointsButton';
 
 const ContactPage = () => {
 const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];

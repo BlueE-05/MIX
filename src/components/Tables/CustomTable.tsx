@@ -1,8 +1,6 @@
 // components/CustomTable.js
 'use client'
 import { Search } from 'lucide-react';
-import LabelOval from '@/components/LabelOval';
-import PointsButton from '@/components/PointsButton';
 
 interface CustomTableProps {
     headers: string[];
@@ -36,7 +34,7 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }:
                             </thead>
                             <tbody>
                                 {data.map((row, index) => (
-                                    <tr key={index} className="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-600">
+                                    <tr key={index} className="border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-200">
                                         {row.map((cell, cellIndex) => (
                                             <td key={cellIndex} className="px-6 py-4">
                                                 {cell}

@@ -36,21 +36,21 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true })
                                         className: "w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CustomTable.tsx",
-                                        lineNumber: 23,
+                                        lineNumber: 21,
                                         columnNumber: 35
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
                                         className: "absolute left-6 h-5 w-5 text-gray-500"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CustomTable.tsx",
-                                        lineNumber: 23,
+                                        lineNumber: 21,
                                         columnNumber: 159
                                     }, this)
                                 ]
                             }, void 0, true)
                         }, void 0, false, {
                             fileName: "[project]/src/components/CustomTable.tsx",
-                            lineNumber: 21,
+                            lineNumber: 19,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("table", {
@@ -65,65 +65,65 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true })
                                                 children: header
                                             }, index, false, {
                                                 fileName: "[project]/src/components/CustomTable.tsx",
-                                                lineNumber: 31,
+                                                lineNumber: 29,
                                                 columnNumber: 41
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/CustomTable.tsx",
-                                        lineNumber: 29,
+                                        lineNumber: 27,
                                         columnNumber: 33
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CustomTable.tsx",
-                                    lineNumber: 28,
+                                    lineNumber: 26,
                                     columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tbody", {
                                     children: data.map((row, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("tr", {
-                                            className: "border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-600",
+                                            className: "border-b border-neutral-200 transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-white/10 dark:hover:bg-neutral-200",
                                             children: row.map((cell, cellIndex)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("td", {
                                                     className: "px-6 py-4",
                                                     children: cell
                                                 }, cellIndex, false, {
                                                     fileName: "[project]/src/components/CustomTable.tsx",
-                                                    lineNumber: 41,
+                                                    lineNumber: 39,
                                                     columnNumber: 45
                                                 }, this))
                                         }, index, false, {
                                             fileName: "[project]/src/components/CustomTable.tsx",
-                                            lineNumber: 39,
+                                            lineNumber: 37,
                                             columnNumber: 37
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/CustomTable.tsx",
-                                    lineNumber: 37,
+                                    lineNumber: 35,
                                     columnNumber: 29
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/CustomTable.tsx",
-                            lineNumber: 27,
+                            lineNumber: 25,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/CustomTable.tsx",
-                    lineNumber: 19,
+                    lineNumber: 17,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/CustomTable.tsx",
-                lineNumber: 18,
+                lineNumber: 16,
                 columnNumber: 17
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/components/CustomTable.tsx",
-            lineNumber: 17,
+            lineNumber: 15,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/components/CustomTable.tsx",
-        lineNumber: 16,
+        lineNumber: 14,
         columnNumber: 9
     }, this);
 };
@@ -180,7 +180,7 @@ const PointsButton = ()=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "flex items-center justify-center",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-            className: "font-bold hover:bg-gray-200 p-3 rounded-md",
+            className: "font-bold hover:bg-gray-300 p-3 rounded-md",
             children: "..."
         }, void 0, false, {
             fileName: "[project]/src/components/PointsButton.tsx",
