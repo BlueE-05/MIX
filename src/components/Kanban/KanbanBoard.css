@@ -1,0 +1,113 @@
+.kanban-board {
+  display: flex;
+  gap: 16px; /* Espacio entre columnas */
+  padding: 16px;
+}
+
+.add-task-form {
+  margin-top: 16px;
+}
+
+.add-task-form input,
+.add-task-form select {
+  display: block;
+  margin-bottom: 8px;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  color: black; /* Texto negro */
+}
+
+.add-task-form button {
+  padding: 8px 16px;
+}
+
+.open-modal-button {
+  margin-bottom: 16px;
+  padding: 8px 16px;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que el modal esté por encima de otros elementos */
+}
+
+.modal-content {
+  background: #f0f8ff; /* Color más bonito */
+  padding: 24px; /* Más espacio alrededor del contenido */
+  border-radius: 8px; /* Bordes más redondeados */
+  width: 320px; /* Ancho del modal */
+  border: 2px solid #000; /* Borde de color negro */
+}
+
+.modal-content input,
+.modal-content select {
+  display: block;
+  margin-bottom: 12px; /* Más espacio entre los campos */
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  color: black; /* Texto negro */
+}
+
+.modal-content button {
+  padding: 8px 16px;
+  margin-right: 8px;
+}
+
+.column {
+  background-color: #f8f9fa; /* Color de fondo más blanco */
+  border: 2px solid black; /* Borde de color negro */
+  border-radius: 4px;
+  padding: 16px;
+  width: 325px;
+  height: 50vh; /* Extiende el rectángulo hacia abajo hasta la altura completa de la ventana */
+  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido es demasiado grande */
+}
+
+.column h2 {
+  margin-top: 0;
+}
+
+.column ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.column li {
+  margin-bottom: 8px;
+}
+
+.card {
+  position: relative;
+  background-color: #ffffff; /* Color de fondo más blanco */
+  border: 2px solid black; /* Borde de color negro */
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+.card.dragging {
+  opacity: 0.5;
+  transform: scale(1.05);
+}
+
+.delete-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  cursor: pointer;
+}

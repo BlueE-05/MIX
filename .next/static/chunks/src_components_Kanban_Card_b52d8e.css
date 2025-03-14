@@ -1,0 +1,22 @@
+/* [project]/src/components/Kanban/Card.css [app-client] (css) */
+.card {
+  position: relative;
+  background-color: #ff8585;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.delete-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: none;
+  border: none;
+  color: red;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=src_components_Kanban_Card_b52d8e.css.map*/
