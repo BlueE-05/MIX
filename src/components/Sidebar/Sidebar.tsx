@@ -1,7 +1,14 @@
+'use client';
 import Link from "next/link";
-import { House, DollarSign, Boxes, UserRound, Columns3, ChartNoAxesCombined, Users, HelpCircle, } from 'lucide-react';
+import { usePathname } from 'next/navigation'; 
+import { House, DollarSign, Boxes, UserRound, Columns3, ChartNoAxesCombined, Users, HelpCircle } from 'lucide-react';
 
 const Sidebar = () => {
+  const pathname = usePathname(); // Obtenemos la ruta actual
+
+  // Función para determinar el color del texto
+  const getTextColor = () => {return pathname === '/products' ? 'text-orange-500' : 'text-green-500';};
+
   return (
     <div className="flex flex-col h-screen w-64 bg-gray-800 text-white">
       {/* Logo */}
@@ -12,27 +19,27 @@ const Sidebar = () => {
       {/* Menú */}
       <nav className="flex-grow mt-5">
         <ul>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/dashboard">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/dashboard">
             <House className="mr-2" />
-            <span className="text-white no-underline">Home</span>
+            <span className="no-underline">Home</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/sales">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/sales">
             <DollarSign className="mr-2" />
             <span>Sales</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/reports">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/reports">
             <ChartNoAxesCombined className="mr-2" />
             <span>Reports</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/kanban">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/kanban">
             <Columns3 className="mr-2" />
             <span>Kanban</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/contacts">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/contacts">
             <Users className="mr-2" />
             <span>Contacts</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/products">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/products">
             <Boxes className="mr-2" />
             <span>Products</span>
           </Link>
@@ -42,11 +49,11 @@ const Sidebar = () => {
         <hr className="my-4 border-gray-700" />
 
         <ul>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/account">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/account">
             <UserRound className="mr-2" />
             <span>Account</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/information">
+          <Link className={`flex items-center p-4 hover:bg-gray-700 ${getTextColor()}`} href="/information">
             <HelpCircle className="mr-2" />
             <span>Help & Information</span>
           </Link>
