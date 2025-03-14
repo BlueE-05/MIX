@@ -3,6 +3,8 @@
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
 import PointsButton from '@/components/Buttons/PointsButton';
+import RoundedButton from '@/components/Buttons/RoundedButton';
+import { CirclePlus } from 'lucide-react';
 
 const ContactPage = () => {
 const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];
@@ -35,7 +37,10 @@ const contactData = Array.from({ length: 25 }, (_, i) => {
   return (
     <main className="min-h-screen p-6">
       <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
-      <CustomTable headers={contactHeaders} data={contactData} color="green"/> {/*por alguna razón este naranja no lo toma => #E96000/70 */}
+      <CustomTable headers={contactHeaders} data={contactData} color="green"/>
+      <div className="fixed bottom-6 right-6">
+        <RoundedButton color="green" text="New Product" Icon={CirclePlus} link="/contacts/newcontact"/>
+      </div>
     </main>
   );
 };

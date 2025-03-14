@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/danae/Documents/Sem4/Reto%20-%20Construccion%20de%20software/MIX-2/src/app/sales/newsale/page.tsx"],"sourcesContent":["'use client'\r\nimport React from \"react\";\r\nimport Formulario from \"@/components/Formulario\";\r\nimport { CirclePlus } from \"lucide-react\";\r\n\r\n\r\nexport default function Home() {\r\n  return (\r\n      <main className=\"min-h-screen p-6\">\r\n       <Formulario/>\r\n      </main>\r\n  );\r\n}"],"names":[],"mappings":";;;;;;;;;AAAA;;;AAMe,SAAS;IACtB,qBACI,8OAAC;QAAK,WAAU;kBACf,cAAA,8OAAC;;;;;;;;;;AAGR"}},
+    {"offset": {"line": 33, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
+    {"offset": {"line": 43, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/danae/Documents/Sem4/Reto%20-%20Construccion%20de%20software/MIX-2/node_modules/next/src/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.ts"],"sourcesContent":["module.exports = require('../../module.compiled').vendored[\n  'react-ssr'\n].ReactJsxDevRuntime\n"],"names":["module","exports","require","vendored","ReactJsxDevRuntime"],"mappings":";AAAAA,OAAOC,OAAO,GAAGC,QAAQ,0HAAyBC,QAAQ,CACxD,YACD,CAACC,kBAAkB","ignoreList":[0]}},
+    {"offset": {"line": 45, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

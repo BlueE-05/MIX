@@ -204,27 +204,43 @@ __turbopack_esm__({
     "default": (()=>__TURBOPACK__default__export__)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_import__("[project]/node_modules/next/dist/client/app-dir/link.js [app-ssr] (ecmascript)");
 ;
-const RoundedButton = ({ color, text, Icon })=>{
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-        className: "flex justify-center items-center p-5 rounded-xl text-white transition-all duration-200 hover:brightness-90",
-        style: {
-            backgroundColor: color
-        },
-        children: [
-            Icon && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
-                className: "mr-2",
-                size: 20
-            }, void 0, false, {
-                fileName: "[project]/src/components/Buttons/RoundedButton.tsx",
-                lineNumber: 12,
-                columnNumber: 22
-            }, this),
-            text
-        ]
-    }, void 0, true, {
+;
+const RoundedButton = ({ color, text, Icon, link, onChange })=>{
+    const handleClick = ()=>{
+        if (onChange) {
+            onChange(); // Ejecutamos la función onChange si se proporciona
+        }
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
+        href: link || "#",
+        passHref: true,
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+            className: "flex justify-center items-center p-5 rounded-xl text-white transition-all duration-200 hover:brightness-90",
+            style: {
+                backgroundColor: color
+            },
+            onClick: handleClick,
+            children: [
+                Icon && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
+                    className: "mr-2",
+                    size: 20
+                }, void 0, false, {
+                    fileName: "[project]/src/components/Buttons/RoundedButton.tsx",
+                    lineNumber: 26,
+                    columnNumber: 26
+                }, this),
+                text
+            ]
+        }, void 0, true, {
+            fileName: "[project]/src/components/Buttons/RoundedButton.tsx",
+            lineNumber: 21,
+            columnNumber: 13
+        }, this)
+    }, void 0, false, {
         fileName: "[project]/src/components/Buttons/RoundedButton.tsx",
-        lineNumber: 11,
+        lineNumber: 20,
         columnNumber: 9
     }, this);
 };

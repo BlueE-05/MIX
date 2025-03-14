@@ -1,14 +1,20 @@
 'use client'
+import BoxClosed from "@/components/Dashboard/BoxClosed";
+import LinesChart from "@/components/Dashboard/LinesChart";
+import PieChart from "@/components/Dashboard/PieChart";
+import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+export default function Dashboard() {
+  return (
+      <main className="min-h-screen p-6">
+        
+        <div className="grid grid-cols-2 gap-3 p-2">
+          <div><BoxClosed/></div>
+          <div><BoxComisiones/></div>
+          <div><PieChart/></div>
+          <div><LinesChart/></div>
+        </div>
 
-export default function ReportsPage() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.push('/dashboard');
-  }, []);
-
-  return null;
-};
+      </main>
+  );
+}
