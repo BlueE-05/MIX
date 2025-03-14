@@ -1,1 +1,15 @@
-{}
+{
+  "/page": "app/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/aboutus/page": "app/aboutus/page.js",
+  "/login/page": "app/login/page.js",
+  "/signup/page": "app/signup/page.js",
+  "/crm/account/page": "app/crm/account/page.js",
+  "/crm/dashboard/page": "app/crm/dashboard/page.js",
+  "/crm/sales/page": "app/crm/sales/page.js",
+  "/crm/reports/page": "app/crm/reports/page.js",
+  "/crm/contacts/page": "app/crm/contacts/page.js",
+  "/crm/products/page": "app/crm/products/page.js",
+  "/crm/kanban/page": "app/crm/kanban/page.js",
+  "/crm/information/page": "app/crm/information/page.js"
+}

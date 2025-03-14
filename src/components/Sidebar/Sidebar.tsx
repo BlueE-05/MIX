@@ -12,27 +12,27 @@ const Sidebar = () => {
       {/* Menú */}
       <nav className="flex-grow mt-5">
         <ul>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/dashboard">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/dashboard">
             <House className="mr-2" />
             <span className="text-white no-underline">Home</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/sales">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/sales">
             <DollarSign className="mr-2" />
             <span>Sales</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/reports">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/reports">
             <ChartNoAxesCombined className="mr-2" />
             <span>Reports</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/kanban">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/kanban">
             <Columns3 className="mr-2" />
             <span>Kanban</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/contacts">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/contacts">
             <Users className="mr-2" />
             <span>Contacts</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/products">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/products">
             <Boxes className="mr-2" />
             <span>Products</span>
           </Link>
@@ -42,11 +42,11 @@ const Sidebar = () => {
         <hr className="my-4 border-gray-700" />
 
         <ul>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/account">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/account">
             <UserRound className="mr-2" />
             <span>Account</span>
           </Link>
-          <Link className="flex items-center p-4 hover:bg-gray-700" href="/information">
+          <Link className="flex items-center p-4 hover:bg-gray-700" href="/crm/information">
             <HelpCircle className="mr-2" />
             <span>Help & Information</span>
           </Link>
