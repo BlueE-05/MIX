@@ -148,36 +148,41 @@ var _s = __turbopack_refresh__.signature();
 const KanbanBoard = ()=>{
     _s();
     const [tasks, setTasks] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
-        'Proyección': [
+        'Prospectos': [
             {
                 id: 1,
-                title: 'Investigar Kanban',
-                description: 'Leer documentación sobre Kanban'
+                title: 'Contactar a cliente potencial',
+                description: 'Enviar correo electrónico de presentación'
             },
             {
                 id: 2,
-                title: 'Diseñar UI',
-                description: 'Crear wireframe en Figma'
+                title: 'Llamada de seguimiento',
+                description: 'Llamar para dar seguimiento a correo enviado'
             }
         ],
         'Cotización': [
             {
                 id: 3,
-                title: 'Implementar arrastrar y soltar',
-                description: 'Agregar drag & drop con react-dnd'
+                title: 'Preparar cotización',
+                description: 'Crear cotización para cliente potencial'
             }
         ],
-        'Reunión': [
+        'Cierre': [
             {
                 id: 4,
-                title: 'Optimizar rendimiento',
-                description: 'Reducir renders innecesarios en componentes'
+                title: 'Negociar términos',
+                description: 'Negociar términos y condiciones del contrato'
+            },
+            {
+                id: 5,
+                title: 'Cerrar venta',
+                description: 'Finalizar y firmar contrato con el cliente'
             }
         ]
     });
     const [newTaskTitle, setNewTaskTitle] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [newTaskDescription, setNewTaskDescription] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const [selectedColumn, setSelectedColumn] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Por hacer');
+    const [selectedColumn, setSelectedColumn] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Prospectos');
     const [isModalOpen, setIsModalOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const addTask = ()=>{
         const newTask = {
@@ -235,7 +240,7 @@ const KanbanBoard = ()=>{
                 children: "Agregar nueva tarea"
             }, void 0, false, {
                 fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                lineNumber: 82,
+                lineNumber: 83,
                 columnNumber: 7
             }, this),
             isModalOpen && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -247,7 +252,7 @@ const KanbanBoard = ()=>{
                             children: "Agregar nueva tarea"
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 86,
+                            lineNumber: 87,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -257,7 +262,7 @@ const KanbanBoard = ()=>{
                             onChange: (e)=>setNewTaskTitle(e.target.value)
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 87,
+                            lineNumber: 88,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -267,7 +272,7 @@ const KanbanBoard = ()=>{
                             onChange: (e)=>setNewTaskDescription(e.target.value)
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 93,
+                            lineNumber: 94,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
@@ -278,12 +283,12 @@ const KanbanBoard = ()=>{
                                     children: column
                                 }, column, false, {
                                     fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                                    lineNumber: 101,
+                                    lineNumber: 102,
                                     columnNumber: 17
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 99,
+                            lineNumber: 100,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -291,7 +296,7 @@ const KanbanBoard = ()=>{
                             children: "Agregar tarea"
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 104,
+                            lineNumber: 105,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -299,18 +304,18 @@ const KanbanBoard = ()=>{
                             children: "Cerrar"
                         }, void 0, false, {
                             fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                            lineNumber: 105,
+                            lineNumber: 106,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                    lineNumber: 85,
+                    lineNumber: 86,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                lineNumber: 84,
+                lineNumber: 85,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -324,22 +329,22 @@ const KanbanBoard = ()=>{
                         onDragOver: onDragOver
                     }, column, false, {
                         fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                        lineNumber: 111,
+                        lineNumber: 112,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-                lineNumber: 109,
+                lineNumber: 110,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/Kanban/KanbanBoard.tsx",
-        lineNumber: 81,
+        lineNumber: 82,
         columnNumber: 5
     }, this);
 };
-_s(KanbanBoard, "6H/ekrSLnSZPirmz7vtrEG+AZpk=");
+_s(KanbanBoard, "bqMpds91AwKfrVTmLMKZVPziZo0=");
 _c = KanbanBoard;
 const __TURBOPACK__default__export__ = KanbanBoard;
 var _c;

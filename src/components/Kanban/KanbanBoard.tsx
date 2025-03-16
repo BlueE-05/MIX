@@ -11,21 +11,22 @@ interface Task {
 
 const KanbanBoard: React.FC = () => {
   const [tasks, setTasks] = useState<{ [key: string]: Task[] }>({
-    'Proyección': [
-      { id: 1, title: 'Investigar Kanban', description: 'Leer documentación sobre Kanban' },
-      { id: 2, title: 'Diseñar UI', description: 'Crear wireframe en Figma' },
+    'Prospectos': [
+      { id: 1, title: 'Contactar a cliente potencial', description: 'Enviar correo electrónico de presentación' },
+      { id: 2, title: 'Llamada de seguimiento', description: 'Llamar para dar seguimiento a correo enviado' },
     ],
     'Cotización': [
-      { id: 3, title: 'Implementar arrastrar y soltar', description: 'Agregar drag & drop con react-dnd' },
+      { id: 3, title: 'Preparar cotización', description: 'Crear cotización para cliente potencial' },
     ],
-    'Reunión': [
-      { id: 4, title: 'Optimizar rendimiento', description: 'Reducir renders innecesarios en componentes' },
+    'Cierre': [
+      { id: 4, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
+      { id: 5, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
     ],
   });
 
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const [newTaskDescription, setNewTaskDescription] = useState('');
-  const [selectedColumn, setSelectedColumn] = useState('Por hacer');
+  const [selectedColumn, setSelectedColumn] = useState('Prospectos');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const addTask = () => {
