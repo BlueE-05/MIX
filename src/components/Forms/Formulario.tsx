@@ -27,7 +27,7 @@ export default function Formulario() {
     <main className="font-sans w-200 h-100 mx-auto p-5 bg-gray-100 rounded-lg">
       
       <div className='relative'>
-        <Link href="/sales" className="absolute top-1 right-1 hover:bg-red-500 bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">x</Link> 
+        <Link href="/crm/sales" className="absolute top-1 right-1 hover:bg-red-500 bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">x</Link> 
       </div>
      
       <h2 className="text-left mb-5 text-gray-800 text-2xl">New Sale</h2>
@@ -97,7 +97,7 @@ export default function Formulario() {
       </div>
 
       <div className="text-right">
-        <Link className="bg-green-500 text-white p-2 rounded cursor-pointer" href={'/sales'}>
+        <Link className="bg-green-500 text-white p-2 rounded cursor-pointer" href={'/crm/sales'}>
           Done
         </Link>
       </div>
