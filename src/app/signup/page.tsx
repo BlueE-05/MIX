@@ -31,7 +31,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
     const validateField = (name: string, value: string) => {
         return requiredFields.includes(name) && !value
-            ? ${fieldLabels[name]} is required
+            ? `${fieldLabels[name]} is required`
             : name === "email" && !emailRegex.test(value)
             ? "Invalid email format"
             : name === "password" && !passwordRegex.test(value)
@@ -42,22 +42,6 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
             ? "Birthdate must be between 1935 and 2009"
             : "";
     };
-
-
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setFormData((prev) => ({ ...prev, profilePic: file }));
-
-            const reader = new FileReader();
-            reader.onload = () => {
-                setImagePreview(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -101,7 +85,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                             type={field === "birthDate" ? "date" : "text"}
                                             name={field}
                                             placeholder={fieldLabels[field]}
-                                            className={p-2 border rounded w-full ${errors[field] ? 'border-red-500' : 'border-gray-300'}}
+                                            className={`p-2 border rounded w-full ${errors[field] ? 'border-red-500' : 'border-gray-300'}`}
                                             onChange={handleChange}
                                         />
                                         {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
@@ -121,7 +105,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                             type={field}
                                             name={field}
                                             placeholder={fieldLabels[field]}
-                                            className={p-2 border rounded w-full ${errors[field] ? 'border-red-500' : 'border-gray-300'}}
+                                            className={`p-2 border rounded w-full ${errors[field] ? 'border-red-500' : 'border-gray-300'}`}
                                             onChange={handleChange}
                                         />
                                         {errors[field] && <p className="text-red-500 text-sm mt-1">{errors[field]}</p>}
@@ -138,23 +122,6 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                         <option key={level} value={level}>{level}</option>
                                     ))}
                                 </select>
-
-                                <label className="block font-medium">Profile Picture (Optional)</label>
-                                <div className="flex flex-col items-center">
-                                    <div className="w-32 h-32 border-2 border-gray-300 rounded-full overflow-hidden flex items-center justify-center">
-                                        {imagePreview ? (
-                                            <img src={imagePreview} alt="Profile Preview" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="text-gray-500">No Image</span>
-                                        )}
-                                    </div>
-                                    <input 
-                                        type="file" 
-                                        accept="image/png, image/jpeg, image/jpg"
-                                        className="mt-4 border p-2 rounded-lg text-sm text-gray-600 cursor-pointer"
-                                        onChange={handleImageChange}
-                                    />
-                                </div>
 
                                 <label className="block font-medium">Job Position (Optional)</label>
                                 <input 
@@ -174,7 +141,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                 </select>
                             </>
                         )}
-                        <div className={flex ${currentStep > 1 ? 'justify-between space-x-4' : ''} mt-4}>
+                        <div className={`flex ${currentStep > 1 ? 'justify-between space-x-4' : ''} mt-4`}>
                             {currentStep > 1 && (
                                 <button 
                                     type="button" 
