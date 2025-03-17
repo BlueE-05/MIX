@@ -1,6 +1,3 @@
 {
-  "/crm/kanban/page": "app/crm/kanban/page.js",
-  "/page": "app/page.js",
-  "/signup/page": "app/signup/page.js",
-  "/aboutus/page": "app/aboutus/page.js"
+  "/signup/page": "app/signup/page.js"
 }
