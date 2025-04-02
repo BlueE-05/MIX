@@ -5,15 +5,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignupFormData } from "@/types/signup";
 import Navbar from "@/components/NavBar";
-import {
-  teams,
-  educationLevels,
-  fieldLabels,
-  passwordRegex,
-  emailRegex,
-  phoneRegex,
-  birthDateRange,
-} from "@/constants/formFields";
+import { teams, educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 import Image from "next/image";
 
 export default function SignupForm() {
@@ -35,15 +27,7 @@ export default function SignupForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [currentStep, setCurrentStep] = useState(1);
 
-  const requiredFields = [
-    "name",
-    "lastName",
-    "birthDate",
-    "phoneNumber",
-    "email",
-    "password",
-    "education",
-  ];
+  const requiredFields = ["name", "lastName", "birthDate", "phoneNumber", "email", "password", "education"];
 
   const validateField = (name: string, value: string) => {
     return requiredFields.includes(name) && !value
@@ -100,191 +84,201 @@ export default function SignupForm() {
     e.preventDefault();
     if (isStepValid()) {
       console.log("Form Data:", formData);
-      // Here you would typically make an API call to your backend
-      // to create the user account.
-      // Example using fetch:
-      // try {
-      //   const response = await fetch('/api/signup', {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     body: JSON.stringify(formData),
-      //   });
-      //   if (response.ok) {
-      //     router.push("/crm/dashboard");
-      //     // Optionally, show a success message
-      //   } else {
-      //     const errorData = await response.json();
-      //     console.error("Signup failed:", errorData);
-      //     // Handle error, display message to the user
-      //   }
-      // } catch (error) {
-      //   console.error("Error during signup:", error);
-      //   // Handle network error, display message to the user
-      // }
-      // For this example, we'll just push to the dashboard after a successful client-side validation
       router.push("/crm/dashboard");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       <Navbar />
-      <div className="flex flex-1 items-center justify-center">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto space-y-4">
-          <h2 className="text-2xl font-bold text-center mb-4 text-black-600">
-            Sign Up
-          </h2>
-          <form onSubmit={handleSubmit} className="w-full flex flex-col space-y-4">
-            {currentStep === 1 && (
-              <>
-                {["name", "lastName", "birthDate", "phoneNumber"].map((field) => (
-                  <div key={field}>
-                    <label className="block font-medium">
-                      {fieldLabels[field]} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type={field === "birthDate" ? "date" : "text"}
-                      name={field}
-                      placeholder={fieldLabels[field]}
-                      className={`p-2 border rounded w-full ${
-                        errors[field] ? "border-red-500" : "border-gray-300"
-                      }`}
-                      onChange={handleChange}
-                    />
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
-                    )}
+      <div className="container mx-auto px-4 py-8 flex items-center justify-center">
+        <div className="w-full max-w-2xl">
+          <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+            {/* Progress Bar */}
+            <div className="bg-gray-100 h-2">
+              <div 
+                className="bg-green-600 h-full transition-all duration-300" 
+                style={{ width: `${(currentStep / 3) * 100}%` }}
+              ></div>
+            </div>
+
+            <div className="p-8 sm:p-10">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Create your account</h1>
+                <p className="text-gray-600">Step {currentStep} of 3</p>
+              </div>
+              
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {currentStep === 1 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {["name", "lastName", "birthDate", "phoneNumber"].map((field) => (
+                      <div key={field} className={field === "birthDate" ? "md:col-span-2" : ""}>
+                        <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
+                          {fieldLabels[field]} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          id={field}
+                          type={field === "birthDate" ? "date" : "text"}
+                          name={field}
+                          placeholder={fieldLabels[field]}
+                          className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                          onChange={handleChange}
+                        />
+                        {errors[field] && (
+                          <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-                <p className="text-center text-sm mt-4">
-                  Already have an account?{" "}
-                  <a href="/login" className="text-blue-500 hover:underline">
+                )}
+
+                {currentStep === 2 && (
+                  <div className="space-y-6">
+                    {["email", "password"].map((field) => (
+                      <div key={field}>
+                        <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
+                          {fieldLabels[field]} <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          id={field}
+                          type={field}
+                          name={field}
+                          placeholder={fieldLabels[field]}
+                          className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                          onChange={handleChange}
+                        />
+                        {errors[field] && (
+                          <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
+                        )}
+                        {field === "password" && (
+                          <p className="mt-2 text-xs text-gray-500">
+                            Password must be at least 8 characters, include an uppercase letter, a number, and a special character
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {currentStep === 3 && (
+                  <div className="space-y-6">
+                    <div>
+                      <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["education"]} <span className="text-red-500">*</span>
+                      </label>
+                      <select 
+                        id="education"
+                        name="education" 
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
+                        onChange={handleChange}
+                      >
+                        <option value="">Select Education Level</option>
+                        {educationLevels.map((level) => (
+                          <option key={level} value={level}>{level}</option>
+                        ))}
+                      </select>
+                      {errors.education && (
+                        <p className="mt-2 text-sm text-red-600">{errors.education}</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-4">
+                      <label className="block text-sm font-medium text-gray-700">Profile Picture (Optional)</label>
+                      <div className="flex flex-col items-center space-y-4">
+                        <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-full overflow-hidden flex items-center justify-center bg-gray-50">
+                          {imagePreview ? (
+                            <Image
+                              src={imagePreview}
+                              alt="Profile Preview"
+                              width={128}
+                              height={128}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-gray-400">No Image</span>
+                          )}
+                        </div>
+                        <label className="cursor-pointer">
+                          <span className="px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                            Upload Photo
+                          </span>
+                          <input 
+                            type="file" 
+                            accept="image/png, image/jpeg, image/jpg"
+                            className="hidden"
+                            onChange={handleImageChange}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="jobPosition" className="block text-sm font-medium text-gray-700 mb-1">
+                        Job Position (Optional)
+                      </label>
+                      <input 
+                        id="jobPosition"
+                        type="text" 
+                        name="jobPosition" 
+                        placeholder="Job Position (To be confirmed)" 
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition" 
+                        onChange={handleChange} 
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="idTeam" className="block text-sm font-medium text-gray-700 mb-1">
+                        Team (Optional)
+                      </label>
+                      <select 
+                        id="idTeam"
+                        name="idTeam" 
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
+                        onChange={handleChange}
+                      >
+                        <option value="">Select Team (To be confirmed)</option>
+                        {teams.map((team) => (
+                          <option key={team.id} value={team.name}>{team.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                <div className={`flex ${currentStep > 1 ? 'justify-between' : 'justify-end'} space-x-4 pt-4`}>
+                  {currentStep > 1 && (
+                    <button 
+                      type="button" 
+                      className="px-6 py-3 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+                      onClick={handleBack}
+                    >
+                      Back
+                    </button>
+                  )}
+                  <button 
+                    type={currentStep < 3 ? "button" : "submit"} 
+                    disabled={!isStepValid()}
+                    className={`px-6 py-3 rounded-lg shadow-sm text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition
+                        ${!isStepValid() 
+                            ? 'bg-gray-400 cursor-not-allowed' 
+                            : 'bg-blue-600 hover:bg-blue-700'}`}
+                    onClick={currentStep < 3 ? handleNext : undefined}
+                  >
+                    {currentStep < 3 ? 'Continue' : 'Complete Registration'}
+                  </button>
+                </div>
+              </form>
+
+              {currentStep === 1 && (
+                <p className="text-center text-sm mt-6 text-gray-600">
+                  Already have an account?{' '}
+                  <a href="/login" className="font-medium text-blue-600 hover:text-blue-500 hover:underline">
                     Log In
                   </a>
                 </p>
-              </>
-            )}
-            {currentStep === 2 && (
-              <>
-                {["email", "password"].map((field) => (
-                  <div key={field}>
-                    <label className="block font-medium">
-                      {fieldLabels[field]} <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type={field}
-                      name={field}
-                      placeholder={fieldLabels[field]}
-                      className={`p-2 border rounded w-full ${
-                        errors[field] ? "border-red-500" : "border-gray-300"
-                      }`}
-                      onChange={handleChange}
-                    />
-                    {errors[field] && (
-                      <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-            {currentStep === 3 && (
-              <>
-                <label className="block font-medium">
-                  {fieldLabels["education"]} <span className="text-red-500">*</span>
-                </label>
-                <select
-                  name="education"
-                  className="p-2 border rounded w-full border-gray-300"
-                  onChange={handleChange}
-                >
-                  <option value="">Select Education Level</option>
-                  {educationLevels.map((level) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  ))}
-                </select>
-
-                <label className="block font-medium">Profile Picture (Optional)</label>
-                <div className="flex flex-col items-center">
-                  <div className="w-32 h-32 border-2 border-gray-300 rounded-full overflow-hidden flex items-center justify-center">
-                    {imagePreview ? (
-                      <Image
-                        src={imagePreview}
-                        alt="Profile Preview"
-                        width={128}
-                        height={128}
-                        className="object-cover"
-                      />
-                    ) : (
-                      <span className="text-gray-500">No Image</span>
-                    )}
-                  </div>
-                  <input
-                    type="file"
-                    accept="image/png, image/jpeg, image/jpg"
-                    className="mt-4 border p-2 rounded-lg text-sm text-gray-600 cursor-pointer"
-                    onChange={handleImageChange}
-                  />
-                </div>
-
-                <label className="block font-medium">Job Position (Optional)</label>
-                <input
-                  type="text"
-                  name="jobPosition"
-                  placeholder="Job Position (To be confirmed)"
-                  className="p-2 border rounded w-full border-gray-300"
-                  onChange={handleChange}
-                />
-
-                <label className="block font-medium">Team (Optional)</label>
-                <select
-                  name="idTeam"
-                  className="p-2 border rounded w-full border-gray-300"
-                  onChange={handleChange}
-                >
-                  <option value="">Select Team (To be confirmed)</option>
-                  {teams.map((team) => (
-                    <option key={team.id} value={team.name}>
-                      {team.name}
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
-            <div
-              className={`flex ${
-                currentStep > 1 ? "justify-between space-x-4" : ""
-              } mt-4`}
-            >
-              {currentStep > 1 && (
-                <button
-                  type="button"
-                  className="bg-green-500 text-white px-4 py-2 rounded w-1/2"
-                  onClick={handleBack}
-                >
-                  Back
-                </button>
               )}
-              <button
-                type={currentStep < 3 ? "button" : "submit"}
-                disabled={!isStepValid()}
-                className={`px-4 py-2 rounded transition ${
-                  currentStep > 1 ? "w-1/2" : "w-full"
-                }
-                  ${
-                    !isStepValid()
-                      ? "bg-orange-300 cursor-not-allowed opacity-75"
-                      : "bg-orange-500 hover:bg-orange-600 text-white"
-                  }`}
-                onClick={currentStep < 3 ? handleNext : undefined}
-              >
-                {currentStep < 3 ? "Next" : "Sign Up"}
-              </button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>

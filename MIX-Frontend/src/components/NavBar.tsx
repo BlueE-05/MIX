@@ -8,9 +8,10 @@ export default function Navbar() {
         <Image src="/mixMv1.svg" alt="Logo" width={55} height={5} className="cursor-pointer" />
       </Link>
       <ul className="flex space-x-6 text-white">
-        <li><Link href="/aboutus">About Us</Link></li>
-        <li><Link href="/login">Log In</Link></li>
-        <li><Link href="/signup">Sign Up</Link></li>
+        <li className="hover:text-green-400 "><Link href="/">Home</Link></li>
+        <li className="hover:text-green-400 "><Link href="/aboutus">About Us</Link></li>
+        <li className="hover:text-green-400 "><Link href="/login">Log In</Link></li>
+        <li className="hover:text-green-400 "><Link href="/signup">Sign Up</Link></li>
       </ul>
     </nav>
   );

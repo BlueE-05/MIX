@@ -2,7 +2,6 @@
 
 import Navbar from "@/components/NavBar";
 import Link from "next/link";
-import Image from "next/image";  // Import the Image component
 
 export default function Home() {
   return (
@@ -17,7 +16,7 @@ export default function Home() {
         </p>
         <div className="mt-6 flex space-x-6">
           <Link href="/signup">
-            <button className="bg-white text-green-600 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-200 transition">Get Started</button>
+            <button className="bg-white text-green-800 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-gray-200 transition">Get Started</button>
           </Link>
           <Link href="/aboutus">
             <button className="border border-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-white hover:text-green-600 transition">Learn More</button>
@@ -52,23 +51,21 @@ export default function Home() {
           <button className="mt-6 bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition">Sign Up Now</button>
         </Link>
       </section>
+        <footer className="bg-gray-900 text-white text-center py-6 mt-10">
+            <div className="flex flex-col items-center space-y-2">
+                <div className="flex items-center space-x-2">
+                    <img src="/raydevRv2.svg" alt="Raydev Logo" className="h-6 w-auto" />
+                    <p className="text-sm">By Raydev</p>
+                </div>
 
-      <footer className="bg-gray-900 text-white text-center py-6 mt-10">
-        <div className="flex flex-col items-center space-y-2">
-          <div className="flex items-center space-x-2">
-            {/* Replacing <img> with <Image /> */}
-            <Image src="/raydevRv2.svg" alt="Raydev Logo" className="h-6 w-auto" width={24} height={24} />
-            <p className="text-sm">By Raydev</p>
-          </div>
-
-          <p className="text-sm">
-            Contact us:  
-            <a className="text-green-400 hover:underline ml-1">
-              support@raydevexample.com
-            </a>
-          </p>
-        </div>
-      </footer>
+                <p className="text-sm">
+                    Contact us:  
+                    <a className="text-green-400 hover:underline ml-1">
+                        support@raydevexample.com
+                    </a>
+                </p>
+            </div>
+        </footer>
     </div>
   );
 }
