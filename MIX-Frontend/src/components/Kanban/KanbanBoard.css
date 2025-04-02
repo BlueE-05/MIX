@@ -1,32 +1,12 @@
+/* KanbanBoardCSS.txt (Simplificado) */
 .kanban-board {
-  display: flex;
+  display: flex; /* O usa grid si lo prefieres */
   gap: 16px; /* Espacio entre columnas */
   padding: 16px;
+  /* overflow-x: auto; ya está en el div wrapper en el TSX */
 }
 
-.add-task-form {
-  margin-top: 16px;
-}
-
-.add-task-form input,
-.add-task-form select {
-  display: block;
-  margin-bottom: 8px;
-  padding: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  color: black; /* Texto negro */
-}
-
-.add-task-form button {
-  padding: 8px 16px;
-}
-
-.open-modal-button {
-  margin-bottom: 16px;
-  padding: 8px 16px;
-}
-
+/* Estilos del Modal (Mantenidos del original o adaptados) */
 .modal {
   position: fixed;
   top: 0;
@@ -37,77 +17,26 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Asegura que el modal esté por encima de otros elementos */
+  z-index: 1000;
 }
 
 .modal-content {
-  background: #f0f8ff; /* Color más bonito */
-  padding: 24px; /* Más espacio alrededor del contenido */
-  border-radius: 8px; /* Bordes más redondeados */
-  width: 320px; /* Ancho del modal */
-  border: 2px solid #000; /* Borde de color negro */
+  /* Usando clases Tailwind directamente en el TSX es otra opción */
+  /* Si mantienes esto, asegúrate que no choque con Tailwind */
+   background: white; /* Ajustado a blanco para consistencia */
+   padding: 24px;
+   border-radius: 8px; /* Tailwind: rounded-lg o rounded-xl */
+   width: 90%; /* Hacerlo responsive */
+   max-width: 480px; /* Limitar ancho máximo */
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind: shadow-lg */
 }
 
-.modal-content input,
-.modal-content select {
-  display: block;
-  margin-bottom: 12px; /* Más espacio entre los campos */
-  padding: 8px;
-  width: 100%;
-  box-sizing: border-box;
-  color: black; /* Texto negro */
-}
+/* Puedes añadir estilos para la clase .dragging si prefieres CSS */
+ .card-base.dragging {
+    opacity: 0.5;
+    transform: rotate(3deg) scale(1.03);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    cursor: grabbing;
+ }
 
-.modal-content button {
-  padding: 8px 16px;
-  margin-right: 8px;
-}
-
-.column {
-  background-color: #f8f9fa; /* Color de fondo más blanco */
-  border: 2px solid black; /* Borde de color negro */
-  border-radius: 4px;
-  padding: 16px;
-  width: 325px;
-  height: 50vh; /* Extiende el rectángulo hacia abajo hasta la altura completa de la ventana */
-  overflow-y: auto; /* Permite el desplazamiento vertical si el contenido es demasiado grande */
-}
-
-.column h2 {
-  margin-top: 0;
-}
-
-.column ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.column li {
-  margin-bottom: 8px;
-}
-
-.card {
-  position: relative;
-  background-color: #ffffff; /* Color de fondo más blanco */
-  border: 2px solid black; /* Borde de color negro */
-  border-radius: 4px;
-  padding: 8px;
-  margin-bottom: 8px;
-  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
-}
-
-.card.dragging {
-  opacity: 0.5;
-  transform: scale(1.05);
-}
-
-.delete-button {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  background: none;
-  border: none;
-  color: red;
-  font-size: 16px;
-  cursor: pointer;
-}
+/* Otros estilos que no quieras manejar con Tailwind */

@@ -1,20 +1,19 @@
-'use client';
+// Column.tsx
+'use client'; // Mantener si usas Next.js App Router
 import React from 'react';
 import { X } from 'lucide-react';
-import './Column.css'; // Importa el archivo CSS
-
-interface Task {
-  id: number;
-  title: string;
-  description?: string;
-}
+import Card from './Card'; // Importar el componente Card
+import { Task } from './types'; // Importar desde el archivo de tipos
+// Quitar import './Column.css'; si se maneja todo con Tailwind y KanbanBoard.css
 
 interface ColumnProps {
   title: string;
   tasks: Task[];
-  deleteTask: (column: string, taskId: number) => void;
+  deleteTask: (columnName: string, taskId: number) => void; // Recibe el nombre de la columna
   onDeleteColumn: () => void;
+  // Pasar los handlers unificados desde KanbanBoard
   onDragStart: (event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => void;
+  onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
   onDrop: (event: React.DragEvent<HTMLDivElement>, toColumn: string) => void;
   onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
 }
@@ -25,46 +24,46 @@ const Column: React.FC<ColumnProps> = ({
   deleteTask,
   onDeleteColumn,
   onDragStart,
+  onDragEnd, // Recibir onDragEnd
   onDrop,
   onDragOver
 }) => {
   return (
+    // Aplicar estilos de columna con Tailwind (o mantener clase .column si prefieres CSS)
+    // Añadir un ancho fijo o flexible según necesites. Width de KanbanBoardCSS era 325px
+    // Height era 50vh, overflow-y auto
     <div
-      className="bg-gray-100 p-4 rounded-lg"
+      className="flex flex-col w-80 h-[70vh] bg-gray-100 p-4 rounded-lg shadow-md flex-shrink-0" // Estilos Tailwind para la columna
       onDrop={(e) => onDrop(e, title)}
       onDragOver={onDragOver}
     >
-      <div className="flex justify-between items-center mb-4">
+      {/* Header de la columna */}
+      <div className="flex justify-between items-center mb-4 pb-2 border-b border-gray-300">
         <h2 className="text-lg font-semibold text-gray-700">{title}</h2>
-        <button 
+        <button
           onClick={onDeleteColumn}
-          className="p-1 hover:bg-gray-200 rounded-full"
+          className="p-1 hover:bg-gray-200 rounded-full text-gray-500 hover:text-gray-700"
+          aria-label={`Eliminar columna ${title}`} // A11y
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="w-4 h-4" />
         </button>
       </div>
-      
-      <div className="space-y-2">
+
+      {/* Lista de tareas (permitiendo scroll) */}
+      {/* Añadido overflow-y-auto y flex-grow para que las tarjetas ocupen el espacio y permitan scroll */}
+      <div className="space-y-2 overflow-y-auto flex-grow">
+        {tasks.length === 0 && (
+            <p className="text-sm text-gray-500 text-center mt-4">No hay tareas</p>
+        )}
         {tasks.map(task => (
-          <div
+          <Card
             key={task.id}
-            draggable
+            task={task} // Pasar el objeto task completo
+            onDelete={() => deleteTask(title, task.id)} // Pasar la función onDelete correcta
+            // Pasar los handlers de drag&drop al Card para que su div raíz sea el draggable
             onDragStart={(e) => onDragStart(e, task.id, title)}
-            className="bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex justify-between items-start">
-              <h3 className="font-medium text-gray-800">{task.title}</h3>
-              <button
-                onClick={() => deleteTask(title, task.id)}
-                className="p-1 hover:bg-gray-100 rounded-full"
-              >
-                <X className="w-4 h-4 text-gray-500" />
-              </button>
-            </div>
-            {task.description && (
-              <p className="text-sm text-gray-600 mt-1">{task.description}</p>
-            )}
-          </div>
+            onDragEnd={onDragEnd}
+          />
         ))}
       </div>
     </div>
