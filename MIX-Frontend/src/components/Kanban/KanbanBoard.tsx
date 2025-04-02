@@ -1,13 +1,23 @@
 'use client';
 import React, { useState } from 'react';
 import Column from './Column';
-import { Plus, CirclePlus } from "lucide-react";
-import './KanbanBoard.css'; // Importa el archivo CSS
+import { Plus, CirclePlus, X } from "lucide-react";
+import './KanbanBoard.css';
 
 interface Task {
   id: number;
   title: string;
   description?: string;
+}
+
+interface ColumnProps {
+  title: string;
+  tasks: Task[];
+  deleteTask: (column: string, taskId: number) => void;
+  onDeleteColumn: () => void;
+  onDragStart: (event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => void;
+  onDrop: (event: React.DragEvent<HTMLDivElement>, toColumn: string) => void;
+  onDragOver: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
 const KanbanBoard: React.FC = () => {
@@ -29,6 +39,8 @@ const KanbanBoard: React.FC = () => {
   const [newTaskDescription, setNewTaskDescription] = useState('');
   const [selectedColumn, setSelectedColumn] = useState('Prospectos');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
 
   const addTask = () => {
     const newTask: Task = {
@@ -43,6 +55,23 @@ const KanbanBoard: React.FC = () => {
     setNewTaskTitle('');
     setNewTaskDescription('');
     setIsModalOpen(false);
+  };
+
+  const addColumn = () => {
+    if (newColumnName && !tasks[newColumnName]) {
+      setTasks({
+        ...tasks,
+        [newColumnName]: []
+      });
+      setNewColumnName('');
+      setIsColumnModalOpen(false);
+    }
+  };
+
+  const deleteColumn = (columnName: string) => {
+    const newTasks = { ...tasks };
+    delete newTasks[columnName];
+    setTasks(newTasks);
   };
 
   const deleteTask = (column: string, taskId: number) => {
@@ -61,9 +90,7 @@ const KanbanBoard: React.FC = () => {
     const taskId = parseInt(event.dataTransfer.getData('taskId'), 10);
     const fromColumn = event.dataTransfer.getData('fromColumn');
 
-    if (fromColumn === toColumn) {
-      return;
-    }
+    if (fromColumn === toColumn) return;
 
     const task = tasks[fromColumn].find(task => task.id === taskId);
     if (task) {
@@ -98,7 +125,10 @@ const KanbanBoard: React.FC = () => {
               <span>Nueva Tarea</span>
             </button>
             
-            <button className="flex items-center gap-2 px-4 py-2 bg-green-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition">
+            <button 
+              onClick={() => setIsColumnModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition"
+            >
               <CirclePlus className="h-4 w-4" />
               <span>Nueva Columna</span>
             </button>
@@ -117,13 +147,14 @@ const KanbanBoard: React.FC = () => {
                 onDragStart={onDragStart}
                 onDrop={onDrop}
                 onDragOver={onDragOver}
+                onDeleteColumn={() => deleteColumn(column)}
               />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Task Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
@@ -133,9 +164,7 @@ const KanbanBoard: React.FC = () => {
                 onClick={() => setIsModalOpen(false)}
                 className="text-gray-500 hover:text-gray-700"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-6 h-6" />
               </button>
             </div>
             
@@ -189,6 +218,52 @@ const KanbanBoard: React.FC = () => {
                 className={`px-4 py-2 rounded-lg text-white ${!newTaskTitle ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
               >
                 Agregar Tarea
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Column Modal */}
+      {isColumnModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-800">Nueva Columna</h3>
+              <button 
+                onClick={() => setIsColumnModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nombre de la Columna</label>
+                <input
+                  type="text"
+                  placeholder="Nombre de la columna"
+                  value={newColumnName}
+                  onChange={(e) => setNewColumnName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <button 
+                onClick={() => setIsColumnModalOpen(false)}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={addColumn}
+                disabled={!newColumnName}
+                className={`px-4 py-2 rounded-lg text-white ${!newColumnName ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+              >
+                Agregar Columna
               </button>
             </div>
           </div>
