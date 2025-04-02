@@ -19,7 +19,7 @@ export default function AboutUs() {
           <h3 className="text-2xl font-semibold text-black mt-8">What is MIX?</h3>
           <p className="text-gray-700 leading-relaxed text-lg">
             MIX is a customer relationship management (CRM) web application developed to assist sales teams in managing 
-            interactions with clients efficiently. Whether it's tracking negotiations, managing partners, or generating insightful 
+            interactions with clients efficiently. Whether it&apos;s tracking negotiations, managing partners, or generating insightful 
             reports, MIX provides a seamless and powerful experience.
           </p>
 
@@ -48,8 +48,8 @@ export default function AboutUs() {
 
           <h3 className="text-2xl font-semibold text-black mt-8">Join Us</h3>
           <p className="text-gray-700 leading-relaxed text-lg">
-            Whether you're a sales professional looking to optimize your workflow or a business owner seeking advanced CRM 
-            capabilities, MIX is designed for you. Let's build the future of customer relationship management together!
+            Whether you&apos;re a sales professional looking to optimize your workflow or a business owner seeking advanced CRM 
+            capabilities, MIX is designed for you. Let&apos;s build the future of customer relationship management together!
           </p>
 
           <h3 className="text-2xl font-semibold text-black mt-12 text-center">Contact Us</h3>

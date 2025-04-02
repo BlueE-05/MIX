@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Profile() {
@@ -15,8 +14,6 @@ export default function Profile() {
     dateOfJoining: "March 15, 2018",
     education: "Bachelor's Degree in Business Administration, Harvard University",
   });
-
-  const router = useRouter();
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

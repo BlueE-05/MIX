@@ -16,28 +16,27 @@ export default function SalesPage() {
     ""
   ];
 
-  const [salesData, setSalesData] = useState([]);
+  const [salesData, setSalesData] = useState<React.ReactNode[][]>([]);
 
   useEffect(() => {
     // Generación de datos de ejemplo para la tabla
-    const data = Array.from({ length: 25 }, (_, i) => {
+    const data: React.ReactNode[][] = Array.from({ length: 25 }, (_, i) => {
       const refNumber = `REF-${10000 + i}`;
-      const amount = (Math.random() * 5000 + 500).toFixed(2); // Generar una cantidad aleatoria entre 500 y 5500
+      const amount = `$${(Math.random() * 5000 + 500).toFixed(2)}`;
       const statusOptions = ["Closed", "In Progress", "Pending"];
-      const status = statusOptions[i % 3]; // Alternar entre los estados
+      const status = statusOptions[i % 3];
       const lastContact = new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US");
       const closingDate = new Date(2025, 2, (i % 28) + 10).toLocaleDateString("en-US");
       const creationDate = new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US");
 
-      // Devolver la fila como un arreglo de React nodes
       return [
         refNumber,
-        `$${amount}`,
+        amount,
         status,
         lastContact,
         closingDate,
         creationDate,
-        <ArrowRightButton key={i} /> // Agregar el botón de la flecha
+        <ArrowRightButton key={i} />
       ];
     });
 

@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from 'next/navigation'; 
 import { House, DollarSign, Boxes, UserRound, Columns3, ChartNoAxesCombined, Users, HelpCircle } from 'lucide-react';
+import Image from "next/image";
 
 const Sidebar = () => {
   const pathname = usePathname(); // Obtenemos la ruta actual
@@ -13,7 +14,13 @@ const Sidebar = () => {
     <div className="flex flex-col h-screen w-64 bg-gray-800 text-white">
       {/* Logo */}
       <div className="flex items-center justify-center h-16 bg-gray-900">
-        <img src="/mixlogo.svg" alt="Logo" className="h-20" />
+      <Image 
+          src="/mixlogo.svg" 
+          alt="Logo" 
+          className="h-20" 
+          width={80} // Specify the width and height for optimization
+          height={80} 
+        />
       </div>
 
       {/* Menú */}
@@ -62,7 +69,13 @@ const Sidebar = () => {
 
       {/* Footer */}
       <div className="flex items-center justify-between px-4">
-        <img src="/raydevlogov1.svg" alt="Logo" className="h-20" />
+      <Image 
+          src="/raydevlogov1.svg" 
+          alt="Logo" 
+          className="h-20" 
+          width={80} // Specify the width and height for optimization
+          height={80} 
+        />
         <span className="text-sm text-gray-400">2025</span>
       </div>
     </div>

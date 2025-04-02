@@ -2,7 +2,7 @@ import React from 'react';
 import './Card.css'; // Importa el archivo CSS
 
 interface CardProps {
-  id: number;
+  //id: number;
   title: string;
   description?: string;
   onDelete: () => void;
@@ -10,7 +10,7 @@ interface CardProps {
   onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
 }
 
-const Card: React.FC<CardProps> = ({ id, title, description, onDelete, onDragStart, onDragEnd }) => {
+const Card: React.FC<CardProps> = ({ title, description, onDelete, onDragStart, onDragEnd }) => { //quité id porque marcaba error de optimizacion al no estarse utilizando
   return (
     <div
       className="card"

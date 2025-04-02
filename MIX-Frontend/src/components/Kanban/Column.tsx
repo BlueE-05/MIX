@@ -26,7 +26,7 @@ const Column: React.FC<ColumnProps> = ({ title, tasks, deleteTask, onDragStart, 
         {tasks.map(task => (
           <li key={task.id}>
             <Card
-              id={task.id}
+              //id={task.id}
               title={task.title}
               description={task.description}
               onDelete={() => deleteTask(title, task.id)}

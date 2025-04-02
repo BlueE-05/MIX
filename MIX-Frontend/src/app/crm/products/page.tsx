@@ -9,7 +9,7 @@ import RoundedButton from '@/components/Buttons/RoundedButton';
 
 const ProductPage = () => {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Billing Frecuency", "Product Type", "Product Sheet", ""];
-  
+
   {/**Data random para rellenar la tabla **/}
   const productData = Array.from({ length: 25 }, (_, i) => [
     i + 1,
@@ -17,9 +17,9 @@ const ProductPage = () => {
     `CRM-${String(i + 1).padStart(3, "0")}`,
     [29.99, 49.99, 99.99][i % 3],
     ["Monthly", "Monthly", "Yearly"][i % 3],
-    <LabelOval color={["#5F8575", "blue", "red"][i % 3]} data={["Inventory", "Subscription", "Service"][i % 3]} />,
-    <a href={`/files/MIX_CRM_${["Basic", "Pro", "Enterprise"][i % 3]}.pdf`} className="text-blue-500 underline">View Sheet</a>,
-    <PointsButton />,
+    <LabelOval key={`label-${i}`} color={["#5F8575", "blue", "red"][i % 3]} data={["Inventory", "Subscription", "Service"][i % 3]} />,
+    <a key={`link-${i}`} href={`/files/MIX_CRM_${["Basic", "Pro", "Enterprise"][i % 3]}.pdf`} className="text-blue-500 underline">View Sheet</a>,
+    <PointsButton key={`points-${i}`} />,
   ]);
 
   return (

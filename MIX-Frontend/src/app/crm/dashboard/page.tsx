@@ -1,5 +1,4 @@
 'use client'
-import Pastel from "@/components/Dashboard/Pastel";
 import BoxClosed from "@/components/Dashboard/BoxClosed";
 import LinesChart from "@/components/Dashboard/LinesChart";
 import PieChart from "@/components/Dashboard/PieChart";
