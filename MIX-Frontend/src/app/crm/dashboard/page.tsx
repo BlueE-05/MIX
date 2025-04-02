@@ -17,7 +17,7 @@ const DashboardPage = () => {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
@@ -25,7 +25,7 @@ const DashboardPage = () => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white grid grid-cols-1 lg:grid-cols-3 gap-6 shadow-md">
+      <div className=" grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column - Charts */}
         <div className="lg:col-span-2 space-y-6">
           {/* First Row - Table */}
@@ -40,8 +40,8 @@ const DashboardPage = () => {
         </div>
 
         {/* Right Column - Pie Chart */}
-        <div className="h-full flex flex-col gap-4">
-          <div className="p-6 bg-white-900 rounded-xl shadow-md h-80">
+        <div className="h-full flex flex-col gap-4 bg-gray">
+          <div className="p-6 bg-white rounded-xl shadow-md h-80">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
               Distribución de Ventas
             </h2>
