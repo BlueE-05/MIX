@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import Column from './Column';
+import { Plus, CirclePlus } from "lucide-react";
 import './KanbanBoard.css'; // Importa el archivo CSS
 
 interface Task {
@@ -61,7 +62,7 @@ const KanbanBoard: React.FC = () => {
     const fromColumn = event.dataTransfer.getData('fromColumn');
 
     if (fromColumn === toColumn) {
-      return; // No hacer nada si se suelta en la misma columna
+      return;
     }
 
     const task = tasks[fromColumn].find(task => task.id === taskId);
@@ -79,47 +80,120 @@ const KanbanBoard: React.FC = () => {
   };
 
   return (
-    <div>
-      <button className="open-modal-button" onClick={() => setIsModalOpen(true)}>Agregar nueva tarea</button>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 sm:p-6">
+      <div className="max-w-full mx-auto">
+        {/* Header with controls */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Tablero Kanban</h1>
+            <p className="text-gray-600">Arrastra y suelta para gestionar tus tareas</p>
+          </div>
+          
+          <div className="flex flex-wrap gap-3">
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Nueva Tarea</span>
+            </button>
+            
+            <button className="flex items-center gap-2 px-4 py-2 bg-green-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition">
+              <CirclePlus className="h-4 w-4" />
+              <span>Nueva Columna</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Kanban Board Container */}
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-w-[800px]">
+            {Object.keys(tasks).map(column => (
+              <Column
+                key={column}
+                title={column}
+                tasks={tasks[column]}
+                deleteTask={deleteTask}
+                onDragStart={onDragStart}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Modal */}
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h3>Agregar nueva tarea</h3>
-            <input
-              type="text"
-              placeholder="Título"
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder="Descripción"
-              value={newTaskDescription}
-              onChange={(e) => setNewTaskDescription(e.target.value)}
-            />
-            <select value={selectedColumn} onChange={(e) => setSelectedColumn(e.target.value)}>
-              {Object.keys(tasks).map(column => (
-                <option key={column} value={column}>{column}</option>
-              ))}
-            </select>
-            <button onClick={addTask}>Agregar tarea</button>
-            <button onClick={() => setIsModalOpen(false)}>Cerrar</button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-800">Nueva Tarea</h3>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Título</label>
+                <input
+                  type="text"
+                  placeholder="Título de la tarea"
+                  value={newTaskTitle}
+                  onChange={(e) => setNewTaskTitle(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea
+                  placeholder="Descripción de la tarea"
+                  value={newTaskDescription}
+                  onChange={(e) => setNewTaskDescription(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  rows={3}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Columna</label>
+                <select 
+                  value={selectedColumn} 
+                  onChange={(e) => setSelectedColumn(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                >
+                  {Object.keys(tasks).map(column => (
+                    <option key={column} value={column}>{column}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-end space-x-3">
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button 
+                onClick={addTask}
+                disabled={!newTaskTitle}
+                className={`px-4 py-2 rounded-lg text-white ${!newTaskTitle ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+              >
+                Agregar Tarea
+              </button>
+            </div>
           </div>
         </div>
       )}
-      <div className="kanban-board">
-        {Object.keys(tasks).map(column => (
-          <Column
-            key={column}
-            title={column}
-            tasks={tasks[column]}
-            deleteTask={deleteTask}
-            onDragStart={onDragStart}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-          />
-        ))}
-      </div>
     </div>
   );
 };

@@ -1,4 +1,5 @@
 'use client'
+//import Pastel from "@/components/Dashboard/Pastel";
 import BoxClosed from "@/components/Dashboard/BoxClosed";
 import LinesChart from "@/components/Dashboard/LinesChart";
 import PieChart from "@/components/Dashboard/PieChart";
@@ -16,27 +17,51 @@ const DashboardPage = () => {
   ];
 
   return (
-    <main className="flex flex-col gap-3 p-2">
-      <h1>Dashboard</h1>
-      <p>Welcome to the dashboard!</p>
-      <div className="grid grid-cols-2 gap-4">
-        {/* Lado izquierdo */}
-        <div className="flex flex-col gap-3">
-          <PieChart />
-          
-          {/* Grid para BoxClosed y BoxComisiones en la misma fila */}
-          <div className="grid grid-cols-2 gap-4 flex items-center">
-            <BoxClosed />
-            <BoxComisiones />
+    <main className="min-h-screen bg-gray-50 p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <p className="text-gray-600">Bienvenido al panel de control</p>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Charts */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* First Row - Pie Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Tareas Recientes</h2>
+            <div className="overflow-x-auto">
+              <CustomTable headers={headers} data={data} />
+            </div>
           </div>
 
-          <LinesChart />
+          {/* Second Row - Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <BoxClosed />
+            </div>
+            <div className="bg-white p-6 rounded-xl shadow-md">
+              <BoxComisiones />
+            </div>
+          </div>
+
+          {/* Third Row - Lines Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Tendencia Mensual</h2>
+            <div className="h-80">
+              <LinesChart />
+            </div>
+          </div>
         </div>
 
-        {/* Lado derecho */}
-        <div>
-          <CustomTable headers={headers} data={data} />
-        </div>
+        {/* Right Column - Table */}
+        <div className="bg-white p-6 rounded-xl shadow-md">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Distribución de Ventas</h2>
+            <div className="h-80">
+              <PieChart />
+            </div>
+          </div>
       </div>
     </main>
   );
