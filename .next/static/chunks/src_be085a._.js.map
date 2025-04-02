@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file://C%3A/Users/danae/Documents/Sem4/Reto%20-%20Construccion%20de%20software/mix/src/components/FaviconUpdater.tsx"],"sourcesContent":["'use client'\r\n\r\nimport { useEffect } from \"react\";\r\n\r\nconst FaviconUpdater = () => {\r\n  useEffect(() => {\r\n    const favicon = document.getElementById(\"favicon\") as HTMLLinkElement;\r\n\r\n    const updateFavicon = () => {\r\n      const isDarkMode = window.matchMedia(\"(prefers-color-scheme: dark)\").matches;\r\n      favicon.href = isDarkMode ? \"/mixMv2.svg\" : \"/mixMv1.svg\";\r\n    };\r\n\r\n    updateFavicon(); // Set favicon on load\r\n\r\n    const mediaQuery = window.matchMedia(\"(prefers-color-scheme: dark)\");\r\n    mediaQuery.addEventListener(\"change\", updateFavicon);\r\n\r\n    return () => mediaQuery.removeEventListener(\"change\", updateFavicon);\r\n  }, []);\r\n\r\n  return null;\r\n};\r\n\r\nexport default FaviconUpdater;"],"names":[],"mappings":";;;AAEA;;AAFA;;AAIA,MAAM,iBAAiB;;IACrB,CAAA,GAAA,6JAAA,CAAA,YAAS,AAAD;oCAAE;YACR,MAAM,UAAU,SAAS,cAAc,CAAC;YAExC,MAAM;0DAAgB;oBACpB,MAAM,aAAa,OAAO,UAAU,CAAC,gCAAgC,OAAO;oBAC5E,QAAQ,IAAI,GAAG,aAAa,gBAAgB;gBAC9C;;YAEA,iBAAiB,sBAAsB;YAEvC,MAAM,aAAa,OAAO,UAAU,CAAC;YACrC,WAAW,gBAAgB,CAAC,UAAU;YAEtC;4CAAO,IAAM,WAAW,mBAAmB,CAAC,UAAU;;QACxD;mCAAG,EAAE;IAEL,OAAO;AACT;GAlBM;KAAA;uCAoBS"}},
-    {"offset": {"line": 43, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}

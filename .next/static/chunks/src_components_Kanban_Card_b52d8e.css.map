@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack://[project]/src/components/Kanban/Card.css"],"sourcesContent":[".card {\r\n  position: relative;\r\n  background-color: #ff8585;\r\n  border: 1px solid #ccc;\r\n  border-radius: 4px;\r\n  padding: 8px;\r\n  margin-bottom: 8px;\r\n}\r\n\r\n.delete-button {\r\n  position: absolute;\r\n  top: 4px;\r\n  right: 4px;\r\n  background: none;\r\n  border: none;\r\n  color: red;\r\n  font-size: 16px;\r\n  cursor: pointer;\r\n}"],"names":[],"mappings":"AAAA;;;;;;;;;AASA"}},
-    {"offset": {"line": 20, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
-}
