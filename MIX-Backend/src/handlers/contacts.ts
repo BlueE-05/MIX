@@ -28,6 +28,24 @@ export default class ContactHTTPHandler {
         }
     }
 
+    async getContactByName(req: Request, res: Response, next: NextFunction) {
+        try {
+            const contact = this.contactController.getContactByName(req.params.name);
+            res.json(contact);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getContactByEnterprise(req: Request, res: Response, next: NextFunction) {
+        try {
+            const contact = this.contactController.getContactByEnterprise(req.params.enterprise);
+            res.json(contact);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async createContact(req: Request, res: Response, next: NextFunction) {
         try {
             const newContact = await this.contactController.createContact(req.body);
@@ -54,22 +72,4 @@ export default class ContactHTTPHandler {
             next(error);
         }
     }
-
-    async getContactByName(req: Request, res: Response, next: NextFunction) {
-        try {
-            const contact = this.contactController.getContactByName(req.params.name);
-            res.json(contact);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getContactByEnterprise(req: Request, res: Response, next: NextFunction) {
-        try {
-            const contact = this.contactController.getContactByEnterprise(req.params.enterprise);
-            res.json(contact);
-        } catch (error) {
-            next(error);
-        }
-    }   
 }

@@ -25,6 +25,20 @@ class ContactService {
     return result.rows;
   }
 
+  async getContactByName(name: string) {
+    const result = await this.db.query(
+      ''
+    );
+    return result.rows;
+  }
+
+  async getContactByEnterprise(enterprise: string) {
+    const result = await this.db.query(
+      ''
+    );
+    return result.rows;
+  }
+
   async createContact(data: any[]) {
     await this.db.query(
       ''
@@ -41,20 +55,6 @@ class ContactService {
     await this.db.query(
       ''
     );
-  }
-
-  async getContactByName(name: string) {
-    const result = await this.db.query(
-      ''
-    );
-    return result.rows;
-  }
-
-  async getContactByEnterprise(enterprise: string) {
-    const result = await this.db.query(
-      ''
-    );
-    return result.rows;
   }
 }
 

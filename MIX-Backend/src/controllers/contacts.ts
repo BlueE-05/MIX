@@ -13,6 +13,14 @@ export default class ContactController {
         return this.service.getContactById(id);
     }
 
+    async getContactByName(name: string) {
+        return this.service.getContactByName(name);
+    }
+
+    async getContactByEnterprise(enterprise: string) {
+        return this.service.getContactByEnterprise(enterprise);
+    }
+
     async createContact(data: any[]) { //tal vez cambie any, pero creo que lo mas conveniente es que se quede así y los cambios se hagan solamente en db
         //aqui se podria reacomodar la data de ser necesario
         return this.service.createContact(data);
@@ -25,13 +33,5 @@ export default class ContactController {
 
     async deleteContact(id: string) {
         return this.service.deleteContact(id);
-    }
-
-    async getContactByName(name: string) {
-        return this.service.getContactByName(name);
-    }
-
-    async getContactByEnterprise(enterprise: string) {
-        return this.service.getContactByEnterprise(enterprise);
     }
 }

@@ -10,14 +10,14 @@ router.get('/', contactHandler.getContacts);
 
 router.get('/:id', contactHandler.getContactById);
 
+router.get('/:name', contactHandler.getContactByName);
+
+router.get('/:enterprise', contactHandler.getContactByEnterprise);
+
 router.post('/', contactHandler.createContact);
 
 router.put('/:id', contactHandler.updateContact);
 
 router.delete('/:id', contactHandler.deleteContact);
-
-router.get('/:name', contactHandler.getContactByName);
-
-router.get('/:enterprise', contactHandler.getContactByEnterptrise);
 
 export default router;
