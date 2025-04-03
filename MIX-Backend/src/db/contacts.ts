@@ -1,4 +1,4 @@
-//* DB Contact
+//* 4. DB Contact
 
 import { Pool } from 'pg';
 
@@ -13,7 +13,46 @@ class ContactService {
 
   async getAllContacts() {
     const result = await this.db.query(
-        'SELECT * FROM contacts'
+      'SELECT * FROM contacts'
+    );
+    return result.rows;
+  }
+
+  async getContactById(id: string) {
+    const result = await this.db.query(
+      ''
+    );
+    return result.rows;
+  }
+
+  async createContact(data: any[]) {
+    await this.db.query(
+      ''
+    );
+  }
+
+  async updateContact(id: string, data: any[]) {
+    await this.db.query(
+      ''
+    );
+  }
+
+  async deleteContact(id: string) {
+    await this.db.query(
+      ''
+    );
+  }
+
+  async getContactByName(name: string) {
+    const result = await this.db.query(
+      ''
+    );
+    return result.rows;
+  }
+
+  async getContactByEnterprise(enterprise: string) {
+    const result = await this.db.query(
+      ''
     );
     return result.rows;
   }
