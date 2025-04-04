@@ -13,7 +13,7 @@ class ContactService {
 
   async getAllContacts() {
     const result = await this.db.query(
-      'SELECT * FROM contacts'
+      'SELECT * FROM Contact'
     );
     return result.rows;
   }

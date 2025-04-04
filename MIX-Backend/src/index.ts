@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 
-import contactsRoutes from '@/routes/contacts';
+import contactsRoutes from "@/routes/contacts";
 import productsRoutes from '@/routes/products';
 
 app.use(express.json());
