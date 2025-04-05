@@ -13,16 +13,16 @@ export const educationLevels = [
 ];
 
 export const fieldLabels: { [key: string]: string } = {
-  name: "First Name",
-  lastName: "Last Name",
-  birthDate: "Birth Date",
-  phoneNumber: "Phone Number",
-  email: "Email Address",
-  password: "Password",
-  education: "Education Level",
-  profilePic: "Profile Picture",
-  idTeam: "Team (To be confirmed)",
-  jobPosition: "Job Position (To be confirmed)",
+  Name: "First Name",
+  LastName: "Last Name",
+  BirthDate: "Birth Date",
+  PhoneNumber: "Phone Number",
+  Email: "Email Address",
+  Password: "Password",
+  Education: "Education Level",
+  ProfilePic: "Profile Picture",
+  IdTeam: "Team (To be confirmed)",
+  JobPosition: "Job Position (To be confirmed)",
 };
 
 export const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
