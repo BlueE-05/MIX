@@ -3,15 +3,14 @@ export interface SignupFormProps {
   }
   
 export interface SignupFormData {
-    name: string;
-    lastName: string;
-    email: string;
-    password: string;
-    phoneNumber: string;
-    birthDate: string;
-    education: string;
-    profilePic: File | null;
-    idTeam: string;
-    jobPosition: string;
+    Name: string;
+    LastName: string;
+    Email: string;
+    Password: string;
+    PhoneNumber: string;
+    BirthDate: string;
+    Education: string;
+    ProfilePic: string | null;
+    IdTeam: string;
+    JobPosition: string;
 }
-  
