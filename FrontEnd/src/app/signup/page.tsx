@@ -31,13 +31,13 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         e.preventDefault();
       
         try {
-          const response = await fetch("http://localhost:4000/api/signup", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(cleanFormData(data))
-          });
+            const response = await fetch("http://localhost:4000/api/signup", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json"
+                },
+                body: JSON.stringify(cleanFormData(data))
+            });
       
           if (!response.ok) throw new Error("Signup failed");
           const result = await response.json();
@@ -51,50 +51,72 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       }; 
 
     const [formData, setFormData] = useState<SignupFormData>({
-      name: "",
-      lastName: "",
-      birthDate: "",
-      phoneNumber: "",
-      email: "",
-      password: "",
-      education: "",
-      profilePic: null,
-      idTeam: "",
-      jobPosition: "",
+      Name: "",
+      LastName: "",
+      BirthDate: "",
+      PhoneNumber: "",
+      Email: "",
+      Password: "",
+      Education: "",
+      ProfilePic: null,
+      IdTeam: "",
+      JobPosition: "",
     });
 
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [currentStep, setCurrentStep] = useState(1);
 
-    const requiredFields = ["name", "lastName", "birthDate", "phoneNumber", "email", "password", "education"];
+    const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
 
     const validateField = (name: string, value: string) => {
         return requiredFields.includes(name) && !value
-            ? `${fieldLabels[name]} is required`
-            : name === "email" && !emailRegex.test(value)
-            ? "Invalid email format"
-            : name === "password" && !passwordRegex.test(value)
-            ? "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
-            : name === "phoneNumber" && (!phoneRegex.test(value) || value.length < 13)
-            ? "Phone number must be at least 13 characters (including country code) with no spaces between numbers"
-            : name === "birthDate" && (value < birthDateRange.min || value > birthDateRange.max)
-            ? "Birthdate must be between 1935 and 2009"
-            : "";
+          ? `${fieldLabels[name]} is required`
+          : name === "Email" && !emailRegex.test(value)
+          ? "Invalid email format"
+          : name === "Password" && !passwordRegex.test(value)
+          ? "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
+          : name === "PhoneNumber" && (!phoneRegex.test(value) || value.length < 13)
+          ? "Phone number must be at least 13 characters (including country code) with no spaces between numbers"
+          : name === "BirthDate" && (value < birthDateRange.min || value > birthDateRange.max)
+          ? "Birthdate must be between 1935 and 2009"
+          : "";
     };
 
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-            setFormData((prev) => ({ ...prev, profilePic: file }));
-
+            const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    
+            if (!allowedTypes.includes(file.type)) {
+                setErrors((prev) => ({
+                    ...prev,
+                    profilePic: "Only .jpg, .jpeg and .png files are allowed",
+                }));
+                setFormData((prev) => ({ ...prev, profilePic: null }));
+                setImagePreview(null);
+                return;
+            }
+    
             const reader = new FileReader();
             reader.onload = () => {
-                setImagePreview(reader.result as string);
+                const base64String = reader.result as string;
+    
+                setFormData((prev) => ({
+                    ...prev,
+                    ProfilePic: base64String,
+                }));
+                setImagePreview(base64String);
+                setErrors((prev) => ({
+                    ...prev,
+                    profilePic: "",
+                }));
             };
             reader.readAsDataURL(file);
         }
     };
+    
+    
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -104,9 +126,9 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
     const isStepValid = () => {
         const stepFields: (keyof typeof formData)[] =
-            currentStep === 1 ? ["name", "lastName", "birthDate", "phoneNumber"] :
-            currentStep === 2 ? ["email", "password"] :
-            ["education"];
+            currentStep === 1 ? ["Name", "LastName", "BirthDate", "PhoneNumber"] :
+            currentStep === 2 ? ["Email", "Password"] :
+            ["Education"];
     
         return stepFields.every((field) => !errors[field] && formData[field]);
     };
@@ -144,15 +166,16 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                             <form className="space-y-6">
                                 {currentStep === 1 && (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {["name", "lastName", "birthDate", "phoneNumber"].map((field) => (
-                                            <div key={field} className={field === "birthDate" ? "md:col-span-2" : ""}>
+                                        {["Name", "LastName", "BirthDate", "PhoneNumber"].map((field) => (
+                                            <div key={field} className={field === "BirthDate" ? "md:col-span-2" : ""}>
                                                 <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
                                                     {fieldLabels[field]} <span className="text-red-500">*</span>
                                                 </label>
                                                 <input
                                                     id={field}
-                                                    type={field === "birthDate" ? "date" : "text"}
+                                                    type={field === "BirthDate" ? "date" : "text"}
                                                     name={field}
+                                                    value={formData[field as keyof typeof formData] || ""}
                                                     placeholder={fieldLabels[field]}
                                                     className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
                                                     onChange={handleChange}
@@ -167,7 +190,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
                                 {currentStep === 2 && (
                                     <div className="space-y-6">
-                                        {["email", "password"].map((field) => (
+                                        {["Email", "Password"].map((field) => (
                                             <div key={field}>
                                                 <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
                                                     {fieldLabels[field]} <span className="text-red-500">*</span>
@@ -196,12 +219,12 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                 {currentStep === 3 && (
                                     <div className="space-y-6">
                                         <div>
-                                            <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-1">
-                                                {fieldLabels["education"]} <span className="text-red-500">*</span>
+                                            <label htmlFor="Education" className="block text-sm font-medium text-gray-700 mb-1">
+                                                {fieldLabels["Education"]} <span className="text-red-500">*</span>
                                             </label>
                                             <select 
-                                                id="education"
-                                                name="education" 
+                                                id="Education"
+                                                name="Education" 
                                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
                                                 onChange={handleChange}
                                             >
@@ -240,13 +263,13 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="jobPosition" className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label htmlFor="JobPosition" className="block text-sm font-medium text-gray-700 mb-1">
                                                 Job Position (Optional)
                                             </label>
                                             <input 
-                                                id="jobPosition"
+                                                id="JobPosition"
                                                 type="text" 
-                                                name="jobPosition" 
+                                                name="JobPosition" 
                                                 placeholder="Job Position (To be confirmed)" 
                                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition" 
                                                 onChange={handleChange} 
@@ -254,12 +277,12 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="idTeam" className="block text-sm font-medium text-gray-700 mb-1">
+                                            <label htmlFor="IdTeam" className="block text-sm font-medium text-gray-700 mb-1">
                                                 Team (Optional)
                                             </label>
                                             <select 
-                                                id="idTeam"
-                                                name="idTeam" 
+                                                id="IdTeam"
+                                                name="IdTeam" 
                                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
                                                 onChange={handleChange}
                                             >
