@@ -37,8 +37,8 @@ export class Auth0Service {
       }
     );
 
-    const { user_id, email: userEmail, email_verified} = response.data;
-    return { user_id, email: userEmail, email_verified};
+    const {email_verified: boolean} = response.data;
+    return {email_verified: boolean};
   }
 
   public async userExists(email: string): Promise<boolean> {
