@@ -4,19 +4,20 @@ import RoundedButton from "@/components/Buttons/RoundedButton";
 import CustomTable from "@/components/Tables/CustomTable";
 import { CirclePlus } from "lucide-react";
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
+import Formulario from '@/components/Forms/SalesForms';
+
+interface SaleFormData {
+  contact: string;
+  status: string;
+  startDate: Date | null;
+  endDate: Date | null;
+}
 
 export default function SalesPage() {
-  const salesHeaders = [
-    "RefNumber", 
-    "$", 
-    "Status", 
-    "Last Contact", 
-    "Closing Date", 
-    "Creation Date", 
-    ""
-  ];
+  const salesHeaders = ["RefNumber", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
 
   const [salesData, setSalesData] = useState<React.ReactNode[][]>([]);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     // Generación de datos de ejemplo para la tabla
@@ -32,24 +33,81 @@ export default function SalesPage() {
       return [
         refNumber,
         amount,
-        status,
+        <span key={`status-${i}`} className={`px-2 py-1 rounded-full text-xs font-medium ${
+          status === 'Closed' ? 'bg-green-100 text-green-800' :
+          status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+          'bg-yellow-100 text-yellow-800'
+        }`}>
+          {status}
+        </span>,
         lastContact,
         closingDate,
         creationDate,
-        <ArrowRightButton key={i} />
+        <ArrowRightButton key={`arrow-${i}`} />
       ];
     });
 
     setSalesData(data);
   }, []);
 
+  const handleNewSale = (newSaleData: SaleFormData) => {
+    // Procesamos los datos del formulario
+    const newRow = [
+      `REF-${10000 + salesData.length}`,
+      '$0.00',
+      <span 
+        key = {`status-${newSaleData.contact}`} // Posible necesidad de cambiar la llave, por el id
+        className={`px-2 py-1 rounded-full text-xs font-medium ${
+          newSaleData.status === 'Acepted' ? 'bg-green-100 text-green-800' :
+          newSaleData.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
+          'bg-yellow-100 text-yellow-800'
+      }`}>
+        {newSaleData.status || 'Pending'}
+      </span>,
+      new Date().toLocaleDateString("en-US"),
+      newSaleData.endDate?.toLocaleDateString("en-US") || '-',
+      newSaleData.startDate?.toLocaleDateString("en-US") || new Date().toLocaleDateString("en-US"),
+      <ArrowRightButton key={salesData.length} />
+    ];
+    
+    setSalesData([...salesData, newRow]);
+    setShowForm(false);
+  };
+
   return (
-    <main className="min-h-screen p-6">
-      <h1 className="font-bold text-3xl mb-5">Active Sales</h1>
-      <CustomTable headers={salesHeaders} data={salesData} color="green" />
-      <div className="fixed bottom-6 right-6">
-        <RoundedButton color="green" text="New Sale" Icon={CirclePlus} link="/crm/sales/newsale" />
+    <main className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-full mx-auto">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Active Sales</h1>
+            <p className="text-gray-600">Manage your current sales pipeline</p>
+          </div>
+          
+          <div className="fixed bottom-6 right-6">
+            <div onClick={() => setShowForm(true)} className='cursor-pointer'>
+              <RoundedButton color="green" text="New Sale" Icon={CirclePlus} />
+            </div>
+          </div>
+        </div>
+
+        {/* Table Container */}
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
+          <CustomTable headers={salesHeaders} data={salesData} color="green" />
+        </div>
       </div>
+      
+      {/* Modal Form */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="w-full max-w-2xl">
+            <Formulario 
+              onClose={() => setShowForm(false)} 
+              onSubmit={handleNewSale} 
+            />
+          </div>
+        </div>
+      )}
     </main>
   );
 }
