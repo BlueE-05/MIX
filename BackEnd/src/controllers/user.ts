@@ -31,7 +31,6 @@ export class UserController {
 
       await this.userDbService.createUser({
         ...userData,
-        user_id: auth0User.user_id,
         email_verified: auth0User.email_verified
       });
 
