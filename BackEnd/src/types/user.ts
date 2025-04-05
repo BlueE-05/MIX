@@ -6,7 +6,7 @@ export interface UserDTO {
     PhoneNumber: string;
     BirthDate: string;
     Education: string;
-    ProfilePic?: string | null;
-    idTeam?: string | null;
-    JobPosition?: string | null;
+    ProfilePic: string | null;
+    idTeam: string | null;
+    JobPosition: string | null;
 }
