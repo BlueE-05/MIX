@@ -1,28 +1,20 @@
 //* 4. DB Contact
 
 import sql from 'mssql';
-
-const config: sql.config = {
-  user: 'sa',
-  password: 's&oiouWMY$mAY1(1bc;!H9x-xi1Myu=y',
-  server: 'mix-fortesting.czcecc0c8ld1.us-east-2.rds.amazonaws.com',
-  database: 'testing',
-  options: {
-    encrypt: true,
-    trustServerCertificate: true,
-  }
-};
+import config from '@/db/config';
 
 export default class ContactService {
   private pool: sql.ConnectionPool;
 
   constructor() {
     this.pool = new sql.ConnectionPool(config);
-    this.pool.connect();
+    // Conectar al pool una sola vez al crear la instancia
+    this.pool.connect().catch(err => {
+      console.error('Error connecting to the database', err);
+    });
   }
 
   async getAllContacts(idUser: number) {
-    await this.pool.connect();
     const result = await this.pool
       .request()
       .input('idUser', idUser)
@@ -42,10 +34,9 @@ export default class ContactService {
         ORDER BY c.LastInteraction DESC`
       );
     return result.recordset;
-  }  
+  }
 
   async getContactById(id: number) {
-    await this.pool.connect();
     const result = await this.pool.request()
       .input('id', sql.Int, id)
       .query(
@@ -66,7 +57,6 @@ export default class ContactService {
   }
 
   async getContactByName(idUser: number, name: string) {
-    await this.pool.connect();
     const result = await this.pool.request()
       .input('name', sql.VarChar, name)
       .input('idUser', sql.Int, idUser)
@@ -90,7 +80,6 @@ export default class ContactService {
   }
 
   async getContactByEnterprise(idUser: number, enterprise: string) {
-    await this.pool.connect();
     const result = await this.pool.request()
       .input('idUser', sql.Int, idUser)
       .input('enterprise', sql.VarChar, enterprise)
@@ -113,7 +102,6 @@ export default class ContactService {
   }
 
   async createContact(idUser: number, data: { name: string; lastName: string; email: string; phoneNumber: number; nameEnterprise: string }) {
-    await this.pool.connect();
     await this.pool.request()
       .input('idUser', sql.Int, idUser)
       .input('name', sql.VarChar, data.name)
@@ -122,14 +110,13 @@ export default class ContactService {
       .input('phoneNumber', sql.VarChar, data.phoneNumber)
       .input('nameEnterprise', sql.VarChar, data.nameEnterprise)
       .query(
-            `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, CreationDate, LastInteraction, IDUser, IDEnterprise)
-            SELECT @name, @lastName, @email, @phoneNumber, GETDATE(), GETDATE(), @idUser, e.ID
-            FROM Enterprise e WHERE e.Name = @nameEnterprise`
-          );
+        `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, CreationDate, LastInteraction, IDUser, IDEnterprise)
+        SELECT @name, @lastName, @email, @phoneNumber, GETDATE(), GETDATE(), @idUser, e.ID
+        FROM Enterprise e WHERE e.Name = @nameEnterprise`
+      );
   }
 
   async updateContact(id: number, data: { name: string; lastName: string; email: string; phoneNumber: number }) {
-    await this.pool.connect();
     await this.pool.request()
       .input('id', sql.Int, id)
       .input('name', sql.VarChar, data.name)
@@ -149,7 +136,6 @@ export default class ContactService {
   }
 
   async deleteContact(id: number) {
-    await this.pool.connect();
     await this.pool.request()
       .input('id', sql.Int, id)
       .query(

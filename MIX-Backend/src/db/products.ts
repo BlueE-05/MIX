@@ -1,15 +1,6 @@
 import sql from 'mssql';
 
-const config: sql.config = {
-  user: 'sa',
-  password: 's&oiouWMY$mAY1(1bc;!H9x-xi1Myu=y',
-  server: 'mix-fortesting.czcecc0c8ld1.us-east-2.rds.amazonaws.com',
-  database: 'testing',
-  options: {
-    encrypt: true,
-    trustServerCertificate: true,
-  }
-};
+import config from '@/db/config';
 
 export default class ProductService {
   private pool: sql.ConnectionPool;
