@@ -9,7 +9,7 @@ import pruebaRoutes from './src/routes/prueba';
 app.use(express.json());
 
 app.use('/prueba', reportRoutes);
-//app.use('/report', pruebaRoutes);
+app.use('/report', pruebaRoutes);
 
 
 const PORT = process.env.PORT || 3000;
