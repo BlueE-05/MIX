@@ -3,7 +3,7 @@
 import ProductService from '@/db/products';
 
 export default class ProductController {
-    private service = ProductService;
+    private service = new ProductService;
 
     async getAllProducts() {
         return this.service.getAllProducts();
@@ -17,17 +17,11 @@ export default class ProductController {
         return this.service.getProductByName(name);
     }
 
-    async getProductByEnterprise(enterprise: string) {
-        return this.service.getProductByEnterprise(enterprise);
-    }
-
-    async createProduct(data: any[]) { //tal vez cambie any, pero creo que lo mas conveniente es que se quede así y los cambios se hagan solamente en db
-        //aqui se podria reacomodar la data de ser necesario
+    async createProduct(data: { id: string; name: string; description: string; type: boolean; price: number; commission: number }) {
         return this.service.createProduct(data);
     }
 
-    async updateProduct(id: string, data: any[]) {
-        //aca se puede reacomodar lo que recibe para que envie correctamente el array de datos al query
+    async updateProduct(id: string, data: { name: string; description: string; type: boolean; price: number; commission: number }) {
         return this.service.updateProduct(id, data);
     }
 

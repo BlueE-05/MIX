@@ -1,67 +1,90 @@
-//* 4. DB Products
+import sql from 'mssql';
 
-import { Pool } from 'pg';
+const config: sql.config = {
+  user: 'sa',
+  password: 's&oiouWMY$mAY1(1bc;!H9x-xi1Myu=y',
+  server: 'mix-fortesting.czcecc0c8ld1.us-east-2.rds.amazonaws.com',
+  database: 'testing',
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+  }
+};
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+export default class ProductService {
+  private pool: sql.ConnectionPool;
 
-class ProductService {
-  private db: typeof pool;
-
-  constructor(db: typeof pool) {
-    this.db = db;
+  constructor() {
+    this.pool = new sql.ConnectionPool(config);
+    this.pool.connect(); // Conectar una vez al iniciar
   }
 
   async getAllProducts() {
-    const result = await this.db.query(
-      'SELECT * FROM products'
+    const result = await this.pool.request().query(
+      'SELECT * FROM Product ORDER BY RefNum ASC'
     );
-    return result.rows;
+    return result.recordset;
   }
 
   async getProductById(id: string) {
-    const result = await this.db.query(
-      'SELECT * FROM products WHERE id = $1',
-      [id]
-    );
-    return result.rows[0];
+    const result = await this.pool.request()
+      .input('id', sql.VarChar, id)
+      .query(
+        'SELECT * FROM Product WHERE RefNum = @id'
+      );
+    return result.recordset[0];
   }
 
   async getProductByName(name: string) {
-    const result = await this.db.query(
-      'SELECT * FROM products WHERE name = $1',
-      [name]
-    );
-    return result.rows[0];
+    const result = await this.pool.request()
+      .input('name', sql.VarChar, name)
+      .query(
+        'SELECT * FROM Product WHERE name = @name'
+      );
+    return result.recordset[0];
   }
 
-  async getProductByEnterprise(enterprise: string) {
-    const result = await this.db.query(
-      'SELECT * FROM products WHERE enterprise = $1',
-      [enterprise]
-    );
-    return result.rows;
+  async createProduct(data: { id: string; name: string; description: string; type: boolean; price: number; commission: number }) {
+    const result = await this.pool.request()
+      .input('id', sql.VarChar, data.id)
+      .input('name', sql.VarChar, data.name)
+      .input('description', sql.VarChar, data.description)
+      .input('type', sql.Bit, data.type)
+      .input('price', sql.Decimal(18, 2), data.price)
+      .input('commission', sql.Decimal(18, 2), data.commission)
+      .query(
+              `INSERT INTO Product (RefNum, Name, Description, ArticleType, UnitaryPrice, Commission, CreationDate)
+              OUTPUT INSERTED.*
+              VALUES (@id, @name, @description, @type, @price, @commission, GETDATE())`
+            );
+    return result.recordset[0];
   }
 
-  async createProduct(data: any[]) {
-    await this.db.query(
-      'INSERT INTO products (name, price, enterprise) VALUES ($1, $2, $3)',
-      data
-    );
-  }
-
-  async updateProduct(id: string, data: any[]) {
-    await this.db.query(
-      'UPDATE products SET name = $1, price = $2, enterprise = $3 WHERE id = $4',
-      [...data, id]
-    );
+  async updateProduct(id: string, data: { name: string; description: string; type: boolean ; price: number; commission: number }) {
+    const result = await this.pool.request()
+      .input('id', sql.VarChar, id)
+      .input('name', sql.VarChar, data.name)
+      .input('description', sql.VarChar, data.description)
+      .input('type', sql.Bit, data.type)
+      .input('price', sql.Decimal(18, 2), data.price)
+      .input('commission', sql.Decimal(18, 2), data.commission)
+      .query(`UPDATE Product
+              SET Name = @name,
+                Description = @description,
+                ArticleType = @type,
+                UnitaryPrice = @price,
+                Commission = @commission
+              OUTPUT INSERTED.*
+              WHERE RefNum = @id`
+            );
+    return result.recordset[0];
   }
 
   async deleteProduct(id: string) {
-    await this.db.query(
-      'DELETE FROM products WHERE id = $1',
-      [id]
-    );
+    await this.pool.request()
+      .input('id', sql.VarChar, id)
+      .query(
+        'DELETE FROM Product WHERE RefNum = @id'
+      );
   }
 }
-
-export default new ProductService(pool);

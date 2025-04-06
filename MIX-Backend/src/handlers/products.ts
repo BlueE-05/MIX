@@ -10,57 +10,57 @@ export default class ProductHTTPHandler {
         this.productController = new ProductController();
     }
 
-    async getProducts(req: Request, res: Response, next: NextFunction) {
+    getProducts = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const products = await this.productController.getAllProducts();
             res.json(products);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async getProductById(req: Request, res: Response, next: NextFunction) {
+    getProductById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const product = await this.productController.getProductById(req.params.id);
             res.json(product);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async getProductByName(req: Request, res: Response, next: NextFunction) {
+    getProductByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const product = this.productController.getProductByName(req.params.name);
+            const product = await this.productController.getProductByName(req.params.name);
             res.json(product);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async createProduct(req: Request, res: Response, next: NextFunction) {
+    createProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const newProduct = await this.productController.createProduct(req.body);
             res.json(newProduct);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async updateProduct(req: Request, res: Response, next: NextFunction) {
+    updateProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const product = await this.productController.updateProduct(req.params.id, req.body);
-            res.json(product);
+            const updated = await this.productController.updateProduct(req.params.id, req.body);
+            res.json(updated);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async deleteProduct(req: Request, res: Response, next: NextFunction) {
+    deleteProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
             await this.productController.deleteProduct(req.params.id);
             res.json({ message: 'Product deleted successfully' });
         } catch (error) {
             next(error);
         }
-    }
+    };
 }
