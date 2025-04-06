@@ -3,35 +3,33 @@
 import ContactService from '@/db/contacts';
 
 export default class ContactController {
-    private service = ContactService;
+    private service = new ContactService;
 
-    async getAllContacts() {
-        return this.service.getAllContacts();
+    async getAllContacts(idUser: number) {
+        return this.service.getAllContacts(idUser);
     }
 
-    async getContactById(id: string) {
+    async getContactById(id: number) {
         return this.service.getContactById(id);
     }
 
-    async getContactByName(name: string) {
-        return this.service.getContactByName(name);
+    async getContactByName(idUser: number, name: string) {
+        return this.service.getContactByName(idUser, name);
     }
 
-    async getContactByEnterprise(enterprise: string) {
-        return this.service.getContactByEnterprise(enterprise);
+    async getContactByEnterprise(idUser: number, enterprise: string) {
+        return this.service.getContactByEnterprise(idUser, enterprise);
     }
 
-    async createContact(data: any[]) { //tal vez cambie any, pero creo que lo mas conveniente es que se quede así y los cambios se hagan solamente en db
-        //aqui se podria reacomodar la data de ser necesario
-        return this.service.createContact(data);
+    async createContact(idUser: number, data: { name: string; lastName: string; email: string; phoneNumber: number; nameEnterprise: string } ) {
+        return this.service.createContact(idUser, data);
     }
 
-    async updateContact(id: string, data: any[]) {
-        //aca se puede reacomodar lo que recibe para que envie correctamente el array de datos al query
+    async updateContact(id: number, data: { name: string; lastName: string; email: string; phoneNumber: number }) {
         return this.service.updateContact(id, data);
     }
 
-    async deleteContact(id: string) {
+    async deleteContact(id: number) {
         return this.service.deleteContact(id);
     }
 }
