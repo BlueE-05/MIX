@@ -1,6 +1,4 @@
 import express from 'express';
-import { reportHttpHandler } from '../handlers/report';
-import newsale from '../controllers/newsale';
 import { newsaleHttpHandler } from '@handlers/newsale';
 
 const router = express.Router();
