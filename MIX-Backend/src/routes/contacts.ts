@@ -6,18 +6,13 @@ import ContactHTTPHandler from '@/handlers/contacts';
 const router = express.Router();
 const contactHandler = new ContactHTTPHandler();
 
-router.get('/', contactHandler.getContacts);
+router.get('/:idUser', contactHandler.getContacts);
+router.get('/id/:id', contactHandler.getContactById);
+router.get('/:idUser/name/:name', contactHandler.getContactByName);
+router.get('/:idUser/enterprise/:enterprise', contactHandler.getContactByEnterprise);
 
-router.get('/:id', contactHandler.getContactById);
-
-router.post('/', contactHandler.createContact);
-
+router.post('/:idUser', contactHandler.createContact);
 router.put('/:id', contactHandler.updateContact);
-
 router.delete('/:id', contactHandler.deleteContact);
-
-router.get('/:name', contactHandler.getContactByName);
-
-router.get('/:enterprise', contactHandler.getContactByEnterptrise);
 
 export default router;

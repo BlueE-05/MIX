@@ -10,66 +10,73 @@ export default class ContactHTTPHandler {
         this.contactController = new ContactController();
     }
 
-    async getContacts(req: Request, res: Response, next: NextFunction) {
+    getContacts = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const contacts = await this.contactController.getAllContacts();
+            const idUser = Number(req.params.idUser);
+            const contacts = await this.contactController.getAllContacts(idUser);
             res.json(contacts);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async getContactById(req: Request, res: Response, next: NextFunction) {
+    getContactById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const contact = await this.contactController.getContactById(req.params.id);
+            const id = Number(req.params.id);
+            const contact = await this.contactController.getContactById(id);
             res.json(contact);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async createContact(req: Request, res: Response, next: NextFunction) {
+    getContactByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const newContact = await this.contactController.createContact(req.body);
-            res.json(newContact);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async updateContact(req: Request, res: Response, next: NextFunction) {
-        try {
-            const contact = await this.contactController.updateContact(req.params.id, req.body);
+            const idUser = Number(req.params.idUser);
+            const contact = await this.contactController.getContactByName(idUser, req.params.name);
             res.json(contact);
         } catch (error) {
             next(error);
         }
-    }
+    };
 
-    async deleteContact(req: Request, res: Response, next: NextFunction) {
+    getContactByEnterprise = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            await this.contactController.deleteContact(req.params.id);
+            const idUser = Number(req.params.idUser);
+            const contact = await this.contactController.getContactByEnterprise(idUser, req.params.enterprise);
+            res.json(contact);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    createContact = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const idUser = Number(req.params.idUser);
+            await this.contactController.createContact(idUser, req.body);
+            res.json({ message: 'Contact created successfully' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    updateContact = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = Number(req.params.id);
+            const updated = await this.contactController.updateContact(id, req.body);
+            res.json(updated);
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    deleteContact = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = Number(req.params.id);
+            await this.contactController.deleteContact(id);
             res.json({ message: 'Contact deleted successfully' });
         } catch (error) {
             next(error);
         }
-    }
-
-    async getContactByName(req: Request, res: Response, next: NextFunction) {
-        try {
-            const contact = this.contactController.getContactByName(req.params.name);
-            res.json(contact);
-        } catch (error) {
-            next(error);
-        }
-    }
-
-    async getContactByEnterprise(req: Request, res: Response, next: NextFunction) {
-        try {
-            const contact = this.contactController.getContactByEnterprise(req.params.enterprise);
-            res.json(contact);
-        } catch (error) {
-            next(error);
-        }
-    }   
+    };
 }

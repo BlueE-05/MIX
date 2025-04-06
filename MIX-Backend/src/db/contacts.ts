@@ -1,61 +1,159 @@
 //* 4. DB Contact
 
-import { Pool } from 'pg';
+import sql from 'mssql';
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const config: sql.config = {
+  user: 'sa',
+  password: 's&oiouWMY$mAY1(1bc;!H9x-xi1Myu=y',
+  server: 'mix-fortesting.czcecc0c8ld1.us-east-2.rds.amazonaws.com',
+  database: 'testing',
+  options: {
+    encrypt: true,
+    trustServerCertificate: true,
+  }
+};
 
-class ContactService {
-  private db: typeof pool;
+export default class ContactService {
+  private pool: sql.ConnectionPool;
 
-  constructor(db: typeof pool) {
-    this.db = db;
+  constructor() {
+    this.pool = new sql.ConnectionPool(config);
+    this.pool.connect();
   }
 
-  async getAllContacts() {
-    const result = await this.db.query(
-      'SELECT * FROM contacts'
-    );
-    return result.rows;
+  async getAllContacts(idUser: number) {
+    await this.pool.connect();
+    const result = await this.pool
+      .request()
+      .input('idUser', idUser)
+      .query(
+        `SELECT 
+          c.ID, 
+          c.Name, 
+          c.LastName, 
+          c.Email, 
+          c.PhoneNumber,
+          e.Name AS EnterpriseName,
+          c.CreationDate, 
+          c.LastInteraction
+        FROM Contact c
+        JOIN Enterprise e ON c.IDEnterprise = e.ID
+        WHERE c.IDUser = @idUser
+        ORDER BY c.LastInteraction DESC`
+      );
+    return result.recordset;
+  }  
+
+  async getContactById(id: number) {
+    await this.pool.connect();
+    const result = await this.pool.request()
+      .input('id', sql.Int, id)
+      .query(
+        `SELECT 
+          c.ID, 
+          c.Name, 
+          c.LastName, 
+          c.Email, 
+          c.PhoneNumber,
+          e.Name AS EnterpriseName,
+          c.CreationDate, 
+          c.LastInteraction
+        FROM Contact c
+        JOIN Enterprise e ON c.IDEnterprise = e.ID
+        WHERE c.ID = @id`
+      );
+    return result.recordset;
   }
 
-  async getContactById(id: string) {
-    const result = await this.db.query(
-      ''
-    );
-    return result.rows;
+  async getContactByName(idUser: number, name: string) {
+    await this.pool.connect();
+    const result = await this.pool.request()
+      .input('name', sql.VarChar, name)
+      .input('idUser', sql.Int, idUser)
+      .query(
+        `SELECT 
+          c.ID, 
+          c.Name, 
+          c.LastName, 
+          c.Email, 
+          c.PhoneNumber,
+          e.Name AS EnterpriseName,
+          c.CreationDate, 
+          c.LastInteraction
+        FROM Contact c
+        JOIN Enterprise e ON c.IDEnterprise = e.ID
+        WHERE c.IDUser = @idUser 
+          AND (c.Name = @name OR c.LastName = @name)
+        ORDER BY c.LastInteraction DESC`
+      );
+    return result.recordset;
   }
 
-  async createContact(data: any[]) {
-    await this.db.query(
-      ''
-    );
+  async getContactByEnterprise(idUser: number, enterprise: string) {
+    await this.pool.connect();
+    const result = await this.pool.request()
+      .input('idUser', sql.Int, idUser)
+      .input('enterprise', sql.VarChar, enterprise)
+      .query(
+        `SELECT 
+          c.ID, 
+          c.Name, 
+          c.LastName, 
+          c.Email, 
+          c.PhoneNumber,
+          e.Name AS EnterpriseName,
+          c.CreationDate, 
+          c.LastInteraction
+        FROM Contact c
+        JOIN Enterprise e ON c.IDEnterprise = e.ID
+        WHERE c.IDUser = @idUser AND e.Name = @enterprise
+        ORDER BY c.LastInteraction DESC`
+      );
+    return result.recordset;
   }
 
-  async updateContact(id: string, data: any[]) {
-    await this.db.query(
-      ''
-    );
+  async createContact(idUser: number, data: { name: string; lastName: string; email: string; phoneNumber: number; nameEnterprise: string }) {
+    await this.pool.connect();
+    await this.pool.request()
+      .input('idUser', sql.Int, idUser)
+      .input('name', sql.VarChar, data.name)
+      .input('lastName', sql.VarChar, data.lastName)
+      .input('email', sql.VarChar, data.email)
+      .input('phoneNumber', sql.VarChar, data.phoneNumber)
+      .input('nameEnterprise', sql.VarChar, data.nameEnterprise)
+      .query(
+            `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, CreationDate, LastInteraction, IDUser, IDEnterprise)
+            SELECT @name, @lastName, @email, @phoneNumber, GETDATE(), GETDATE(), @idUser, e.ID
+            FROM Enterprise e WHERE e.Name = @nameEnterprise`
+          );
   }
 
-  async deleteContact(id: string) {
-    await this.db.query(
-      ''
-    );
+  async updateContact(id: number, data: { name: string; lastName: string; email: string; phoneNumber: number }) {
+    await this.pool.connect();
+    await this.pool.request()
+      .input('id', sql.Int, id)
+      .input('name', sql.VarChar, data.name)
+      .input('lastName', sql.VarChar, data.lastName)
+      .input('email', sql.VarChar, data.email)
+      .input('phoneNumber', sql.VarChar, data.phoneNumber)
+      .query(
+        `UPDATE Contact
+        SET
+          Name = @name,
+          LastName = @lastName,
+          Email = @email,
+          PhoneNumber = @phoneNumber,
+          LastInteraction = GETDATE()
+        WHERE ID = @id`
+      );
   }
 
-  async getContactByName(name: string) {
-    const result = await this.db.query(
-      ''
-    );
-    return result.rows;
-  }
-
-  async getContactByEnterprise(enterprise: string) {
-    const result = await this.db.query(
-      ''
-    );
-    return result.rows;
+  async deleteContact(id: number) {
+    await this.pool.connect();
+    await this.pool.request()
+      .input('id', sql.Int, id)
+      .query(
+        'DELETE FROM Contact WHERE ID = @id'
+      );
   }
 }
-
-export default new ContactService(pool);
