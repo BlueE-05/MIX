@@ -7,7 +7,10 @@ export default class ProductService {
 
   constructor() {
     this.pool = new sql.ConnectionPool(config);
-    this.pool.connect(); // Conectar una vez al iniciar
+    // Conectar al pool una sola vez al crear la instancia
+    this.pool.connect().catch(err => {
+      console.error('Error connecting to the database', err);
+    });
   }
 
   async getAllProducts() {
