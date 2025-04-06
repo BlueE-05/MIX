@@ -1,19 +1,21 @@
-// Capas: db -> controller -> handler -> routes -> Postman
-const express = require('express');
-const app = express();
+import express, { Request, Response, NextFunction } from 'express';
 
-import contactsRoutes from "@/routes/contacts";
 import productsRoutes from '@/routes/products';
+import contactsRoutes from '@/routes/contacts';
+
+const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
-const PORT = process.env.PORT || 3000;
 
-app.use('api/contacts', contactsRoutes);
-app.use('api/products', productsRoutes);
+// Rutas
+app.use('/api/products', productsRoutes);
+app.use('/api/contacts', contactsRoutes);
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+// Middleware de error global (opcional pero recomendado)
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Algo salió mal', error: err.message });
+});
 
-/*
-por que se usa controller mas alla de las pruebas unitarias
-en el frontend vamos a hacer rputer.post, .get, etc?
-*/
+app.listen(PORT, () => { console.log(`🚀 Servidor corriendo en el puerto ${PORT}`); });
