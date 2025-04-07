@@ -35,4 +35,4 @@ export function useProfile(accessToken: string) {
     }, [accessToken]);
   
     return { profile, loading };
-  }
+}
