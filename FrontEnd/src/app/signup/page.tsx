@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignupFormProps, SignupFormData } from "@/types/signup";
 import Navbar from "@/components/NavBar";
-import { teams, educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
+import { educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
     const router = useRouter();
@@ -42,7 +42,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
           if (!response.ok) throw new Error("Signup failed");
           const result = await response.json();
           console.log("Signup result:", result);
-      
+          localStorage.setItem("access_token", result.access_token);
           router.push("/crm/dashboard");
         } catch (error) {
           console.error("Signup error:", error);
@@ -63,8 +63,22 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       JobPosition: "",
     });
 
+    const [teamsFromDb, setTeamsFromDb] = useState<{ ID: string; TeamName: string }[]>([]);
     const [errors, setErrors] = useState<{ [key: string]: string }>({});
     const [currentStep, setCurrentStep] = useState(1);
+
+    useEffect(() => {
+        const fetchTeams = async () => {
+          try {
+            const res = await fetch("http://localhost:4000/api/teams");
+            const data = await res.json();
+            setTeamsFromDb(data);
+          } catch (err) {
+            console.error("Error fetching teams:", err);
+          }
+        };
+        fetchTeams();
+      }, []);
 
     const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
 
@@ -287,8 +301,10 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                                 onChange={handleChange}
                                             >
                                                 <option value="">Select Team (To be confirmed)</option>
-                                                {teams.map((team) => (
-                                                    <option key={team.id} value={team.name}>{team.name}</option>
+                                                {teamsFromDb.map((team) => (
+                                                    <option key={team.ID} value={team.ID}>
+                                                        {team.TeamName}
+                                                    </option>
                                                 ))}
                                             </select>
                                         </div>
