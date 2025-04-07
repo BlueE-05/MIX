@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
 import PointsButton from '@/components/Buttons/PointsButton';
@@ -22,63 +22,112 @@ interface EnterpriseFormData {
   webpageUrl: string;
 }
 
+interface ContactFromAPI {
+  ID: number;
+  Name: string;
+  LastName: string;
+  Email: string;
+  PhoneNumber: string;
+  EnterpriseName: string;
+  CreationDate: string;
+  LastInteraction: string;
+}
+
 const ContactPage = () => {
   const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];
+  const [contactData, setContactData] = useState<any[][]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
 
-  // Data random para rellenar la tabla
-  const firstNames = ["John", "Alice", "Michael", "Sophie", "Daniel", "Emma", "David", "Olivia"];
-  const lastNames = ["Smith", "Johnson", "Brown", "Taylor", "Anderson", "Thomas", "Harris", "Clark"];
-  const enterprises = ["Acme Inc.", "Globex Corp.", "Initech", "Cyberdyne", "Umbrella Corp."];
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const res = await fetch("http://localhost:5000/api/contacts/1");
+        const data: ContactFromAPI[] = await res.json();
 
-  const [contactData, setContactData] = useState(() => {
-    return Array.from({ length: 25 }, (_, i) => {
-      const firstName = firstNames[i % firstNames.length];
-      const lastName = lastNames[i % lastNames.length];
-      const enterprise = enterprises[i % enterprises.length];
-      const statusOptions = ["Active", "Pending", "Inactive"];
-      const statusColors = ["green", "blue", "red"];
-      const statusIndex = i % 3;
-      
-      return [
-        i + 1,
-        firstName,
-        lastName,
-        enterprise,
-        <LabelOval key={`status-${i}`} color={statusColors[statusIndex]} data={statusOptions[statusIndex]} />,
-        `+1 555-${String(1000 + i).slice(-4)}-${String(1000 + (i * 3)).slice(-4)}`,
-        `${firstName.toLowerCase()}.${lastName.toLowerCase()}@${enterprise.toLowerCase().replace(/\s+/g, '')}.com`,
-        <PointsButton key={`points-${i}`} />,
-      ];
-    });
-  });
+        const now = new Date();
 
-  const handleNewContact = (data: ContactFormData | EnterpriseFormData) => {
+        const transformed = data.map((contact, index) => {
+          const lastInteraction = new Date(contact.LastInteraction);
+          const daysSinceInteraction = Math.floor((now.getTime() - lastInteraction.getTime()) / (1000 * 60 * 60 * 24));
+
+          const status = daysSinceInteraction <= 30 ? "Active" : "Inactive";
+          const color = status === "Active" ? "green" : "red";
+
+          return [
+            index + 1,
+            contact.Name,
+            contact.LastName,
+            contact.EnterpriseName,
+            <LabelOval key={`status-${index}`} color={color} data={status} />,
+            contact.PhoneNumber,
+            contact.Email,
+            <PointsButton key={`points-${index}`} />
+          ];
+        });
+
+        setContactData(transformed);
+      } catch (err) {
+        console.error("Error fetching contacts:", err);
+      }
+    };
+
+    fetchContacts();
+  }, []);
+
+  const handleNewContact = async (data: ContactFormData | EnterpriseFormData) => {
     if (formType === 'contact') {
       const contact = data as ContactFormData;
-      const newContact = [
-        contactData.length + 1,
-        contact.name,
-        contact.lastName,
-        contact.enterprise,
-        <LabelOval key={`status-new`} color="green" data="Active" />,
-        contact.phone,
-        contact.email,
-        <PointsButton key={`points-new`} />
-      ];
-      setContactData([...contactData, newContact]);
+  
+      const contactDataToSend = {
+        name: contact.name,
+        lastName: contact.lastName,
+        email: contact.email,
+        phoneNumber: contact.phone,
+        nameEnterprise: contact.enterprise, // Asegúrate de que este campo sea el que corresponde
+      };
+  
+      try {
+        const response = await fetch("http://localhost:5000/api/contacts/1", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(contactDataToSend),
+        });
+  
+        if (!response.ok) {
+          throw new Error("Error creating contact");
+        }
+  
+        // Si la respuesta es exitosa, agregar el nuevo contacto a la lista
+        const newContact = [
+          contactData.length + 1,
+          contact.name,
+          contact.lastName,
+          contact.enterprise,
+          <LabelOval key={`status-new`} color="green" data="Active" />,
+          contact.phone,
+          contact.email,
+          <PointsButton key={`points-new`} />
+        ];
+  
+        setContactData([...contactData, newContact]);
+        setShowForm(false); // Cerrar el formulario
+      } catch (err) {
+        console.error("Error creating contact:", err);
+      }
     } else {
-      // Lógica para agregar nueva empresa si es necesario
       console.log('New enterprise:', data);
     }
-    setShowForm(false);
   };
+  
+  
 
   return (
     <main className="min-h-screen p-6">
       <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
-      <CustomTable headers={contactHeaders} data={contactData} color="green"/>
+      <CustomTable headers={contactHeaders} data={contactData} color="green" />
 
       {showForm && (
         <Formulario 

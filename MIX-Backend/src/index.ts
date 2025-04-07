@@ -1,9 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
+const cors = require('cors');
 
 import productsRoutes from '@/routes/products';
 import contactsRoutes from '@/routes/contacts';
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());

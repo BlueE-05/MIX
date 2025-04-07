@@ -42,7 +42,7 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
     webpageUrl: "",
   });
 
-  const enterprises = ["Enterprise 1", "Enterprise 2", "Enterprise 3"];
+  const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
 
   const handleChangeContact = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -58,7 +58,18 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
 
   const handleSubmitContact = (e: FormEvent): void => {
     e.preventDefault();
-    onSubmit(contactData);
+  
+    // Prepara los datos para enviar en el formato correcto
+    const dataToSend = {
+      name: contactData.name,
+      lastName: contactData.lastName,
+      email: contactData.email,
+      phone: contactData.phone,
+      enterprise: contactData.enterprise,  // Nombre de la empresa seleccionado en el dropdown
+    };
+  
+    // Llamada a la función onSubmit pasando los datos formateados
+    onSubmit(dataToSend);
   };
 
   const handleSubmitEnterprise = (e: FormEvent): void => {
