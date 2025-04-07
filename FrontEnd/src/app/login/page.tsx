@@ -13,33 +13,48 @@ export default function Login() {
 
     const router = useRouter();
 
-    const correctEmail = "Mary.Sue@Company.com";
-    const correctPassword = "SecurePass123!";
-
     const validateEmail = (email: string) => {
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email) ? "" : "Invalid email format";
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
-        // Validación de email
+      
         const emailValidationError = validateEmail(email);
         setEmailError(emailValidationError);
-
-        // Validación de credenciales
-        if (!emailValidationError) {
-            if (email === correctEmail && password === correctPassword) {
-                console.log("Login successful for Mary Sue");
-                router.push("/crm/dashboard");
-            } else {
-                setEmailError("Invalid credentials");
-                setPasswordError("Invalid credentials");
-            }
+      
+        if (emailValidationError) return;
+      
+        try {
+          const res = await fetch("http://localhost:4000/api/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email, password })
+          });
+      
+          const data = await res.json();
+      
+          if (!res.ok) {
+            setEmailError(data.message || "Invalid credentials");
+            setPasswordError(data.message || "Invalid credentials");
+            return;
+          }
+      
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("id_token", data.id_token);
+      
+          console.log("Login OK:", data);
+          router.push("/crm/dashboard");
+        } catch (err) {
+          console.error("Error de login:", err);
+          setEmailError("Login failed");
+          setPasswordError("Login failed");
         }
     };
-
+      
     const isButtonDisabled = !email || !password;
 
     return (
