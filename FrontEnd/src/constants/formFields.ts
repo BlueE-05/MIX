@@ -1,11 +1,3 @@
-export const teams = [
-  { id: 1, name: "Sales" },
-  { id: 2, name: "Marketing" },
-  { id: 3, name: "Customer Support" },
-  { id: 4, name: "Development" },
-  { id: 5, name: "Operations" },
-];
-
 export const educationLevels = [
   "High School Diploma",
   "Technical High School Diploma",
