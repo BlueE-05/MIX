@@ -20,7 +20,7 @@ export class UserDbService {
       .input("jobPosition", sql.NVarChar, user.JobPosition || null)
       .input("education", sql.NVarChar, user.Education)
       .input("profilePic", sql.VarBinary(sql.MAX), bufferPic)
-      .input("idTeam", sql.NVarChar, user.idTeam || null)
+      .input("idTeam", sql.Int, user.idTeam ? parseInt(user.idTeam) : null)
       .query(`
         INSERT INTO [User] (
           Name, LastName, Email, EmailVerified,
@@ -33,4 +33,46 @@ export class UserDbService {
         )
       `);
   }
+  async getUserByEmail(email: string) {
+    try {
+      console.log("Searching getUserByEmail()", email);
+      
+      const result = await this.db.request()
+        .input("email", sql.NVarChar, email.toLowerCase())
+        .query(`
+          SELECT 
+            u.ID,
+            u.Name,
+            u.LastName,
+            u.Email,
+            u.EmailVerified,
+            u.PhoneNumber,
+            u.BirthDate,
+            u.JoiningDate,
+            u.JobPosition,
+            u.Education,
+            u.IDTeam,
+            t.TeamName AS TeamName,
+            u.ProfilePic
+          FROM [User] u
+          LEFT JOIN [Team] t ON u.IDTeam = t.ID
+          WHERE LOWER(u.Email) = @email
+        `);
+  
+      console.log("getUserByEmail():", result.recordset[0]);
+      
+      const user = result.recordset[0];
+      if (!user) return null;
+  
+      return {
+        ...user,
+        ProfilePic: user.ProfilePic 
+          ? `data:image/png;base64,${user.ProfilePic.toString("base64")}` 
+          : null,
+      };
+    } catch (error) {
+      console.error("ERROR getUserByEmail():", error);
+      throw error;
+    }
+  }  
 }
