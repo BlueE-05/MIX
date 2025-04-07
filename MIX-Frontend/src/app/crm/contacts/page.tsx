@@ -6,6 +6,7 @@ import PointsButton from '@/components/Buttons/PointsButton';
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import Formulario from '@/components/Forms/ContactsForms';
 import { CirclePlus } from 'lucide-react';
+import { ReactNode } from 'react';
 
 interface ContactFormData {
   name: string;
@@ -33,9 +34,20 @@ interface ContactFromAPI {
   LastInteraction: string;
 }
 
+interface ContactRow {
+  id: number;
+  name: string;
+  lastName: string;
+  enterprise: string;
+  status: ReactNode;
+  phone: string;
+  email: string;
+  actions: ReactNode;
+}
+
 const ContactPage = () => {
   const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];
-  const [contactData, setContactData] = useState<any[][]>([]);
+  const [contactData, setContactData] = useState<ContactRow[]>([]); // Use ContactRow type
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
 
@@ -47,23 +59,23 @@ const ContactPage = () => {
 
         const now = new Date();
 
-        const transformed = data.map((contact, index) => {
+        const transformed: ContactRow[] = data.map((contact, index) => {
           const lastInteraction = new Date(contact.LastInteraction);
           const daysSinceInteraction = Math.floor((now.getTime() - lastInteraction.getTime()) / (1000 * 60 * 60 * 24));
 
           const status = daysSinceInteraction <= 30 ? "Active" : "Inactive";
           const color = status === "Active" ? "green" : "red";
 
-          return [
-            index + 1,
-            contact.Name,
-            contact.LastName,
-            contact.EnterpriseName,
-            <LabelOval key={`status-${index}`} color={color} data={status} />,
-            contact.PhoneNumber,
-            contact.Email,
-            <PointsButton key={`points-${index}`} />
-          ];
+          return {
+            id: index + 1,
+            name: contact.Name,
+            lastName: contact.LastName,
+            enterprise: contact.EnterpriseName,
+            status: <LabelOval key={`status-${index}`} color={color} data={status} />,
+            phone: contact.PhoneNumber,
+            email: contact.Email,
+            actions: <PointsButton key={`points-${index}`} />
+          };
         });
 
         setContactData(transformed);
@@ -78,7 +90,7 @@ const ContactPage = () => {
   const handleNewContact = async (data: ContactFormData | EnterpriseFormData) => {
     if (formType === 'contact') {
       const contact = data as ContactFormData;
-  
+
       const contactDataToSend = {
         name: contact.name,
         lastName: contact.lastName,
@@ -86,7 +98,7 @@ const ContactPage = () => {
         phoneNumber: contact.phone,
         nameEnterprise: contact.enterprise, // Asegúrate de que este campo sea el que corresponde
       };
-  
+
       try {
         const response = await fetch("http://localhost:5000/api/contacts/1", {
           method: "POST",
@@ -95,23 +107,23 @@ const ContactPage = () => {
           },
           body: JSON.stringify(contactDataToSend),
         });
-  
+
         if (!response.ok) {
           throw new Error("Error creating contact");
         }
-  
+
         // Si la respuesta es exitosa, agregar el nuevo contacto a la lista
-        const newContact = [
-          contactData.length + 1,
-          contact.name,
-          contact.lastName,
-          contact.enterprise,
-          <LabelOval key={`status-new`} color="green" data="Active" />,
-          contact.phone,
-          contact.email,
-          <PointsButton key={`points-new`} />
-        ];
-  
+        const newContact: ContactRow = {
+          id: contactData.length + 1,
+          name: contact.name,
+          lastName: contact.lastName,
+          enterprise: contact.enterprise,
+          status: <LabelOval key={`status-new`} color="green" data="Active" />,
+          phone: contact.phone,
+          email: contact.email,
+          actions: <PointsButton key={`points-new`} />
+        };
+
         setContactData([...contactData, newContact]);
         setShowForm(false); // Cerrar el formulario
       } catch (err) {
@@ -121,13 +133,23 @@ const ContactPage = () => {
       console.log('New enterprise:', data);
     }
   };
-  
-  
+
+  // Convert ContactRow[] to ReactNode[][]
+  const contactDataForTable: ReactNode[][] = contactData.map(contact => [
+    contact.id,
+    contact.name,
+    contact.lastName,
+    contact.enterprise,
+    contact.status,
+    contact.phone,
+    contact.email,
+    contact.actions,
+  ]);
 
   return (
     <main className="min-h-screen p-6">
       <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
-      <CustomTable headers={contactHeaders} data={contactData} color="green" />
+      <CustomTable headers={contactHeaders} data={contactDataForTable} color="green" />
 
       {showForm && (
         <Formulario 
