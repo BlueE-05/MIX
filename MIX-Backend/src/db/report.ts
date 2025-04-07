@@ -4,7 +4,7 @@ class ReportService{ //Esto funciona
 
   async testConnection() {
     const pool = await poolPromise;
-    const result = await pool.request().query('SELECT * FROM Users');
+    const result = await pool.request().query('select * from User');
     console.log('✅ Conexión exitosa:', result.recordset);
     return result.recordset;
   }
