@@ -1,4 +1,4 @@
-import express from 'express';
+/*import express from 'express';
 import { newsaleHttpHandler } from '@handlers/newsale';
 
 const router = express.Router();
@@ -9,3 +9,4 @@ router.post('create', newsaleHttpHandler.createNewSale);
 
 
 export default router;
+*/

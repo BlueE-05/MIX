@@ -1,6 +1,6 @@
 // Capas: db -> controller -> handler -> routes -> Postman
-
-const express = require('express');
+/*
+import express from 'express';
 const app = express();
 import reportRoutes from './src/routes/report';
 import newsaleRoutes from './src/routes/newsale';
@@ -17,6 +17,79 @@ app.use('/sale', saleRoutes);
 
 const PORT = process.env.PORT || 3000;
 
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+*/
+
+/*
+import express from 'express';
+import reportRoutes from './src/routes/report';
+
+const app = express();
+app.use(express.json());
+
+app.use('/report', reportRoutes);
+
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+*/
+
+
+
+
+//PARA EMERGENCIAS: VERIFICAR LA CONEXION CON LA BASE DE DATOS
+/*
+import express from 'express';
+const app = express();
+import { poolPromise } from './src/database';
+
+app.use(express.json());
+
+const testConnection = async () => {
+  const pool = await poolPromise;
+  if (!pool) {
+    console.log('No se pudo conectar a la base de datos.');
+    return;
+  }
+
+  try {
+    // Prueba de conexión con una consulta simple
+    const result = await pool.request().query('select * from Users');
+    console.log('✅ Conexión exitosa:', result.recordset);
+  } catch (error) {
+    console.error('Error en la prueba de conexión:', error);
+  }
+};
+
+testConnection();
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+*/
+
+
+
+import express from 'express';
+import ReportService from './src/db/report';
+import reportRoutes from './src/routes/report';
+import ReportController from './src/controllers/report';
+
+
+const app = express();
+app.use(express.json());
+
+
+app.use('/api', reportRoutes);
+
+
+/*//Prueba de que funciona db->report
+const reportService = new ReportService();
+reportService.testConnection(); 
+*/
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 

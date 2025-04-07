@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+/*import { Request, Response, NextFunction } from 'express';
 import NewSaleController from '../controllers/newsale';
 
 
@@ -42,3 +42,4 @@ export class NewSaleHttpHandler {
 
 
 export const newsaleHttpHandler = new NewSaleHttpHandler();
+*/

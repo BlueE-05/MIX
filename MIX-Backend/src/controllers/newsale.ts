@@ -1,4 +1,4 @@
-import NewSaleService from "../db/newsale";
+/*import NewSaleService from "../db/newsale";
 
 class NewSaleController {
   private NewSaleService: typeof NewSaleService;
@@ -24,3 +24,4 @@ class NewSaleController {
 }
 
 export default new NewSaleController;
+*/

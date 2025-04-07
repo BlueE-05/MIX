@@ -1,3 +1,4 @@
+/*
 import SaleService from "../db/sale";
 
 class SaleController {
@@ -18,3 +19,4 @@ class SaleController {
 }
 
 export default new SaleController;
+*/

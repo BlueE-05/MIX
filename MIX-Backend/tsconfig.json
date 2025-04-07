@@ -20,6 +20,6 @@
       "sourceMap": true,                    // Para debugging
       "resolveJsonModule": true             // Si usas JSON en tu código
     },
-    "include": ["src/**/*.ts", "src/dbConfig.ts"],             // Archivos a compilar
+    "include": ["src/**/*.ts", "src/database.ts"],             // Archivos a compilar
     "exclude": ["node_modules", "tests"]    // Excluir estos directorios
   }

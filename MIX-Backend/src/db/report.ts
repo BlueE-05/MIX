@@ -1,7 +1,38 @@
-import { Pool } from "pg";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+import { poolPromise } from '../database';
+
+class ReportService{ //Esto funciona
+
+  async testConnection() {
+    const pool = await poolPromise;
+    const result = await pool.request().query('SELECT * FROM Users');
+    console.log('✅ Conexión exitosa:', result.recordset);
+    return result.recordset;
+  }
+  
+
+}
+
+export default ReportService;
+
+/* //Codigo base que me dio CHATGPT
+  async testConnection() {
+    const pool = await poolPromise;
+    if (!pool) {
+      console.log('No se pudo conectar a la base de datos.');
+      return;
+    }
+
+    try {
+      const result = await pool.request().query('SELECT * FROM Users');
+      console.log('✅ Conexión exitosa:', result.recordset);
+    } catch (error) {
+      console.error('Error en la prueba de conexión:', error);
+    }
+  }
+    */
 
 
+/* //QUERIES
 class ReportService {
     private db: Pool;
     constructor(db: Pool) {
@@ -32,17 +63,7 @@ class ReportService {
       return result.rows;
     }
 
-/* Obtner total de comisiones por usuario
-  SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission 
-      FROM [User] u 
-      JOIN [Sale] s ON u.ID = s.IDUser 
-      JOIN [SaleArticle] sa ON s.ID = sa.IDSale 
-      JOIN [Product] p ON sa.IDProduct = p.RefNum 
-      WHERE u.ID = 1 
-      GROUP BY u.ID, u.Name
-   */
-
 }
 
 export default new ReportService(pool);
-
+*/
