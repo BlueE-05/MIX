@@ -1,10 +1,11 @@
 import * as sql from "mssql";
+import { dbConfig } from "../config/db"
 
 const config: sql.config = {
-  user: process.env.DB_USER!,
-  password: process.env.DB_PASSWORD!,
-  server: process.env.DB_SERVER!,
-  database: process.env.DB_NAME!,
+  user: dbConfig.user,
+  password: dbConfig.password,
+  server: dbConfig.server,
+  database: dbConfig.database,
   options: {
     encrypt: true,
     trustServerCertificate: true,
