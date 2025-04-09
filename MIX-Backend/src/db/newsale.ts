@@ -1,3 +1,79 @@
+import { poolPromise } from '../database';
+import sql from 'mssql';
+
+class NewSaleService{
+
+
+  //Desplegar todos los contactos que haya registrado un User en especifico
+  async getAllContactByUser(id: number) {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id).query('SELECT CONCAT(c.Name , \' \' , c.LastName) AS FullName FROM Contact AS c WHERE c.IDUser = @id');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getAllCierre:', error);
+        throw new Error('Error al obtener cierres');
+    }
+  }
+
+  //Mostrar la informacion de un contacto que se haya seleccionado por el usuario
+  async getInfoContacto(id: number, cont: number) {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request()
+            .input('id', sql.Int, id)  
+            .input('cont', sql.Int, cont)  
+            .query('SELECT c.Email,e.Name AS EnterpriseName, c.PhoneNumber FROM Contact AS c INNER JOIN Enterprise AS e ON c.IDEnterprise = e.ID WHERE c.ID = @cont AND c.IDUser = @id');
+        
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getInfoContacto:', error);
+        throw new Error('Error al obtener información del contacto');
+    }
+  }
+
+  //Desplegar todas las fases de la venta para seleccionar
+  async getPhases() {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.query('select Name from Phase;');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getAllCierre:', error);
+        throw new Error('Error al obtener cierres');
+    }
+  }
+
+
+    //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
+    //Nota: Recordar que hay que cambair la fecha de fin con un triger o algo al momento de cerrar realmente la venta 
+    async createSale(iduser: number, idcont: number, startdate: string, enddate: string, idphase: number) {
+      try {
+          const pool = await poolPromise;
+          const result = await pool.request()
+              .input('iduser', sql.Int, iduser)  
+              .input('idcont', sql.Int, idcont)  
+              .input('startdate', sql.Date, startdate)
+              .input('enddate', sql.Date, enddate)
+              .input('idphase', sql.Int, idphase)
+              .query('INSERT INTO Sale (IDUser, IDContact, StartDate, EndDate, IDPhase)VALUES (@iduser, @idcont, @startdate, @enddate, idphase)');
+          return result.recordset;
+      } catch (error) {
+          console.error('❌ Error en getInfoContacto:', error);
+          throw new Error('Error al obtener información del contacto');
+      }
+    }
+
+  
+
+  
+
+}
+export default NewSaleService;
+
+
 /*import { Pool } from "pg";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 

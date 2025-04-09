@@ -39,7 +39,7 @@ app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 
 //PARA EMERGENCIAS: VERIFICAR LA CONEXION CON LA BASE DE DATOS
-
+/*
 import express from 'express';
 const app = express();
 import { poolPromise } from './src/database';
@@ -55,7 +55,7 @@ const testConnection = async () => {
 
   try {
     // Prueba de conexión con una consulta simple
-    const result = await pool.request().query('select * from User');
+    const result = await pool.request().query('select * from Phase;');
     console.log('✅ Conexión exitosa:', result.recordset);
   } catch (error) {
     console.error('Error en la prueba de conexión:', error);
@@ -67,29 +67,29 @@ testConnection();
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+*/
 
 
+//import ReportService from './src/db/report';
+//import ReportController from './src/controllers/report';
 
-/*
 import express from 'express';
-import ReportService from './src/db/report';
 import reportRoutes from './src/routes/report';
-import ReportController from './src/controllers/report';
-
+import newsaleRoutes from './src/routes/newsale';
 
 const app = express();
 app.use(express.json());
 
+app.use('/report', reportRoutes);
+app.use('/newsale', newsaleRoutes);
 
-app.use('/api', reportRoutes);
-*/
 
 /*//Prueba de que funciona db->report
 const reportService = new ReportService();
 reportService.testConnection(); 
 */
-/*
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-*/
+
 

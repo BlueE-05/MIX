@@ -9,79 +9,49 @@ class ReportHTTPHandler {
         this.reportController = ReportController;
     }
 
-    getData = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const products = await this.reportController.testConnection();
-            res.json(products);
-        } catch (error) {
-            next(error);
-        }
-    };
-}
-
-export default new ReportHTTPHandler();
-
-
-
-/*import { Request, Response, NextFunction } from 'express';
-import ReportController from '../controllers/report';
-
-export class ReportHttpHandler {
-  private reportController: typeof ReportController;
-
-    constructor() {
-        this.reportController = ReportController;
-    }
-
-    async getData(req: Request, res: Response, next: NextFunction): Promise<void> {
+    getAllCierre = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const total = await ReportController.getData();
-        res.json(total);
+        const id = parseInt(req.params.id); 
+        const products = await this.reportController.getAllCierre(id);
+        res.json(products);
       } catch (error) {
         next(error);
       }
-    }
- 
-    /*
-  async getAllCierre(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await ReportController.getAllCierre();
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
+    };
 
-  async getAllProspecto(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await ReportController.getAllProspecto();
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
 
-  async getAllCotizacion(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await ReportController.getAllCotizacion();
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
+    getAllCotizacion = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = parseInt(req.params.id); 
+        const products = await this.reportController.getAllCotizacion(id);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
 
-  async getAllComissions(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await ReportController.getTotalComissions
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
-    */
-/*
+
+    getAllProspecto = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = parseInt(req.params.id); 
+        const products = await this.reportController.getAllProspecto(id);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+
+    getTotalComissions = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = parseInt(req.params.id); 
+        const products = await this.reportController.getTotalComissions(id);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
 }
 
-
-export const reportHttpHandler = new ReportHttpHandler();
-*/
+export default new ReportHTTPHandler();

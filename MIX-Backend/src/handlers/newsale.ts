@@ -1,3 +1,71 @@
+import { Request, Response, NextFunction } from 'express';
+import NewSaleController from '../controllers/newsale';
+
+class NewSaleHTTPHandler {
+  private newsaleController: typeof NewSaleController;
+
+    constructor() {
+        this.newsaleController = NewSaleController;
+    }
+
+    getAllContactByUser = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const id = parseInt(req.params.id); 
+        const resultado = await this.newsaleController.getAllContactByUser(id);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+  
+    getInfoContacto = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+          const id = Number(req.params.id);
+          const cont = Number(req.params.cont);
+          const resultado = await this.newsaleController.getInfoContacto(id, cont);
+          res.json(resultado);
+          
+      } catch (error) {
+          console.error('Error en getInfoContacto handler:', error);
+          next(error);
+      }
+    };
+
+
+    getPhases= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const resultado = await this.newsaleController.getPhases();
+        res.json(resultado);
+      } catch (error) {
+      next(error);
+      }
+    };
+
+    
+    createSale = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+          const iduser = Number(req.params.iduser);
+          const idcont = Number(req.params.idcont);
+          const startdate = String(req.params.startdate);
+          const enddate = String(req.params.enddate);
+          const idphase = Number(req.params.idphase);
+          const resultado = await this.newsaleController.createSale(iduser, idcont, startdate, enddate, idphase);
+          res.json(resultado);
+          
+      } catch (error) {
+          console.error('Error en getInfoContacto handler:', error);
+          next(error);
+      }
+    };
+
+    
+}
+
+export default new NewSaleHTTPHandler();
+
+
+
 /*import { Request, Response, NextFunction } from 'express';
 import NewSaleController from '../controllers/newsale';
 

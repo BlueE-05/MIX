@@ -3,24 +3,10 @@ import ReportHTTPHandler from '../handlers/report';
 
 const router = Router();
 
+router.get('/allCierre/:id', ReportHTTPHandler.getAllCierre);
+router.get('/allCotizacion/:id', ReportHTTPHandler.getAllCotizacion);
+router.get('/allProspecto/:id', ReportHTTPHandler.getAllProspecto);
+router.get('/totalComissions/:id', ReportHTTPHandler.getTotalComissions);
 
-router.get('/test', ReportHTTPHandler.getData);
 
 export default router;
-
-
-
-/*import express from 'express';
-import { reportHttpHandler } from '../handlers/report';
-
-const router = express.Router();
-
-router.get('/data', reportHttpHandler.getData);
-/*
-router.get('/prospecto', reportHttpHandler.getAllProspecto);
-router.get('/cotizacion', reportHttpHandler.getAllCotizacion);
-router.get('/cierre', reportHttpHandler.getAllCierre);
-router.get('/comisiones', reportHttpHandler.getAllComissions);
-*/
-/*
-export default router; */

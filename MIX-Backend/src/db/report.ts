@@ -1,69 +1,102 @@
 import { poolPromise } from '../database';
+import sql from 'mssql';
 
-class ReportService{ //Esto funciona
+class ReportService{
 
-  async testConnection() {
-    const pool = await poolPromise;
-    const result = await pool.request().query('select * from User');
-    console.log('✅ Conexión exitosa:', result.recordset);
-    return result.recordset;
+
+  //Considerar Cierre como ID=3 en Phase
+  async getAllCierre(id: number) {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getAllCierre:', error);
+        throw new Error('Error al obtener cierres');
+    }
   }
-  
+
+  //Considerar Cotizacion como ID=2 en Phase
+  async getAllCotizacion(id: number) {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase = 2 AND IDUser = @id');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getAllCotizacion:', error);
+        throw new Error('Error al obtener cotizacion');
+    }
+  }
+
+  //Considerar Prospecto como ID=1 en Phase
+  async getAllProspecto(id: number) {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase = 1 AND IDUser = @id');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en Prospecto:', error);
+        throw new Error('Error al obtener prospecto');
+    }
+  }
+
+  async getTotalComissions(id: number) {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.input('id', sql.Int, id).query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission FROM Users AS u JOIN Sale AS s ON u.ID = s.IDUser JOIN SaleArticle AS sa ON s.ID = sa.IDSale JOIN Product AS p ON sa.IDProduct = p.RefNum WHERE u.ID = @id GROUP BY u.ID, u.Name');
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en Prospecto:', error);
+        throw new Error('Error al obtener prospecto');
+    }
+  }
 
 }
-
 export default ReportService;
 
-/* //Codigo base que me dio CHATGPT
-  async testConnection() {
+
+
+//DEJAR POR EL MOMENTO PARA PRUEBAS SI FALLA
+/*import { poolPromise } from '../database';
+
+class ReportService{
+    async getAllCierre() {
     const pool = await poolPromise;
-    if (!pool) {
-      console.log('No se pudo conectar a la base de datos.');
-      return;
+    const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = 1');
+    console.log('✅ Conexión exitosa');
+    return result.recordset;
     }
 
-    try {
-      const result = await pool.request().query('SELECT * FROM Users');
-      console.log('✅ Conexión exitosa:', result.recordset);
-    } catch (error) {
-      console.error('Error en la prueba de conexión:', error);
-    }
-  }
-    */
-
-
-/* //QUERIES
-class ReportService {
-    private db: Pool;
-    constructor(db: Pool) {
-      this.db = db;
+  
+    async getAllCotizacion() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase=2 AND IDUser = 1');
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
     }
 
-    //Para grafica de pie
-    //Contar cuantas ventas están en estado 3 (Cierre)
-    async getAllCierre(): Promise<any[]> {
-      const result = await this.db.query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase=3');
-      return result.rows;
+
+    async getAllProspecto() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase=1 AND IDUser = 1');
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
     }
 
-    //Contar cuantas ventas están en estado 2 (Cotizacion)
-    async getAllCotizacion(): Promise<any[]> {
-      const result = await this.db.query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase=2');
-      return result.rows;
-    }
 
-    //Contar cuantas ventas están en estado 1 (Prospecto)
-    async getAllProspecto(): Promise<any[]> {
-      const result = await this.db.query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase=1');
-      return result.rows;
-    }
+    async getTotalComissions() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommissions FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum JOIN Sale s ON sa.IDSale = s.ID WHERE s.IDUser = 1');    
 
-    async getAllComission(): Promise<any[]> {
-      const result = await this.db.query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommissions FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum;');
-      return result.rows;
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
     }
 
 }
-
-export default new ReportService(pool);
+export default ReportService;
 */
+
