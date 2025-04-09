@@ -42,7 +42,7 @@ class NewSaleHTTPHandler {
       }
     };
 
-    
+    //Revisar
     createSale = async (req: Request, res: Response, next: NextFunction) => {
       try {
           const iduser = Number(req.params.iduser);
@@ -59,7 +59,7 @@ class NewSaleHTTPHandler {
       }
     };
 
-    
+
 }
 
 export default new NewSaleHTTPHandler();

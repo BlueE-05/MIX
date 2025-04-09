@@ -76,12 +76,14 @@ app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 import express from 'express';
 import reportRoutes from './src/routes/report';
 import newsaleRoutes from './src/routes/newsale';
+import saleRoutes from './src/routes/sale';
 
 const app = express();
 app.use(express.json());
 
 app.use('/report', reportRoutes);
 app.use('/newsale', newsaleRoutes);
+app.use('/sale', saleRoutes);
 
 
 /*//Prueba de que funciona db->report
@@ -89,7 +91,7 @@ const reportService = new ReportService();
 reportService.testConnection(); 
 */
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 

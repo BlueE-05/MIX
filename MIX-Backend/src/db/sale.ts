@@ -4,59 +4,82 @@ import sql from 'mssql';
 class SaleService{
 
 
-  //Considerar Cierre como ID=3 en Phase
-  async getAllCierre(id: number) {
-    try {
-        const pool = await poolPromise;
-        const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
-        return result.recordset;
-    } catch (error) {
-        console.error('❌ Error en getAllCierre:', error);
-        throw new Error('Error al obtener cierres');
+  //Desplegar todas las sales
+    //Nota: revisar el orden del orden de los datos que se muestran
+    async getAllSales(id: number) {
+        try {
+           const pool = await poolPromise;
+           const request = pool.request();
+           const result = await request.input('id', sql.Int, id).query('SELECT s.ID AS SaleID, (SELECT SUM(p.UnitaryPrice * sa.Quantity) FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum WHERE sa.IDSale = s.ID) AS Total, ph.Name AS Status, c.LastInteraction AS LastContact, s.EndDate AS ClosingDate, s.StartDate AS CreationDate, e.Name AS EnterpriseName FROM Sale s JOIN Phase ph ON s.IDPhase = ph.ID JOIN Contact c ON s.IDContact = c.ID JOIN Enterprise e ON c.IDEnterprise = e.ID WHERE s.IDUser = @id ORDER BY c.LastInteraction');
+           return result.recordset;
+        } catch (error) {
+           console.error('❌ Error en getAllCierre:', error);
+           throw new Error('Error al obtener cierres');
+        }
     }
-  }
 
-  //Considerar Cotizacion como ID=2 en Phase
-  async getAllCotizacion(id: number) {
-    try {
-        const pool = await poolPromise;
-        const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase = 2 AND IDUser = @id');
-        return result.recordset;
-    } catch (error) {
-        console.error('❌ Error en getAllCotizacion:', error);
-        throw new Error('Error al obtener cotizacion');
+  
+  //Buscar sales por fase
+  //Nota: revisar el orden del orden de los datos que se muestran
+    async getSaleByFase(idfase: number, iduser: number) {
+        try {
+            const pool = await poolPromise;
+            const request = pool.request();
+            const result = await request.input('idfase', sql.Int, idfase).input('iduser', sql.Int, iduser).query('SELECT s.ID AS SaleID, (SELECT SUM(p.UnitaryPrice * sa.Quantity) FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum WHERE sa.IDSale = s.ID) AS Total, ph.Name AS Status, c.LastInteraction AS LastContact, s.EndDate AS ClosingDate, s.StartDate AS CreationDate,e.Name AS EnterpriseName FROM Sale s JOIN Phase ph ON s.IDPhase = ph.ID JOIN Contact c ON s.IDContact = c.ID JOIN Enterprise e ON c.IDEnterprise = e.ID WHERE s.IDUser = @iduser  AND s.IDPhase = @idfase ORDER BY c.LastInteraction');
+            return result.recordset;
+        } catch (error) {
+            console.error('❌ Error en getAllCierre:', error);
+            throw new Error('Error al obtener cierres');
+        }
     }
-  }
 
-  //Considerar Prospecto como ID=1 en Phase
-  async getAllProspecto(id: number) {
-    try {
-        const pool = await poolPromise;
-        const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase = 1 AND IDUser = @id');
-        return result.recordset;
-    } catch (error) {
-        console.error('❌ Error en Prospecto:', error);
-        throw new Error('Error al obtener prospecto');
+    //Notas: Agregar el despliegue de un mensaje de "Empresa no encontrada" si no hay ninguna empresa registrada con ese nombre
+
+    async getSaleByEnt(ent: string, iduser: number) {
+        try {
+            const pool = await poolPromise;
+            const request = pool.request();
+            const result = await request.input('ent', sql.VarChar, ent).input('iduser', sql.Int, iduser).query('SELECT s.ID AS SaleID, (SELECT SUM(p.UnitaryPrice * sa.Quantity) FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum WHERE sa.IDSale = s.ID) AS Total,ph.Name AS Status, c.LastInteraction AS LastContact, s.EndDate AS ClosingDate, s.StartDate AS CreationDate, e.Name AS EnterpriseName FROM Sale s JOIN Phase ph ON s.IDPhase = ph.ID JOIN Contact c ON s.IDContact = c.ID JOIN Enterprise e ON c.IDEnterprise = e.ID WHERE s.IDUser = @iduser AND e.Name = @ent ORDER BY c.LastInteraction');
+            return result.recordset;
+        } catch (error) {
+            console.error('❌ Error en getAllCierre:', error);
+            throw new Error('Error al obtener cierres');
+        }
     }
-  }
 
-  async getTotalComissions(id: number) {
-    try {
-        const pool = await poolPromise;
-        const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission FROM Users AS u JOIN Sale AS s ON u.ID = s.IDUser JOIN SaleArticle AS sa ON s.ID = sa.IDSale JOIN Product AS p ON sa.IDProduct = p.RefNum WHERE u.ID = @id GROUP BY u.ID, u.Name');
-        return result.recordset;
-    } catch (error) {
-        console.error('❌ Error en Prospecto:', error);
-        throw new Error('Error al obtener prospecto');
-    }
-  }
+    /*
+    SELECT 
+    s.ID AS SaleID, 
+    (SELECT SUM(p.UnitaryPrice * sa.Quantity) 
+     FROM SaleArticle sa 
+     JOIN Product p ON sa.IDProduct = p.RefNum 
+     WHERE sa.IDSale = s.ID) AS Total,
+    ph.Name AS Status, 
+    c.LastInteraction AS LastContact, 
+    s.EndDate AS ClosingDate, 
+    s.StartDate AS CreationDate,
+    e.Name AS EnterpriseName
+FROM 
+    Sale s 
+JOIN 
+    Phase ph ON s.IDPhase = ph.ID 
+JOIN 
+    Contact c ON s.IDContact = c.ID 
+JOIN 
+    Enterprise e ON c.IDEnterprise = e.ID
+WHERE 
+    s.IDUser = 1                  
+    AND e.Name = 'Empresa A'       
+ORDER BY 
+    c.LastInteraction;
+    */
 
+
+ 
 }
 export default SaleService;
+
+
 
 
 /*import { Pool } from "pg";
