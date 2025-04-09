@@ -3,7 +3,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const dbConfig: config = {
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> 05af417436ebd5b02e28419565df26b4f2fe16b9
   options: {
     encrypt: true,  // Necesario si usas Azure
     trustServerCertificate: true // Si el certificado no es válido
