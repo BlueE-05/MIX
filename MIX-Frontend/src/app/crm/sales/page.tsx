@@ -86,14 +86,14 @@ export default function SalesPage() {
           
           <div className="fixed bottom-6 right-6">
             <div onClick={() => setShowForm(true)} className='cursor-pointer'>
-              <RoundedButton color="green" text="New Sale" Icon={CirclePlus} />
+              <RoundedButton color="blue" text="New Sale" Icon={CirclePlus} /> {/*Aqui esta el color del boton*/}
             </div>
           </div>
         </div>
 
         {/* Table Container */}
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
-          <CustomTable headers={salesHeaders} data={salesData} color="green" />
+          <CustomTable headers={salesHeaders} data={salesData} color="blue" /> {/*Aqui esta el color de la tabla*/}
         </div>
       </div>
       

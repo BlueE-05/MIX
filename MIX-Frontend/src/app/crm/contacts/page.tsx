@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
-import PointsButton from '@/components/Buttons/PointsButton';
+import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import Formulario from '@/components/Forms/ContactsForms';
 import { CirclePlus } from 'lucide-react';
@@ -74,7 +74,7 @@ const ContactPage = () => {
             status: <LabelOval key={`status-${index}`} color={color} data={status} />,
             phone: contact.PhoneNumber,
             email: contact.Email,
-            actions: <PointsButton key={`points-${index}`} />
+            actions: <ArrowRightButton key={`arrow-${index}`} />
           };
         });
 
@@ -121,7 +121,7 @@ const ContactPage = () => {
           status: <LabelOval key={`status-new`} color="green" data="Active" />,
           phone: contact.phone,
           email: contact.email,
-          actions: <PointsButton key={`points-new`} />
+          actions: <ArrowRightButton key={`arrow-${contactData.length + 1}`} />
         };
 
         setContactData([...contactData, newContact]);

@@ -24,7 +24,7 @@ const Sidebar = () => {
           <Image 
             src="/mixlogo.svg" 
             alt="Logo" 
-            width={120}
+            width={80}
             height={60}
             className="h-auto"
           />
@@ -115,11 +115,11 @@ const Sidebar = () => {
 
       {/* Footer */}
       {!isCollapsed ? (
-        <div className="flex items-center justify-between px-4 pb-4">
+        <div className="flex items-center justify-between px-4">
           <Image 
             src="/raydevlogov1.svg" 
             alt="Logo" 
-            width={100}
+            width={85}
             height={60}
             className="h-auto"
           />
