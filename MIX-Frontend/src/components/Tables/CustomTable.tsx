@@ -1,15 +1,25 @@
-// components/CustomTable.js
+// components/CustomTable.tsx
 'use client'
 import { Search } from 'lucide-react';
+import { ChangeEvent } from 'react';
 
 interface CustomTableProps {
     headers: string[];
     data: React.ReactNode[][]; // Permite cualquier tipo de dato en las celdas
     color?: string;
     includeSearch?: boolean;
+    onSearch?: (searchTerm: string) => void; // Nueva prop para manejar la búsqueda
 }
 
-const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }: CustomTableProps) => {
+const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true, onSearch }: CustomTableProps) => {
+    
+    // Función para manejar el cambio en el input de búsqueda
+    const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (onSearch) {
+            onSearch(e.target.value);
+        }
+    };
+
     return (
         <div className="flex flex-col w-full">
             <div className="overflow-visible">
@@ -18,7 +28,14 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }:
                         {/** Buscador **/}
                         <div style={{ backgroundColor: color }} className="rounded-t-md h-14 flex items-center p-4 relative">
                             {includeSearch && (
-                                <><input placeholder="Search" className="w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-gray-100" /><Search className="absolute left-6 h-5 w-5 text-black" /></>
+                                <>
+                                    <input 
+                                        placeholder="Search" 
+                                        className="w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-gray-100" 
+                                        onChange={handleSearchChange}
+                                    />
+                                    <Search className="absolute left-6 h-5 w-5 text-black" />
+                                </>
                             )}
                         </div>
 
