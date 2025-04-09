@@ -7,6 +7,15 @@ import { Task } from './types'; // Importar desde el archivo de tipos
 // y que Tailwind se usa para el resto.
 import './KanbanBoard.css'; 
 
+const columnColors: { [key: string]: string } = {
+  'Prospecting': 'bg-sky-300',
+  'Initial Contact': 'bg-cyan-300',
+  'Proposal': 'bg-teal-300',
+  'Negotiation': 'bg-emerald-300',
+  'Closing': 'bg-lime-300',
+  'Cancelled': 'bg-red-300',
+};
+
 const initialColumns: { [key: string]: Task[] } = {
   'Prospecting': [
     { id: 1, title: 'Contactar a cliente potencial', description: 'Enviar correo electrónico de presentación' },
@@ -120,6 +129,7 @@ const KanbanBoard: React.FC = () => {
                 key={columnName}
                 title={columnName}
                 tasks={columns[columnName]}
+                colorClass={columnColors[columnName] ?? 'bg-white'}
                 deleteTask={deleteTask} // Pasar directamente
                 onDeleteColumn={() => deleteColumn(columnName)}
                 onDragStart={handleDragStart} // Pasar handlers unificados
