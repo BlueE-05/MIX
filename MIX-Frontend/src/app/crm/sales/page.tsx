@@ -92,7 +92,7 @@ export default function SalesPage() {
         </div>
 
         {/* Table Container */}
-        <div className="rounded-xl p-4 sm:p-6 overflow-x-auto">
+        <div className="rounded-xl p-4 sm:p-6 overflow-visible">
           <CustomTable headers={salesHeaders} data={salesData} color="#4209B0" /> {/*Aqui esta el color de la tabla*/}
         </div>
       </div>

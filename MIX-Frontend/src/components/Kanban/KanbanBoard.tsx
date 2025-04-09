@@ -95,7 +95,7 @@ const KanbanBoard: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 sm:p-6">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -107,14 +107,14 @@ const KanbanBoard: React.FC = () => {
         </div>
 
         {/* Board Container (usando CSS para flex layout base) */}
-        <div className="kanban-board bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
+        <div className="kanban-board rounded-xl p-4 sm:p-6 overflow-visible">
           {/* Usar grid aquí podría ser menos flexible para drag and drop entre listas largas,
               flexbox (como en KanbanBoard.css) podría ser más natural.
               Ajusta según tus preferencias visuales/funcionales.
               Si usas el CSS original, quita las clases de grid.
           */}
           {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-w-[800px]"> */}
-          <div className="flex gap-6 min-w-[800px]"> {/* Usando flex y gap */}
+          <div className="flex gap-6 min-w-[800px"> {/* Usando flex y gap */}
             {Object.keys(columns).map(columnName => (
               <Column
                 key={columnName}

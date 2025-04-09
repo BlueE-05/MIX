@@ -12,7 +12,7 @@ interface CustomTableProps {
 const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }: CustomTableProps) => {
     return (
         <div className="flex flex-col w-full">
-            <div className="overflow-x-auto">
+            <div className="overflow-visible">
                 <div className="inline-block min-w-full py-2">
                     <div className="overflow-hidden">
                         {/** Buscador **/}

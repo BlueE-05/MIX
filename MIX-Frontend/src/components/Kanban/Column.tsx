@@ -33,7 +33,7 @@ const Column: React.FC<ColumnProps> = ({
     // Añadir un ancho fijo o flexible según necesites. Width de KanbanBoardCSS era 325px
     // Height era 50vh, overflow-y auto
     <div
-      className="flex flex-col w-80 h-[70vh] bg-gray-100 p-4 rounded-lg shadow-md flex-shrink-0" // Estilos Tailwind para la columna
+      className="flex flex-col w-80 h-[70vh] bg-gray-100 p-4 rounded-lgflex-shrink-0 shadow-xl " // Estilos Tailwind para la columna
       onDrop={(e) => onDrop(e, title)}
       onDragOver={onDragOver}
     >
