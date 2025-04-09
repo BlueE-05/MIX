@@ -75,7 +75,7 @@ export default function SalesPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="min-h-screen p-6">
       <div className="max-w-full mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -92,7 +92,7 @@ export default function SalesPage() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
+        <div className="rounded-xl p-4 sm:p-6 overflow-x-auto">
           <CustomTable headers={salesHeaders} data={salesData} color="#4209B0" /> {/*Aqui esta el color de la tabla*/}
         </div>
       </div>

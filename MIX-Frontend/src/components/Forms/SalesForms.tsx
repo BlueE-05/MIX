@@ -163,7 +163,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+            className="px-6 py-2 bg-[#4209B0] text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
           >
             Done
           </button>
