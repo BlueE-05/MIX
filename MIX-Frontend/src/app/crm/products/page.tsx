@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import CustomTable from '@/components/Tables/CustomTable';
-import LabelOval from '@/components/Buttons/LabelOval';
 import PointsButton from '@/components/Buttons/PointsButton';
 import { ReactNode } from 'react';
 
@@ -22,13 +21,12 @@ interface ProductRow {
   refNum: string;
   unitaryPrice: number;
   commission: number;
-  productType: ReactNode;
   productSheet: ReactNode;
   actions: ReactNode;
 }
 
 const ProductPage = () => {
-  const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission$", "Product Type", "Product Sheet", ""];
+  const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission$", "Product Sheet", ""];
 
   const [productData, setProductData] = useState<ProductRow[]>([]); // Use the ProductRow type
 
@@ -45,7 +43,6 @@ const ProductPage = () => {
             refNum: product.RefNum,
             unitaryPrice: product.UnitaryPrice,
             commission: product.Commission,
-            productType: <LabelOval key={`label-${index}`} color={product.ArticleType ? "green" : "red"} data={product.ArticleType ? "Product" : "Service"} />,
             productSheet: <a key={`link-${index}`} href={`/files/${product.RefNum}.pdf`} className="text-blue-500 underline">View Sheet</a>,
             actions: <PointsButton key={`points-${index}`} />,
           };
@@ -67,7 +64,6 @@ const ProductPage = () => {
     product.refNum,
     product.unitaryPrice,
     product.commission,
-    product.productType,
     product.productSheet,
     product.actions,
   ]);

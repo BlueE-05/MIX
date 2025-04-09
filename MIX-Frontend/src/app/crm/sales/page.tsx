@@ -14,7 +14,7 @@ interface SaleFormData {
 }
 
 export default function SalesPage() {
-  const salesHeaders = ["RefNumber", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
+  const salesHeaders = ["RefNumber", "Enterprise", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
 
   const [salesData, setSalesData] = useState<React.ReactNode[][]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -86,14 +86,14 @@ export default function SalesPage() {
           
           <div className="fixed bottom-6 right-6">
             <div onClick={() => setShowForm(true)} className='cursor-pointer'>
-              <RoundedButton color="blue" text="New Sale" Icon={CirclePlus} /> {/*Aqui esta el color del boton*/}
+              <RoundedButton color="#4209B0" text="New Sale" Icon={CirclePlus} /> {/*Aqui esta el color del boton*/}
             </div>
           </div>
         </div>
 
         {/* Table Container */}
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
-          <CustomTable headers={salesHeaders} data={salesData} color="blue" /> {/*Aqui esta el color de la tabla*/}
+          <CustomTable headers={salesHeaders} data={salesData} color="#4209B0" /> {/*Aqui esta el color de la tabla*/}
         </div>
       </div>
       
