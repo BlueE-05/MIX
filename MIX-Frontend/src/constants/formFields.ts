@@ -6,6 +6,14 @@ export const teams = [
   { id: 5, name: "Operations" },
 ];
 
+export const jobPosition = [
+  { id: 1, name: "Sales Representative", teamId: 1 }, // Sales
+  { id: 2, name: "SEO Analyst", teamId: 2 },         // Marketing
+  { id: 3, name: "Technical Support", teamId: 3 },   // Customer Support
+  { id: 4, name: "Junior Marketing Associate", teamId: 4 },
+  { id: 5, name: "Senior Marketing Manager", teamId: 5 }
+];
+
 export const educationLevels = [
   "High School Diploma",
   "Technical High School Diploma",

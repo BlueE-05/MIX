@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignupFormData } from "@/types/signup";
 import Navbar from "@/components/NavBar";
-import { teams, educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
+import { teams, jobPosition, educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 import Image from "next/image";
 
 export default function SignupForm() {
@@ -26,8 +26,29 @@ export default function SignupForm() {
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
   const requiredFields = ["name", "lastName", "birthDate", "phoneNumber", "email", "password", "education"];
+
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const teamName = e.target.value;
+    const team = teams.find((t) => t.name === teamName);
+    setSelectedTeamId(team?.id || null);
+    setFormData({
+      ...formData,
+      idTeam: teamName,
+      jobPosition: "", // Resetear puesto al cambiar equipo
+    });
+  };
+
+  const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData({ ...formData, jobPosition: e.target.value });
+  };
+
+  // Filtrar puestos por equipo seleccionado
+  const filteredPositions = selectedTeamId
+    ? jobPosition.filter((job) => job.teamId === selectedTeamId)
+    : [];
 
   const validateField = (name: string, value: string) => {
     return requiredFields.includes(name) && !value
@@ -213,32 +234,42 @@ export default function SignupForm() {
                     </div>
 
                     <div>
-                      <label htmlFor="jobPosition" className="block text-sm font-medium text-gray-700 mb-1">
-                        Job Position (Optional)
-                      </label>
-                      <input 
-                        id="jobPosition"
-                        type="text" 
-                        name="jobPosition" 
-                        placeholder="Job Position (To be confirmed)" 
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition" 
-                        onChange={handleChange} 
-                      />
-                    </div>
-
-                    <div>
                       <label htmlFor="idTeam" className="block text-sm font-medium text-gray-700 mb-1">
-                        Team (Optional)
+                        Team
                       </label>
-                      <select 
+                      <select
                         id="idTeam"
-                        name="idTeam" 
+                        name="idTeam"
+                        value={formData.idTeam}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
-                        onChange={handleChange}
+                        onChange={handleTeamChange}
                       >
                         <option value="">Select Team (To be confirmed)</option>
                         {teams.map((team) => (
-                          <option key={team.id} value={team.name}>{team.name}</option>
+                          <option key={team.id} value={team.name}>
+                            {team.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="jobPosition" className="block text-sm font-medium text-gray-700 mb-1">
+                        Job Position
+                      </label>
+                      <select
+                        id="jobPosition"
+                        name="jobPosition"
+                        value={formData.jobPosition}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
+                        onChange={handlePositionChange}
+                        disabled={!selectedTeamId} // Deshabilitar si no hay equipo seleccionado
+                      >
+                        <option value="">Job Position (To be confirmed)</option>
+                        {filteredPositions.map((job) => (
+                          <option key={job.id} value={job.name}>
+                            {job.name}
+                          </option>
                         ))}
                       </select>
                     </div>
