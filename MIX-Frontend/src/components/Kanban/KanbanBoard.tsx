@@ -2,65 +2,40 @@
 'use client';
 import React, { useState, useCallback } from 'react';
 import Column from './Column';
-import { Plus, CirclePlus, X } from "lucide-react";
 import { Task } from './types'; // Importar desde el archivo de tipos
 // Asumiendo que los estilos del modal y el layout base están en KanbanBoard.css
 // y que Tailwind se usa para el resto.
 import './KanbanBoard.css'; 
 
 const initialColumns: { [key: string]: Task[] } = {
-  'Prospectos': [
+  'Prospecting': [
     { id: 1, title: 'Contactar a cliente potencial', description: 'Enviar correo electrónico de presentación' },
     { id: 2, title: 'Llamada de seguimiento', description: 'Llamar para dar seguimiento a correo enviado' },
   ],
-  'Cotización': [
+  'Initial Contact': [
     { id: 3, title: 'Preparar cotización', description: 'Crear cotización para cliente potencial' },
   ],
-  'Cierre': [
+  'Proposal': [
     { id: 4, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
     { id: 5, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+  ],
+  'Negotiation': [
+    { id: 6, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
+    { id: 7, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+  ],  
+  'Closing': [
+    { id: 8, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
+    { id: 9, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+  ],
+  'Cancelled': [
+    { id: 10, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
+    { id: 11, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
   ],
 };
 
 const KanbanBoard: React.FC = () => {
   const [columns, setColumns] = useState<{ [key: string]: Task[] }>(initialColumns);
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-  const [newTaskDescription, setNewTaskDescription] = useState('');
   const [selectedColumn, setSelectedColumn] = useState(Object.keys(initialColumns)[0] || ''); // Selecciona la primera columna por defecto
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const [newColumnName, setNewColumnName] = useState('');
-  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
-
-  // Usar useCallback para optimizar las funciones pasadas como props
-  const addTask = useCallback(() => {
-    if (!newTaskTitle || !selectedColumn || !columns[selectedColumn]) return; // Añadir validación
-
-    const newTask: Task = {
-      id: Date.now(), // Usar timestamp es simple pero no ideal para IDs persistentes
-      title: newTaskTitle,
-      description: newTaskDescription,
-    };
-
-    setColumns(prevColumns => ({
-      ...prevColumns,
-      [selectedColumn]: [...prevColumns[selectedColumn], newTask],
-    }));
-
-    setNewTaskTitle('');
-    setNewTaskDescription('');
-    setIsTaskModalOpen(false);
-  }, [newTaskTitle, newTaskDescription, selectedColumn, columns]);
-
-  const addColumn = useCallback(() => {
-    if (newColumnName && !columns[newColumnName]) {
-      setColumns(prevColumns => ({
-        ...prevColumns,
-        [newColumnName]: []
-      }));
-      setNewColumnName('');
-      setIsColumnModalOpen(false);
-    }
-  }, [newColumnName, columns]);
 
   const deleteColumn = useCallback((columnName: string) => {
     setColumns(prevColumns => {
@@ -125,24 +100,9 @@ const KanbanBoard: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Tablero Kanban</h1>
-            <p className="text-gray-600">Arrastra y suelta para gestionar tus tareas</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
+            <p className="text-gray-600">Drag and Drop your tasks!</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-             <button
-              onClick={() => setIsTaskModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Nueva Tarea</span>
-            </button>
-            <button
-              onClick={() => setIsColumnModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition"
-            >
-              <CirclePlus className="h-4 w-4" />
-              <span>Nueva Columna</span>
-            </button>
           </div>
         </div>
 
@@ -171,133 +131,6 @@ const KanbanBoard: React.FC = () => {
           </div>
         </div>
       </div>
-
-       {/* Task Modal */}
-      {isTaskModalOpen && (
-        // Reutiliza tu estructura de modal actual o refactoriza si es necesario
-        // Asegúrate de que los inputs y el select funcionen con los estados
-        // y que los botones llamen a `addTask` y `setIsTaskModalOpen(false)`
-        <div className="modal"> {/* Usando clase de KanbanBoardCSS.txt */}
-           <div className="modal-content"> {/* Usando clase de KanbanBoardCSS.txt */}
-             <div className="flex justify-between items-center mb-4">
-               <h3 className="text-xl font-semibold text-gray-800">Nueva Tarea</h3>
-               <button
-                 onClick={() => setIsTaskModalOpen(false)}
-                 className="text-gray-500 hover:text-gray-700"
-                 aria-label="Cerrar modal de nueva tarea" // A11y
-               >
-                 <X className="w-6 h-6" />
-               </button>
-             </div>
-            {/* Formulario (similar al original) */}
-             <div className="space-y-4">
-               <div>
-                 <label htmlFor="task-title" className="block text-sm font-medium text-gray-700 mb-1">Título</label>
-                 <input
-                   id="task-title"
-                   type="text"
-                   placeholder="Título de la tarea"
-                   value={newTaskTitle}
-                   onChange={(e) => setNewTaskTitle(e.target.value)}
-                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                 />
-               </div>
-               <div>
-                 <label htmlFor="task-description" className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
-                 <textarea
-                   id="task-description"
-                   placeholder="Descripción de la tarea"
-                   value={newTaskDescription}
-                   onChange={(e) => setNewTaskDescription(e.target.value)}
-                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                   rows={3}
-                 />
-               </div>
-               <div>
-                <label htmlFor="task-column" className="block text-sm font-medium text-gray-700 mb-1">Columna</label>
-                <select
-                  id="task-column"
-                  value={selectedColumn}
-                  onChange={(e) => setSelectedColumn(e.target.value)}
-                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                   // Deshabilitar si no hay columnas
-                   disabled={Object.keys(columns).length === 0}
-                >
-                   {/* Opción por defecto si no hay columnas */}
-                   {Object.keys(columns).length === 0 && <option>No hay columnas disponibles</option>}
-                   {Object.keys(columns).map(col => (
-                    <option key={col} value={col}>{col}</option>
-                  ))}
-                </select>
-              </div>
-             </div>
-             <div className="mt-6 flex justify-end space-x-3">
-               <button
-                 onClick={() => setIsTaskModalOpen(false)}
-                 className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-               >
-                 Cancelar
-               </button>
-               <button
-                 onClick={addTask}
-                 disabled={!newTaskTitle || !selectedColumn || Object.keys(columns).length === 0} // Deshabilitar si no hay título o columna seleccionable
-                 className={`px-4 py-2 rounded-lg text-white ${(!newTaskTitle || !selectedColumn || Object.keys(columns).length === 0) ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-               >
-                 Agregar Tarea
-               </button>
-             </div>
-           </div>
-         </div>
-      )}
-
-       {/* Column Modal */}
-       {isColumnModalOpen && (
-         // Reutiliza tu estructura de modal actual
-         // Asegúrate de que los botones llamen a `addColumn` y `setIsColumnModalOpen(false)`
-         <div className="modal"> {/* Usando clase de KanbanBoardCSS.txt */}
-           <div className="modal-content"> {/* Usando clase de KanbanBoardCSS.txt */}
-               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold text-gray-800">Nueva Columna</h3>
-                <button
-                    onClick={() => setIsColumnModalOpen(false)}
-                    className="text-gray-500 hover:text-gray-700"
-                    aria-label="Cerrar modal de nueva columna" // A11y
-                >
-                    <X className="w-6 h-6" />
-                </button>
-                </div>
-                <div className="space-y-4">
-                <div>
-                    <label htmlFor="column-name" className="block text-sm font-medium text-gray-700 mb-1">Nombre de la Columna</label>
-                    <input
-                    id="column-name"
-                    type="text"
-                    placeholder="Nombre de la columna"
-                    value={newColumnName}
-                    onChange={(e) => setNewColumnName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    />
-                </div>
-                </div>
-                <div className="mt-6 flex justify-end space-x-3">
-                <button
-                    onClick={() => setIsColumnModalOpen(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
-                >
-                    Cancelar
-                </button>
-                <button
-                    onClick={addColumn}
-                    disabled={!newColumnName || !!columns[newColumnName]} // Deshabilitar si está vacío o el nombre ya existe
-                    className={`px-4 py-2 rounded-lg text-white ${(!newColumnName || !!columns[newColumnName]) ? 'bg-green-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
-                >
-                    Agregar Columna
-                </button>
-                </div>
-           </div>
-         </div>
-       )}
-    </div>
   );
 };
 

@@ -30,17 +30,23 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 space-y-6">
           {/* First Row - Table */}
           <div className="bg-white p-6 rounded-xl">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+            <h2 className="text-xl font-semibold text-gray-700">
               Tareas Recientes
             </h2>
             <div className="overflow-x-auto">
-              <CustomTable headers={headers} data={data} />
+              <CustomTable headers={headers} data={data} includeSearch = {false}/>
             </div>
           </div>
         </div>
 
-        {/* Right Column - Pie Chart */}
+        {/* Right Column*/}
         <div className="h-full flex flex-col gap-4 bg-gray">
+          <div className="p-6 bg-orange-300 rounded-xl shadow-md h-40 opacity-50">
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">
+              Awards
+            </h2>
+            {/*<Awards/>*/}
+          </div>
           <div className="p-6 bg-white rounded-xl shadow-md h-80">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
               Distribución de Ventas
