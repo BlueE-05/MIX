@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import CustomTable from '@/components/Tables/CustomTable';
 import Formulario, { ProductData } from '@/components/Forms/ProductsForms';
 import RoundedButton from '@/components/Buttons/RoundedButton';
-import PointsButton from '@/components/Buttons/PointsButton';
+import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import { CirclePlus } from 'lucide-react';
 
 interface ProductFromAPI {
@@ -44,7 +44,7 @@ export default function ProductPage() {
         unitaryPrice: product.UnitaryPrice,
         commission: product.Commission,
         productSheet: <a key={`link-${index}`} href={`/files/${product.RefNum}.pdf`} className="text-blue-500 underline">View Sheet</a>,
-        actions: <PointsButton key={`points-${index}`} />,
+        actions: <ArrowRightButton key={`arrow-${index}`} />
       };
     });
 
