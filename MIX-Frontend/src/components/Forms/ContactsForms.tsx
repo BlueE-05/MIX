@@ -4,7 +4,7 @@ import Input from "@/components/Forms/Input";
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
 
-interface ContactData {
+export interface ContactData {
   name: string;
   lastName: string;
   email: string;
@@ -12,7 +12,7 @@ interface ContactData {
   enterprise: string;
 }
 
-interface EnterpriseData {
+export interface EnterpriseData {
   name: string;
   description: string;
   industry: string;

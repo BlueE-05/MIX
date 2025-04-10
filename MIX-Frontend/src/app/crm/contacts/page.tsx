@@ -1,27 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react';
+import { ReactNode } from 'react';
+
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import RoundedButton from '@/components/Buttons/RoundedButton';
-import Formulario from '@/components/Forms/ContactsForms';
+import Formulario, { ContactData, EnterpriseData } from '@/components/Forms/ContactsForms';
 import { CirclePlus } from 'lucide-react';
-import { ReactNode } from 'react';
-
-interface ContactFormData {
-  name: string;
-  lastName: string;
-  enterprise: string;
-  phone: string;
-  email: string;
-}
-
-interface EnterpriseFormData {
-  name: string;
-  industry: string;
-  description: string;
-  webpageUrl: string;
-}
 
 interface ContactFromAPI {
   ID: number;
@@ -47,21 +33,20 @@ interface ContactRow {
 
 export default function ContactPage() {
   const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];
+  
   const [contactData, setContactData] = useState<ContactRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
-  const [isSearching, setIsSearching] = useState(false);
 
   const fetchContacts = async (searchTerm?: string) => {
     try {
-      let url = "http://localhost:5000/api/contacts/1";
+      const url = "http://localhost:5000/api/contacts/1";
       
       // Si hay término de búsqueda, buscamos por nombre y empresa
       if (searchTerm && searchTerm.trim() !== '') {
-        setIsSearching(true);
         const [nameResults, enterpriseResults] = await Promise.all([
-          fetch(`http://localhost:5000/api/contacts/1/name/${encodeURIComponent(searchTerm)}`),
-          fetch(`http://localhost:5000/api/contacts/1/enterprise/${encodeURIComponent(searchTerm)}`)
+          fetch(`${url}/name/${encodeURIComponent(searchTerm)}`),
+          fetch(`${url}/enterprise/${encodeURIComponent(searchTerm)}`)
         ]);
         
         const nameData: ContactFromAPI[] = await nameResults.json();
@@ -75,14 +60,12 @@ export default function ContactPage() {
         
         transformAndSetData(uniqueData);
       } else {
-        setIsSearching(false);
         const res = await fetch(url);
         const data: ContactFromAPI[] = await res.json();
         transformAndSetData(data);
       }
     } catch (err) {
       console.error("Error fetching contacts:", err);
-      setIsSearching(false);
     }
   };
 
@@ -109,7 +92,6 @@ export default function ContactPage() {
     });
 
     setContactData(transformed);
-    setIsSearching(false);
   };
 
   useEffect(() => {
@@ -120,9 +102,9 @@ export default function ContactPage() {
     await fetchContacts(searchTerm);
   };
 
-  const handleNewContact = async (data: ContactFormData | EnterpriseFormData) => {
+  const handleNewContact = async (data: ContactData | EnterpriseData) => {
     if (formType === 'contact') {
-      const contact = data as ContactFormData;
+      const contact = data as ContactData;
   
       const contactDataToSend = {
         name: contact.name,
