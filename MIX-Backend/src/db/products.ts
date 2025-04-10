@@ -24,9 +24,9 @@ export default class ProductService {
     const result = await this.pool.request()
       .input('id', sql.VarChar, id)
       .query(
-        'SELECT * FROM Product WHERE RefNum = @id'
+        'SELECT * FROM Product WHERE RefNum = @id ORDER BY RefNum ASC'
       );
-    return result.recordset[0];
+    return result.recordset;
   }
 
   async getProductByName(name: string) {
@@ -35,7 +35,7 @@ export default class ProductService {
       .query(
         'SELECT * FROM Product WHERE name = @name'
       );
-    return result.recordset[0];
+    return result.recordset;
   }
 
   async createProduct(data: { id: string; name: string; description: string; type: boolean; price: number; commission: number }) {
@@ -51,7 +51,7 @@ export default class ProductService {
               OUTPUT INSERTED.*
               VALUES (@id, @name, @description, @type, @price, @commission, GETDATE())`
             );
-    return result.recordset[0];
+    //return result.recordset[0];
   }
 
   async updateProduct(id: string, data: { name: string; description: string; type: boolean ; price: number; commission: number }) {
@@ -71,7 +71,7 @@ export default class ProductService {
               OUTPUT INSERTED.*
               WHERE RefNum = @id`
             );
-    return result.recordset[0];
+    //return result.recordset[0];
   }
 
   async deleteProduct(id: string) {
