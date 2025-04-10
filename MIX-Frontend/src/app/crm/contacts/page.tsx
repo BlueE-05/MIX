@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ReactNode } from 'react';
 
 import CustomTable from '@/components/Tables/CustomTable';
@@ -33,31 +33,31 @@ interface ContactRow {
 
 export default function ContactPage() {
   const contactHeaders = ["#", "Name(s)", "Last Name", "Enterprise", "Status", "Phone Number", "E-mail", ""];
-  
+
   const [contactData, setContactData] = useState<ContactRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
 
-  const fetchContacts = async (searchTerm?: string) => {
+  const fetchContacts = useCallback(async (searchTerm?: string) => {
     try {
       const url = "http://localhost:5000/api/contacts/1";
-      
+
       // Si hay término de búsqueda, buscamos por nombre y empresa
       if (searchTerm && searchTerm.trim() !== '') {
         const [nameResults, enterpriseResults] = await Promise.all([
           fetch(`${url}/name/${encodeURIComponent(searchTerm)}`),
           fetch(`${url}/enterprise/${encodeURIComponent(searchTerm)}`)
         ]);
-        
+
         const nameData: ContactFromAPI[] = await nameResults.json();
         const enterpriseData: ContactFromAPI[] = await enterpriseResults.json();
-        
+
         // Combinar resultados y eliminar duplicados
         const combinedData = [...nameData, ...enterpriseData];
         const uniqueData = combinedData.filter((contact, index, self) =>
           index === self.findIndex(c => c.ID === contact.ID)
         );
-        
+
         transformAndSetData(uniqueData);
       } else {
         const res = await fetch(url);
@@ -67,11 +67,11 @@ export default function ContactPage() {
     } catch (err) {
       console.error("Error fetching contacts:", err);
     }
-  };
+  }, []);
 
   const transformAndSetData = (data: ContactFromAPI[]) => {
     const now = new Date();
-    
+
     const transformed: ContactRow[] = data.map((contact, index) => {
       const lastInteraction = new Date(contact.LastInteraction);
       const daysSinceInteraction = Math.floor((now.getTime() - lastInteraction.getTime()) / (1000 * 60 * 60 * 24));
@@ -96,7 +96,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     fetchContacts();
-  }, []);
+  }, [fetchContacts]);
 
   const handleSearch = async (searchTerm: string) => {
     await fetchContacts(searchTerm);
@@ -105,7 +105,7 @@ export default function ContactPage() {
   const handleNewContact = async (data: ContactData | EnterpriseData) => {
     if (formType === 'contact') {
       const contact = data as ContactData;
-  
+
       const contactDataToSend = {
         name: contact.name,
         lastName: contact.lastName,
@@ -113,7 +113,7 @@ export default function ContactPage() {
         phoneNumber: contact.phone,
         nameEnterprise: contact.enterprise,
       };
-  
+
       try {
         const response = await fetch("http://localhost:5000/api/contacts/1", {
           method: "POST",
@@ -122,11 +122,11 @@ export default function ContactPage() {
           },
           body: JSON.stringify(contactDataToSend),
         });
-  
+
         if (!response.ok) {
           throw new Error("Error creating contact");
         }
-  
+
         await fetchContacts(); // Actualizar la lista de contactos
         setShowForm(false); // Cerrar el formulario
       } catch (err) {
@@ -156,7 +156,7 @@ export default function ContactPage() {
     <main className="min-h-screen p-6">
       {/* Title of the page */}
       <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
-      
+
       {/* Table of contacts */}
       <CustomTable headers={contactHeaders} data={contactDataForTable} color="green" includeSearch={true} onSearch={handleSearch} />
 
@@ -171,7 +171,7 @@ export default function ContactPage() {
           <RoundedButton color="green" text="New Contact" Icon={CirclePlus} />
         </div>
       </div>
-      
+
     </main>
   );
 };
