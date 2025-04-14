@@ -35,6 +35,9 @@ export default function ProductPage() {
   const [showForm, setShowForm] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
 
+    // Solución para el error de build - Eliminar este setIsAdmin, solo se ha colocado para quitar el error del build
+    void setIsAdmin;
+
   const transformAndSetData = (data: ProductFromAPI[]) => {
     const transformed: ProductRow[] = data.map((product, index) => {
       return {

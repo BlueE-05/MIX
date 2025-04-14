@@ -19,21 +19,18 @@ const DashboardPage = () => {
   const [selectedTeam, setSelectedTeam] = useState("");
   const [selectedPosition, setSelectedPosition] = useState("");
   const [filteredPositions, setFilteredPositions] = useState<typeof jobPosition>([]);
-  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
 
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const teamName = e.target.value;
     setSelectedTeam(teamName);
     setSelectedPosition("");
     
-    // Find team ID and filter positions
+    // Filter positions based on selected team
     const team = teams.find(t => t.name === teamName);
     if (team) {
-      setSelectedTeamId(team.id);
       const filtered = jobPosition.filter(pos => pos.teamId === team.id);
       setFilteredPositions(filtered);
     } else {
-      setSelectedTeamId(null);
       setFilteredPositions([]);
     }
   };
@@ -72,7 +69,7 @@ const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Position Dropdown - Now properly filtered by team */}
+          {/* Position Dropdown */}
           <div className="relative w-full sm:w-64">
             <label htmlFor="position-select" className="block text-sm font-medium text-gray-700 mb-1">
               Posición
