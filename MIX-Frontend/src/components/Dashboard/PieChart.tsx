@@ -5,7 +5,7 @@ export default function PieChart() {
     return (
         <div className="w-full h-full rounded-2xl">
             <div className="p-1">
-                <p className="text-lg font-bold">Sales goal of the month</p>
+                {/*<p className="text-lg font-bold">Sales goal of the month</p>*/}
             </div>
 
             <div className="flex flex-col items-center justify-center p-4">
