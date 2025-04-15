@@ -22,11 +22,11 @@ export function useProfile(accessToken: string) {
           setProfile({
             name: data.Name,
             lastName: data.LastName,
-            email: data.Email,
+            email: data.ID,
             phone: data.PhoneNumber,
             education: data.Education,
             dateOfJoining: new Date(data.JoiningDate).toLocaleDateString(),
-            position: data.JobPosition || "N/A",
+            position: data.JobPositionName || "N/A",
             profilePic: data.ProfilePic || null,
           });
           setLoading(false);
