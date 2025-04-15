@@ -49,15 +49,19 @@ export default function Profile() {
   
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Unauthorized");
-  
+        
         setProfileData({
           name: data.Name,
           lastName: data.LastName,
-          email: data.Email,
+          email: data.ID,
           phone: data.PhoneNumber,
           education: data.Education,
-          dateOfJoining: new Date(data.JoiningDate).toLocaleDateString(),
-          position: data.JobPosition || "N/A",
+          dateOfJoining: new Date(data.JoiningDate).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              }),
+          position: data.JobPositionName || "N/A",
           profilePic: data.ProfilePic || null,
         });
       } catch (err) {
