@@ -7,156 +7,145 @@ import Navbar from "@/components/NavBar";
 import { educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
-    const router = useRouter();
+  const router = useRouter();
 
-    const cleanFormData = (data: SignupFormData): SignupFormData => {
-        const cleanedData: any = {};
-      
-        for (const [key, value] of Object.entries(data)) {
-          if (
-            value === undefined ||
-            value === null ||
-            (typeof value === "string" && value.trim() === "")
-          ) {
-            cleanedData[key] = null;
-          } else {
-            cleanedData[key] = value;
-          }
-        }
-      
-        return cleanedData as SignupFormData;
-      };
+  const cleanFormData = (data: SignupFormData): SignupFormData => {
+    const cleanedData: Partial<SignupFormData> = {};
+    for (const [key, value] of Object.entries(data)) {
+      cleanedData[key as keyof SignupFormData] =
+        value === undefined || value === null || (typeof value === "string" && value.trim() === "")
+          ? null
+          : value;
+    }
+    return cleanedData as SignupFormData;
+  };
 
-    const handleFormSubmit = async (e: React.FormEvent, data: SignupFormData) => {
-        e.preventDefault();
-      
-        try {
-            const response = await fetch("http://localhost:4000/api/signup", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json"
-                },
-                body: JSON.stringify(cleanFormData(data))
-            });
-      
-          if (!response.ok) throw new Error("Signup failed");
-          const result = await response.json();
-          console.log("Signup result:", result);
-          localStorage.setItem("access_token", result.access_token);
-          router.push("/crm/dashboard");
-        } catch (error) {
-          console.error("Signup error:", error);
-          alert("Error al registrar usuario");
-        }
-      }; 
+  const [formData, setFormData] = useState<SignupFormData>({
+    Name: "",
+    LastName: "",
+    BirthDate: "",
+    PhoneNumber: "",
+    Email: "",
+    Password: "",
+    Education: "",
+    ProfilePic: null,
+    IDJobPosition: "",
+  });
 
-    const [formData, setFormData] = useState<SignupFormData>({
-      Name: "",
-      LastName: "",
-      BirthDate: "",
-      PhoneNumber: "",
-      Email: "",
-      Password: "",
-      Education: "",
-      ProfilePic: null,
-      IdTeam: "",
-      JobPosition: "",
-    });
+  const [teamsFromDb, setTeamsFromDb] = useState<{ ID: number; TeamName: string }[]>([]);
+  const [jobsFromDb, setJobsFromDb] = useState<{ ID: number; Name: string; IDTeam: number }[]>([]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [currentStep, setCurrentStep] = useState(1);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [selectedTeamId, setSelectedTeamId] = useState("");
 
-    const [teamsFromDb, setTeamsFromDb] = useState<{ ID: string; TeamName: string }[]>([]);
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
-    const [currentStep, setCurrentStep] = useState(1);
-
-    useEffect(() => {
-        const fetchTeams = async () => {
-          try {
-            const res = await fetch("http://localhost:4000/api/teams");
-            const data = await res.json();
-            setTeamsFromDb(data);
-          } catch (err) {
-            console.error("Error fetching teams:", err);
-          }
-        };
-        fetchTeams();
-      }, []);
-
-    const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
-
-    const validateField = (name: string, value: string) => {
-        return requiredFields.includes(name) && !value
-          ? `${fieldLabels[name]} is required`
-          : name === "Email" && !emailRegex.test(value)
-          ? "Invalid email format"
-          : name === "Password" && !passwordRegex.test(value)
-          ? "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
-          : name === "PhoneNumber" && (!phoneRegex.test(value) || value.length < 13)
-          ? "Phone number must be at least 13 characters (including country code) with no spaces between numbers"
-          : name === "BirthDate" && (value < birthDateRange.min || value > birthDateRange.max)
-          ? "Birthdate must be between 1935 and 2009"
-          : "";
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/teams");
+        const data = await res.json();
+        setTeamsFromDb(data);
+      } catch (err) {
+        console.error("Error fetching teams:", err);
+      }
     };
+    fetchTeams();
+  }, []);
 
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-    
-            if (!allowedTypes.includes(file.type)) {
-                setErrors((prev) => ({
-                    ...prev,
-                    profilePic: "Only .jpg, .jpeg and .png files are allowed",
-                }));
-                setFormData((prev) => ({ ...prev, profilePic: null }));
-                setImagePreview(null);
-                return;
-            }
-    
-            const reader = new FileReader();
-            reader.onload = () => {
-                const base64String = reader.result as string;
-    
-                setFormData((prev) => ({
-                    ...prev,
-                    ProfilePic: base64String,
-                }));
-                setImagePreview(base64String);
-                setErrors((prev) => ({
-                    ...prev,
-                    profilePic: "",
-                }));
-            };
-            reader.readAsDataURL(file);
-        }
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/jobs");
+        const data = await res.json();
+        setJobsFromDb(data);
+      } catch (err) {
+        console.error("Error fetching jobs:", err);
+      }
     };
-    
-    
+    fetchJobs();
+  }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+  const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
+
+  const validateField = (name: string, value: string) => {
+    if (requiredFields.includes(name) && !value) return `${fieldLabels[name]} is required`;
+    if (name === "Email" && !emailRegex.test(value)) return "Invalid email format";
+    if (name === "Password" && !passwordRegex.test(value)) return "Password must be at least 8 characters, include an uppercase letter, a number, and a special character";
+    if (name === "PhoneNumber" && (!phoneRegex.test(value) || value.length < 13)) return "Phone number must be at least 13 characters (including country code) with no spaces";
+    if (name === "BirthDate" && (value < birthDateRange.min || value > birthDateRange.max)) return "Birthdate must be between 1935 and 2009";
+    return "";
+  };
+
+  const isStepValid = () => {
+    const stepFields: (keyof SignupFormData)[] =
+      currentStep === 1 ? ["Name", "LastName", "BirthDate", "PhoneNumber"] :
+      currentStep === 2 ? ["Email", "Password"] :
+      ["Education"];
+
+    return stepFields.every((field) => formData[field] && !validateField(field, formData[field] as string));
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent, data: SignupFormData) => {
+    e.preventDefault();
+  
+    const cleaned = cleanFormData(data);
+    console.log("Payload que se envía:", cleaned);
+  
+    try {
+      const response = await fetch("http://localhost:4000/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(cleaned),
+      });
+  
+      if (!response.ok) throw new Error("Signup failed");
+  
+      const result = await response.json();
+      localStorage.setItem("access_token", result.access_token);
+      router.push("/crm/dashboard");
+    } catch (error) {
+      console.error("Signup error:", error);
+      alert("Error al registrar usuario");
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    if (!allowedTypes.includes(file.type)) {
+      setErrors((prev) => ({ ...prev, profilePic: "Only .jpg, .jpeg and .png files are allowed" }));
+      setFormData((prev) => ({ ...prev, ProfilePic: null }));
+      setImagePreview(null);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setFormData((prev) => ({ ...prev, ProfilePic: base64 }));
+      setImagePreview(base64);
+      setErrors((prev) => ({ ...prev, profilePic: "" }));
     };
+    reader.readAsDataURL(file);
+  };
 
-    const isStepValid = () => {
-        const stepFields: (keyof typeof formData)[] =
-            currentStep === 1 ? ["Name", "LastName", "BirthDate", "PhoneNumber"] :
-            currentStep === 2 ? ["Email", "Password"] :
-            ["Education"];
-    
-        return stepFields.every((field) => !errors[field] && formData[field]);
-    };
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setSelectedTeamId(value);
+    setFormData((prev) => ({ ...prev, IdJobPosition: "" }));
+  };
 
-    const handleNext = () => isStepValid() && setCurrentStep((prev) => prev + 1);
-    const handleBack = () => setCurrentStep((prev) => prev - 1);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
+  };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (isStepValid()) {
-          handleFormSubmit(e, formData);
-        }
-    };      
-
+  const handleNext = () => isStepValid() && setCurrentStep((prev) => prev + 1);
+  const handleBack = () => setCurrentStep((prev) => prev - 1);
+  const handleSubmit = (e: React.FormEvent) => isStepValid() && handleFormSubmit(e, formData);
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             <Navbar />
@@ -214,6 +203,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                                     type={field}
                                                     name={field}
                                                     placeholder={fieldLabels[field]}
+                                                    value={formData[field as keyof typeof formData] || ""}
                                                     className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
                                                     onChange={handleChange}
                                                 />
@@ -277,33 +267,43 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                         </div>
 
                                         <div>
-                                            <label htmlFor="JobPosition" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Job Position (Optional)
-                                            </label>
-                                            <input 
-                                                id="JobPosition"
-                                                type="text" 
-                                                name="JobPosition" 
-                                                placeholder="Job Position (To be confirmed)" 
-                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition" 
-                                                onChange={handleChange} 
-                                            />
-                                        </div>
-
-                                        <div>
                                             <label htmlFor="IdTeam" className="block text-sm font-medium text-gray-700 mb-1">
                                                 Team (Optional)
                                             </label>
-                                            <select 
+                                            <select
                                                 id="IdTeam"
-                                                name="IdTeam" 
+                                                name="IdTeam"
+                                                value={selectedTeamId}
+                                                onChange={handleTeamChange}
                                                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
-                                                onChange={handleChange}
                                             >
                                                 <option value="">Select Team (To be confirmed)</option>
                                                 {teamsFromDb.map((team) => (
-                                                    <option key={team.ID} value={team.ID}>
-                                                        {team.TeamName}
+                                                <option key={team.ID} value={team.ID}>
+                                                    {team.TeamName}
+                                                </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="IDJobPosition" className="block text-sm font-medium text-gray-700 mb-1">
+                                                Job Position (Optional)
+                                            </label>
+                                            <select
+                                                id="IDJobPosition"
+                                                name="IDJobPosition"
+                                                value={formData.IDJobPosition}
+                                                disabled={!selectedTeamId}
+                                                onChange={handleChange}
+                                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition disabled:bg-gray-100"
+                                            >
+                                                <option value="">{selectedTeamId ? "Select Job Position (To be confirmed)" : "Select a Team first"}</option>
+                                                {jobsFromDb
+                                                .filter((job) => String(job.IDTeam) === String(selectedTeamId))
+                                                .map((job) => (
+                                                    <option key={job.ID} value={job.ID}>
+                                                    {job.Name}
                                                     </option>
                                                 ))}
                                             </select>
