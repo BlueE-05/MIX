@@ -7,6 +7,5 @@ export interface UserDTO {
     BirthDate: string;
     Education: string;
     ProfilePic: string | null;
-    idTeam: string | null;
-    JobPosition: string | null;
+    IDJobPosition: string | null;
 }
