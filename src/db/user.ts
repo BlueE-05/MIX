@@ -17,19 +17,18 @@ export class UserDbService {
       .input("emailVerified", sql.Bit, user.email_verified)
       .input("phoneNumber", sql.NVarChar, user.PhoneNumber)
       .input("birthDate", sql.Date, user.BirthDate)
-      .input("jobPosition", sql.NVarChar, user.JobPosition || null)
       .input("education", sql.NVarChar, user.Education)
       .input("profilePic", sql.VarBinary(sql.MAX), bufferPic)
-      .input("idTeam", sql.Int, user.idTeam ? parseInt(user.idTeam) : null)
+      .input("idJobPosition", sql.Int, user.IDJobPosition ? parseInt(user.IDJobPosition) : null)
       .query(`
         INSERT INTO [User] (
-          Name, LastName, Email, EmailVerified,
-          PhoneNumber, BirthDate, JobPosition, Education,
-          ProfilePic, IDTeam
+          Name, LastName, ID, EmailVerified,
+          PhoneNumber, BirthDate, Education,
+          ProfilePic, IDJobPosition
         ) VALUES (
           @name, @lastName, @email, @emailVerified,
-          @phoneNumber, @birthDate, @jobPosition, @education,
-          @profilePic, @idTeam
+          @phoneNumber, @birthDate, @education,
+          @profilePic, @idJobPosition
         )
       `);
   }
@@ -44,19 +43,14 @@ export class UserDbService {
             u.ID,
             u.Name,
             u.LastName,
-            u.Email,
-            u.EmailVerified,
             u.PhoneNumber,
-            u.BirthDate,
             u.JoiningDate,
-            u.JobPosition,
             u.Education,
-            u.IDTeam,
-            t.TeamName AS TeamName,
+            jp.Name AS JobPositionName,
             u.ProfilePic
           FROM [User] u
-          LEFT JOIN [Team] t ON u.IDTeam = t.ID
-          WHERE LOWER(u.Email) = @email
+          INNER JOIN [JobPosition] jp ON u.IDJobPosition = jp.ID
+          WHERE LOWER(u.ID) = @email
         `);
   
       console.log("getUserByEmail():", result.recordset[0]);
