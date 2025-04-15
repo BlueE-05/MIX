@@ -34,9 +34,8 @@ export default function ProductPage() {
   const [productData, setProductData] = useState<ProductRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
-
-    // Solución para el error de build - Eliminar este setIsAdmin, solo se ha colocado para quitar el error del build
-    void setIsAdmin;
+  void setIsAdmin;
+  const [selectedProduct, setSelectedProduct] = useState<ProductRow | null>(null);
 
   const transformAndSetData = (data: ProductFromAPI[]) => {
     const transformed: ProductRow[] = data.map((product, index) => {
@@ -155,6 +154,64 @@ export default function ProductPage() {
         color="orange"
         onSearch={handleSearch}
       />
+
+      {/* Tarjeta de detalles del producto */}
+      {selectedProduct && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">{selectedProduct.name}</h2>
+              <button 
+                onClick={() => setSelectedProduct(null)}
+                className="text-gray-500 hover:text-gray-700 text-xl"
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <div className="border-b pb-2">
+                <h3 className="font-semibold text-gray-500">Reference Number</h3>
+                <p className="text-gray-700">{selectedProduct.refNum}</p>
+              </div>
+              
+              <div className="border-b pb-2">
+                <h3 className="font-semibold text-gray-500">Price</h3>
+                <p className="text-gray-700">${selectedProduct.unitaryPrice.toFixed(2)}</p>
+              </div>
+              
+              <div className="border-b pb-2">
+                <h3 className="font-semibold text-gray-500">Commission</h3>
+                <p className="text-gray-700">${selectedProduct.commission.toFixed(2)}</p>
+              </div>
+              
+              <div>
+                <h3 className="font-semibold text-gray-500">Product Sheet</h3>
+                <div className="mt-1">{selectedProduct.productSheet}</div>
+              </div>
+            </div>
+            
+            <div className="mt-6 flex justify-between">
+              <button 
+                onClick={() => {
+                  // Función para el botón adicional (puedes personalizar esto)
+                  console.log('Acción adicional para:', selectedProduct.name);
+                }}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
+                Editar
+              </button>
+              
+              <button 
+                onClick={() => setSelectedProduct(null)}
+                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Form to add new product */}
       {showForm && (
