@@ -94,20 +94,22 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     try {
       const response = await fetch("http://localhost:4000/api/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(cleaned),
+        credentials: "include",
       });
   
       if (!response.ok) throw new Error("Signup failed");
   
-      const result = await response.json();
-      localStorage.setItem("access_token", result.access_token);
       router.push("/crm/dashboard");
     } catch (error) {
       console.error("Signup error:", error);
       alert("Error al registrar usuario");
     }
   };
+  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

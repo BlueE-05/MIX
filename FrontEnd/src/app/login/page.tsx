@@ -32,7 +32,8 @@ export default function Login() {
             headers: {
               "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: "include"
           });
       
           const data = await res.json();
@@ -43,9 +44,6 @@ export default function Login() {
             return;
           }
       
-          localStorage.setItem("access_token", data.access_token);
-          localStorage.setItem("id_token", data.id_token);
-      
           console.log("Login OK:", data);
           router.push("/crm/dashboard");
         } catch (err) {
@@ -53,7 +51,8 @@ export default function Login() {
           setEmailError("Login failed");
           setPasswordError("Login failed");
         }
-    };
+      };
+      
       
     const isButtonDisabled = !email || !password;
 

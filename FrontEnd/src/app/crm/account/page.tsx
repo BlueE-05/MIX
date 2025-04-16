@@ -21,10 +21,21 @@ export default function Profile() {
 
   const router = useRouter();
   
-  const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    router.push("/login");
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:4000/api/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+  
+      router.push("/login");
+    } catch (err) {
+      console.error("Logout error:", err);
+      alert("Error logging out");
+    }
   };
+
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setProfileData({ ...profileData, [e.target.name]: e.target.value });
   };
@@ -37,14 +48,9 @@ export default function Profile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("access_token");
-  
         const res = await fetch("http://localhost:4000/api/profile", {
           method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         });
   
         const data = await res.json();
