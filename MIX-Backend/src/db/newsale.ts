@@ -46,11 +46,12 @@ class NewSaleService{
     }
   }
 
-
+    //NOTA: Pendiente
     //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
     //Nota: Recordar que hay que cambair la fecha de fin con un triger o algo al momento de cerrar realmente la venta 
+    /*
     async createSale(iduser: number, idcont: number, startdate: string, enddate: string, idphase: number) {
-      try {
+      
           const pool = await poolPromise;
           const result = await pool.request()
               .input('iduser', sql.Int, iduser)  
@@ -59,12 +60,9 @@ class NewSaleService{
               .input('enddate', sql.Date, enddate)
               .input('idphase', sql.Int, idphase)
               .query('INSERT INTO Sale (IDUser, IDContact, StartDate, EndDate, IDPhase)VALUES (@iduser, @idcont, @startdate, @enddate, idphase)');
-          return result.recordset;
-      } catch (error) {
-          console.error('❌ Error en getInfoContacto:', error);
-          throw new Error('Error al obtener información del contacto');
-      }
+      
     }
+              */
 
   
 

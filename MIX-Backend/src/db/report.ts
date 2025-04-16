@@ -9,7 +9,7 @@ class ReportService{
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
+        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
@@ -43,6 +43,9 @@ class ReportService{
     }
   }
 
+  //NOTAS DE CAMBIOS: Agregar funcion para las nuevas fases
+  
+  //Calcular comisiones de un solo usuario
   async getTotalComissions(id: number) {
     try {
         const pool = await poolPromise;
@@ -55,48 +58,10 @@ class ReportService{
     }
   }
 
-}
-export default ReportService;
-
-
-
-//DEJAR POR EL MOMENTO PARA PRUEBAS SI FALLA
-/*import { poolPromise } from '../database';
-
-class ReportService{
-    async getAllCierre() {
-    const pool = await poolPromise;
-    const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = 1');
-    console.log('✅ Conexión exitosa');
-    return result.recordset;
-    }
-
-  
-    async getAllCotizacion() {
-      const pool = await poolPromise;
-      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase=2 AND IDUser = 1');
-      console.log('✅ Conexión exitosa');
-      return result.recordset;
-    }
-
-
-    async getAllProspecto() {
-      const pool = await poolPromise;
-      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase=1 AND IDUser = 1');
-      console.log('✅ Conexión exitosa');
-      return result.recordset;
-    }
-
-
-    async getTotalComissions() {
-      const pool = await poolPromise;
-      const result = await pool.request().query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommissions FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum JOIN Sale s ON sa.IDSale = s.ID WHERE s.IDUser = 1');    
-
-      console.log('✅ Conexión exitosa');
-      return result.recordset;
-    }
+  //Lo que falta
+  //Trigger para que se actualice las tablas y graficas cada cambio de mes
+  //Hacer la gráfica de lineas
 
 }
 export default ReportService;
-*/
 

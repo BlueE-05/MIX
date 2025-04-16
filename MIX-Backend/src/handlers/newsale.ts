@@ -42,22 +42,11 @@ class NewSaleHTTPHandler {
       }
     };
 
-    //Revisar
-    createSale = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-          const iduser = Number(req.params.iduser);
-          const idcont = Number(req.params.idcont);
-          const startdate = String(req.params.startdate);
-          const enddate = String(req.params.enddate);
-          const idphase = Number(req.params.idphase);
-          const resultado = await this.newsaleController.createSale(iduser, idcont, startdate, enddate, idphase);
-          res.json(resultado);
-          
-      } catch (error) {
-          console.error('Error en getInfoContacto handler:', error);
-          next(error);
-      }
-    };
+    
+    
+  
+    
+
 
 
 }

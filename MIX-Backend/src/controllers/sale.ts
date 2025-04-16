@@ -15,30 +15,90 @@ class SaleController {
     return this.saleService.getSaleByEnt(ent, iduser);
   }
 
+  async getKNnum(idsale: number, iduser: number) {
+    return this.saleService.getKNnum(idsale, iduser);
+  }
+
+  
+
+
+/*
+  async getKBNum(idsale: number, iduser: number) {
+    return this.saleService.getKBNum(idsale, iduser);
+  } */
+
+ 
+
+
+  
+
+
+
 }
 
 export default new SaleController();
 
 
+//EN CASO DE QUE NO FUNCIONE LA OTRA FUNCIÓN
 /*
-import SaleService from "../db/sale";
-
-class SaleController {
-  private SaleService: typeof SaleService;
-
-  constructor() {
-    this.SaleService = SaleService;
+  async getKNnum(idsale: number, iduser: number) {
+    try {
+      const result = await this.saleService.getKNnum(idsale, iduser);
+      return {
+        success: true,
+        data: result
+      };
+      
+    } catch (error) {
+      console.error('❌ Error en SaleController.getTest:', error);
+      return {
+        success: false,
+        message: 'Ocurrió un error al obtener el resumen de la venta.',
+        error
+      };
+    }
   }
+    */
 
-    async getSaleByID(id: number) {
-        return await this.SaleService.getSaleByID(id);
+
+
+//DEJAR POR EL MOMENTO PARA PRUEBAS SI FALLA
+/*import { poolPromise } from '../database';
+
+class ReportService{
+    async getAllCierre() {
+    const pool = await poolPromise;
+    const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cierre FROM Sale WHERE IDPhase = 3 AND IDUser = 1');
+    console.log('✅ Conexión exitosa');
+    return result.recordset;
     }
 
-    async getSaleByPhase(id: number) {
-        return await this.SaleService.getSaleByPhase(id);
+  
+    async getAllCotizacion() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase=2 AND IDUser = 1');
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
+    }
+
+
+    async getAllProspecto() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase=1 AND IDUser = 1');
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
+    }
+
+
+    async getTotalComissions() {
+      const pool = await poolPromise;
+      const result = await pool.request().query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommissions FROM SaleArticle sa JOIN Product p ON sa.IDProduct = p.RefNum JOIN Sale s ON sa.IDSale = s.ID WHERE s.IDUser = 1');    
+
+      console.log('✅ Conexión exitosa');
+      return result.recordset;
     }
 
 }
-
-export default new SaleController;
+export default ReportService;
 */
+

@@ -18,9 +18,11 @@ class SaleService{
         }
     }
 
+
   
   //Buscar sales por fase
   //Nota: revisar el orden del orden de los datos que se muestran
+  //Nota: considerar las neuvas fases idk
     async getSaleByFase(idfase: number, iduser: number) {
         try {
             const pool = await poolPromise;
@@ -34,7 +36,6 @@ class SaleService{
     }
 
     //Notas: Agregar el despliegue de un mensaje de "Empresa no encontrada" si no hay ninguna empresa registrada con ese nombre
-
     async getSaleByEnt(ent: string, iduser: number) {
         try {
             const pool = await poolPromise;
@@ -47,33 +48,49 @@ class SaleService{
         }
     }
 
+
+    //query para eliminar una sale
+    //query para modificar una sale
+
+    //PARA USAR EN EL KANBAN
+    //Mostrar comision total y precio total
+    async getKNnum (idsale: number, iduser: number) {
+      const pool = await poolPromise;
+      try {
+        const result = await pool.request().input('idsale', sql.Int, idsale).input('iduser', sql.Int, iduser)
+        .query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission, SUM(p.UnitaryPrice * sa.Quantity) AS TotalSale FROM Sale s JOIN SaleArticle sa ON s.ID = sa.IDSale JOIN Product p ON sa.IDProduct = p.RefNum WHERE s.ID = @idsale AND s.IDUser = @iduser');
+        return result.recordset; 
+      } catch (error) {
+        console.error('❌ Error en la prueba:');
+        throw error; 
+      }
+    };
+
+
+
+
+
+    //Mostrar la info de la sale
     /*
     SELECT 
-    s.ID AS SaleID, 
-    (SELECT SUM(p.UnitaryPrice * sa.Quantity) 
-     FROM SaleArticle sa 
-     JOIN Product p ON sa.IDProduct = p.RefNum 
-     WHERE sa.IDSale = s.ID) AS Total,
-    ph.Name AS Status, 
-    c.LastInteraction AS LastContact, 
-    s.EndDate AS ClosingDate, 
-    s.StartDate AS CreationDate,
-    e.Name AS EnterpriseName
-FROM 
-    Sale s 
-JOIN 
-    Phase ph ON s.IDPhase = ph.ID 
-JOIN 
-    Contact c ON s.IDContact = c.ID 
-JOIN 
-    Enterprise e ON c.IDEnterprise = e.ID
-WHERE 
-    s.IDUser = 1                  
-    AND e.Name = 'Empresa A'       
-ORDER BY 
-    c.LastInteraction;
+    c.Name AS ContactName,
+    e.Name AS EnterpriseName,
+    SUM(sa.Quantity) AS TotalProducts
+FROM Sale s
+JOIN Contact c ON s.IDContact = c.ID
+JOIN Enterprise e ON c.IDEnterprise = e.ID
+JOIN SaleArticle sa ON s.ID = sa.IDSale
+WHERE s.ID = 1 AND s.IDUser =1
+GROUP BY c.Name, e.Name;
     */
 
+
+    //Cambiar el estado de la fase de acuerdo a la columna en la que se meuva en el kanban
+    //Cambiar el estado de la fase cuando se actualiza
+
+
+
+ 
 
  
 }
@@ -81,29 +98,3 @@ export default SaleService;
 
 
 
-
-/*import { Pool } from "pg";
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-class SaleService {
-    private db: Pool;
-    constructor(db: Pool) {
-      this.db = db;
-    }
-
-    //Buscar sale por ID
-    async getSaleByID(id: number): Promise<any[]> {
-        const result = await this.db.query('SELECT s.ID AS SaleID, (SELECT SUM(p.UnitaryPrice * sa.Quantity) AS Total FROM Sale s JOIN SaleArticle sa ON s.ID = sa.IDSale JOIN Product p ON sa.IDProduct = p.RefNum WHERE s.ID = $1 GROUP BY s.ID) AS Total, p.Name AS Status, c.LastInteraction AS LastContact, s.EndDate AS ClosingDate, s.StartDate AS CreationDate FROM Sale s JOIN Phase p ON s.IDPhase = p.ID JOIN Contact c ON s.IDContact = c.ID WHERE s.ID = $1', [id]);
-        return result.rows;
-    }
-
-    //Buscar sales por fase
-    async getSaleByPhase(idphase: number): Promise<any[]> {
-        const result = await this.db.query('SELECT s.ID AS SaleID, (SELECT SUM(p.UnitaryPrice * sa.Quantity) AS Total FROM Sale s JOIN SaleArticle sa ON s.ID = sa.IDSaleJOIN Product p ON sa.IDProduct = p.RefNum WHERE s.IDPhase = $1G ROUP BY s.ID) As Total, p.Name AS Status, c.LastInteraction AS LastContact, s.EndDate AS ClosingDate, s.StartDate AS CreationDate FROM Sale s JOIN Phase p ON s.IDPhase = p.ID JOIN Contact c ON s.IDContact = c.ID WHERE s.IDPhase = $1', [idphase]);
-        return result.rows;
-    }
-
-}
-
-export default new SaleService(pool);
-*/
