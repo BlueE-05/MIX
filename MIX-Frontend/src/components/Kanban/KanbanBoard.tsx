@@ -1,11 +1,9 @@
-// KanbanBoard.tsx
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import Column from './Column';
-import { Task } from './types'; // Importar desde el archivo de tipos
-// Asumiendo que los estilos del modal y el layout base están en KanbanBoard.css
-// y que Tailwind se usa para el resto.
-import './KanbanBoard.css'; 
+import { Task } from './types';
+import './KanbanBoard.css';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const columnColors: { [key: string]: string } = {
   'Prospecting': 'bg-sky-300',
@@ -44,7 +42,51 @@ const initialColumns: { [key: string]: Task[] } = {
 
 const KanbanBoard: React.FC = () => {
   const [columns, setColumns] = useState<{ [key: string]: Task[] }>(initialColumns);
-  const [selectedColumn, setSelectedColumn] = useState(Object.keys(initialColumns)[0] || ''); // Selecciona la primera columna por defecto
+  const [selectedColumn, setSelectedColumn] = useState(Object.keys(initialColumns)[0] || '');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3);
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  // Calcular columnas visibles basado en el ancho del tablero
+  useEffect(() => {
+    const calculateVisibleColumns = () => {
+      if (boardRef.current) {
+        const boardWidth = boardRef.current.offsetWidth;
+        // Asumimos un ancho aproximado de columna de 300px + gap
+        const columnWidth = 300 + 24; // 24 es el gap (gap-6 = 1.5rem = 24px)
+        const count = Math.max(1, Math.floor(boardWidth / columnWidth));
+        setVisibleColumnsCount(count);
+      }
+    };
+
+    calculateVisibleColumns();
+    window.addEventListener('resize', calculateVisibleColumns);
+    return () => window.removeEventListener('resize', calculateVisibleColumns);
+  }, []);
+
+  // Dividir las columnas en grupos según las columnas visibles
+  const columnGroups = React.useMemo(() => {
+    const columnNames = Object.keys(columns);
+    const groups = [];
+    for (let i = 0; i < columnNames.length; i += visibleColumnsCount) {
+      groups.push(columnNames.slice(i, i + visibleColumnsCount));
+    }
+    return groups;
+  }, [columns, visibleColumnsCount]);
+
+  const visibleColumns = columnGroups[currentPage] || [];
+
+  const goToNextPage = () => {
+    if (currentPage < columnGroups.length - 1) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPrevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   const deleteColumn = useCallback((columnName: string) => {
     setColumns(prevColumns => {
@@ -104,43 +146,61 @@ const KanbanBoard: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 sm:p-6">
-      <div className="max-w-full mx-auto">
+    <div className="min-h-screen p-4 sm:p-6 overflow-x-hidden">
+      <div className="max-w-full mx-auto" ref={boardRef}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
             <p className="text-gray-600">Drag and Drop your tasks!</p>
           </div>
-          </div>
         </div>
 
-        {/* Board Container (usando CSS para flex layout base) */}
-        <div className="kanban-board rounded-xl p-4 sm:p-6 overflow-visible">
-          {/* Usar grid aquí podría ser menos flexible para drag and drop entre listas largas,
-              flexbox (como en KanbanBoard.css) podría ser más natural.
-              Ajusta según tus preferencias visuales/funcionales.
-              Si usas el CSS original, quita las clases de grid.
-          */}
-          {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-6 min-w-[800px]"> */}
-          <div className="flex gap-6 min-w-[800px"> {/* Usando flex y gap */}
-            {Object.keys(columns).map(columnName => (
-              <Column
-                key={columnName}
-                title={columnName}
-                tasks={columns[columnName]}
-                colorClass={columnColors[columnName] ?? 'bg-white'}
-                deleteTask={deleteTask} // Pasar directamente
-                onDeleteColumn={() => deleteColumn(columnName)}
-                onDragStart={handleDragStart} // Pasar handlers unificados
-                onDragEnd={handleDragEnd}
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-              />
-            ))}
+        {/* Board Container con controles de paginación */}
+        <div className="relative">
+          {columnGroups.length > 1 && (
+            <div className="flex items-center justify-between mb-4">
+              <button 
+                onClick={goToPrevPage}
+                disabled={currentPage === 0}
+                className={`p-2 rounded-full ${currentPage === 0 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <span className="text-gray-600">
+                Página {currentPage + 1} de {columnGroups.length}
+              </span>
+              <button 
+                onClick={goToNextPage}
+                disabled={currentPage === columnGroups.length - 1}
+                className={`p-2 rounded-full ${currentPage === columnGroups.length - 1 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
+              >
+                <ChevronRight size={24} />
+              </button>
+            </div>
+          )}
+
+          <div className="kanban-board-container overflow-x-auto pb-4">
+            <div className="flex gap-6" style={{ minWidth: 'max-content' }}>
+              {visibleColumns.map(columnName => (
+                <Column
+                  key={columnName}
+                  title={columnName}
+                  tasks={columns[columnName]}
+                  colorClass={columnColors[columnName] ?? 'bg-white'}
+                  deleteTask={deleteTask}
+                  onDeleteColumn={() => deleteColumn(columnName)}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+    </div>
   );
 };
 
