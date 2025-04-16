@@ -1,38 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ProfileData } from "@/types/profile"
+import { LayOutProfileData } from "@/types/profile";
 
+export function useProfile() {
+  const [profile, setProfile] = useState<LayOutProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export function useProfile(accessToken: string) {
-    const [profile, setProfile] = useState<ProfileData | null>(null);
-    const [loading, setLoading] = useState(true);
-  
-    useEffect(() => {
-      if (!accessToken) return;
-  
-      fetch("http://localhost:4000/api/profile", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setProfile({
-            name: data.Name,
-            lastName: data.LastName,
-            email: data.ID,
-            phone: data.PhoneNumber,
-            education: data.Education,
-            dateOfJoining: new Date(data.JoiningDate).toLocaleDateString(),
-            position: data.JobPositionName || "N/A",
-            profilePic: data.ProfilePic || null,
-          });
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }, [accessToken]);
-  
-    return { profile, loading };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/profile", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) throw new Error("Unauthorized");
+
+        const data = await res.json();
+
+        setProfile({
+          name: data.Name,
+          lastName: data.LastName,
+          profilePic: data.ProfilePic || null
+        });
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  return { profile, loading };
 }
