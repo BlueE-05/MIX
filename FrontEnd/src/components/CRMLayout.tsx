@@ -1,29 +1,21 @@
 "use client";
 
 import Sidebar from '@/components/Sidebar/Sidebar';
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import Image from 'next/image';
 import { useProfile } from '@/hooks/useProfile';
-import { useRouter } from 'next/navigation';
+import { useSession } from '@/hooks/useSession';
 
 interface CRMLayoutProps {
   children: ReactNode;
 }
 
 export default function CRMLayout({ children }: CRMLayoutProps) {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const router = useRouter();
+  const { isAuthenticated, loading } = useSession();
+  const { profile } = useProfile();
 
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      router.push("/login");
-    } else {
-      setAccessToken(token);
-    }
-  }, [router]);
-
-  const { profile } = useProfile(accessToken || "");
+  if (loading) return <div className="p-8 text-center">Cargando sesión...</div>;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen flex">
