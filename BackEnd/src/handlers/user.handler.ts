@@ -26,4 +26,14 @@ export class UserHttpHandler {
       next(error);
     }
   }
+
+  async logout(req: Request, res: Response, next: NextFunction) {
+    try {
+      const controller = await controllerPromise;
+      controller.logout(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+  
 }
