@@ -5,6 +5,7 @@ import CustomTable from "@/components/Tables/CustomTable";
 import { CirclePlus } from "lucide-react";
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import Formulario from '@/components/Forms/SalesForms';
+import SaleDetailCard from '@/components/Cards/SaleDetailCard';
 
 interface SaleFormData {
   contact: string;
@@ -29,6 +30,7 @@ export default function SalesPage() {
   const salesHeaders = ["#", "RefNumber", "Enterprise", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
   const [salesData, setSalesData] = useState<SaleRow[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [selectedSale, setSelectedSale] = useState<SaleRow | null>(null);
 
   useEffect(() => {
     // Simulación de datos de ventas
@@ -55,7 +57,23 @@ export default function SalesPage() {
         lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
         closingDate: new Date(2025, 2, (i % 28) + 10).toLocaleDateString("en-US"),
         creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
-        actions: <ArrowRightButton key={`arrow-${i}`} />,
+        actions: <ArrowRightButton color='#0C43A8'
+                  key={`arrow-${i}`} 
+                  onClick={() => {
+                    // 3. Asignar el sale seleccionado al hacer click
+                    setSelectedSale({
+                      id: i + 1,
+                      refNumber: `REF-${1000 + i}`,
+                      enterprise: `Company ${i + 1}`,
+                      amount: `$${(Math.random() * 5000 + 500).toFixed(2)}`,
+                      status: status,
+                      lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
+                      closingDate: new Date(2025, 2, (i % 28) + 10).toLocaleDateString("en-US"),
+                      creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
+                      actions: <ArrowRightButton />
+                    });
+                  }}
+                />,
       };
     });
 
@@ -117,6 +135,17 @@ export default function SalesPage() {
         <Formulario
           onClose={() => setShowForm(false)}
           onSubmit={handleNewSale}
+        />
+      )}
+
+      {/* Tarjeta de detalles de la venta */}
+      {selectedSale && (
+        <SaleDetailCard
+          sale={{
+            ...selectedSale,
+            status: selectedSale.status // Pasa el status como está
+          }}
+          onClose={() => setSelectedSale(null)}
         />
       )}
 

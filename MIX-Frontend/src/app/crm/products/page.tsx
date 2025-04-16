@@ -7,6 +7,7 @@ import Formulario, { ProductData } from '@/components/Forms/ProductsForms';
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import { CirclePlus } from 'lucide-react';
+import ProductDetailCard from '@/components/Cards/ProductDetailCard';
 
 interface ProductFromAPI {
   RefNum: string;
@@ -46,12 +47,29 @@ export default function ProductPage() {
         unitaryPrice: product.UnitaryPrice,
         commission: product.Commission,
         productSheet: <a key={`link-${index}`} href={`/files/${product.RefNum}.pdf`} className="text-blue-500 underline">View Sheet</a>,
-        actions: <ArrowRightButton key={`arrow-${index}`} />
+        actions: <ArrowRightButton color='orange'
+                  key={`arrow-${index}`} 
+                  onClick={() => {
+                    setSelectedProduct({
+                      id: index + 1,
+                      name: product.Name,
+                      refNum: product.RefNum,
+                      unitaryPrice: product.UnitaryPrice,
+                      commission: product.Commission,
+                      productSheet: <a href={`/files/${product.RefNum}.pdf`} className="text-blue-500 underline">View Sheet</a>,
+                      actions: <ArrowRightButton />
+                    });
+                  }}
+                />
       };
     });
 
     setProductData(transformed);
   };
+
+  const handleEditProduct = () => {
+    // Lógica para editar el producto seleccionado
+  }
 
   const fetchProducts = useCallback(async (searchTerm?: string) => {
     try {
@@ -157,60 +175,13 @@ export default function ProductPage() {
 
       {/* Tarjeta de detalles del producto */}
       {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">{selectedProduct.name}</h2>
-              <button 
-                onClick={() => setSelectedProduct(null)}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-              >
-                &times;
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="border-b pb-2">
-                <h3 className="font-semibold text-gray-500">Reference Number</h3>
-                <p className="text-gray-700">{selectedProduct.refNum}</p>
-              </div>
-              
-              <div className="border-b pb-2">
-                <h3 className="font-semibold text-gray-500">Price</h3>
-                <p className="text-gray-700">${selectedProduct.unitaryPrice.toFixed(2)}</p>
-              </div>
-              
-              <div className="border-b pb-2">
-                <h3 className="font-semibold text-gray-500">Commission</h3>
-                <p className="text-gray-700">${selectedProduct.commission.toFixed(2)}</p>
-              </div>
-              
-              <div>
-                <h3 className="font-semibold text-gray-500">Product Sheet</h3>
-                <div className="mt-1">{selectedProduct.productSheet}</div>
-              </div>
-            </div>
-            
-            <div className="mt-6 flex justify-between">
-              <button 
-                onClick={() => {
-                  // Función para el botón adicional (puedes personalizar esto)
-                  console.log('Acción adicional para:', selectedProduct.name);
-                }}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-              >
-                Editar
-              </button>
-              
-              <button 
-                onClick={() => setSelectedProduct(null)}
-                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
-              >
-                Cerrar
-              </button>
-            </div>
-          </div>
-        </div>
+        <ProductDetailCard
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onEdit={handleEditProduct}
+          editButtonText="Editar Producto"
+          closeButtonText="Cerrar"
+        />
       )}
 
       {/* Form to add new product */}

@@ -9,6 +9,8 @@ import RoundedButton from '@/components/Buttons/RoundedButton';
 import Formulario, { ContactData, EnterpriseData } from '@/components/Forms/ContactsForms';
 import { CirclePlus } from 'lucide-react';
 
+import ContactDetailCard from '@/components/Cards/ContactDetailCard'
+
 interface ContactFromAPI {
   ID: number;
   Name: string;
@@ -37,6 +39,8 @@ export default function ContactPage() {
   const [contactData, setContactData] = useState<ContactRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
+  const [selectedContact, setSelectedContact] = useState<ContactRow | null>(null)
+
 
   const fetchContacts = useCallback(async (searchTerm?: string) => {
     try {
@@ -87,12 +91,30 @@ export default function ContactPage() {
         status: <LabelOval key={`status-${index}`} color={color} data={status} />,
         phone: contact.PhoneNumber,
         email: contact.Email,
-        actions: <ArrowRightButton key={`arrow-${index}`} />
+        actions: <ArrowRightButton color='green'
+                  key={`arrow-${index}`} 
+                  onClick={() => {
+                    setSelectedContact({
+                      id: contact.ID,
+                      name: contact.Name,
+                      lastName: contact.LastName,
+                      enterprise: contact.EnterpriseName,
+                      status: status,
+                      phone: contact.PhoneNumber,
+                      email: contact.Email,
+                      actions: <ArrowRightButton />
+                    });
+                  }}
+                />
       };
     });
 
     setContactData(transformed);
   };
+
+  const handleEditContact = () => {
+    // Implementar aqui la lógica de edición
+  }
 
   useEffect(() => {
     fetchContacts();
@@ -150,8 +172,6 @@ export default function ContactPage() {
   ]);
 
 
-
-
   return (
     <main className="min-h-screen p-6">
       {/* Title of the page */}
@@ -171,6 +191,17 @@ export default function ContactPage() {
           <RoundedButton color="green" text="New Contact" Icon={CirclePlus} />
         </div>
       </div>
+
+      {/* Tarjeta de detalles del contacto */}
+      {selectedContact && (
+        <ContactDetailCard
+          contact={selectedContact}
+          onClose={() => setSelectedContact(null)}
+          onEdit={handleEditContact}
+          editButtonText="Editar Contacto"
+          closeButtonText="Cerrar"
+        />
+      )}
 
     </main>
   );
