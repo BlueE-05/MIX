@@ -8,3 +8,9 @@ export interface ProfileData {
     education: string;
     profilePic: string | null;
 }
+
+export interface LayOutProfileData {
+    name: string;
+    lastName: string;
+    profilePic: string | null;
+}
