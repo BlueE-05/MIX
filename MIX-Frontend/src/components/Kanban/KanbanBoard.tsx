@@ -18,27 +18,27 @@ const columnColors: { [key: string]: string } = {
 
 const initialColumns: { [key: string]: Task[] } = {
   'Prospecting': [
-    { id: 1, title: 'Contactar a cliente potencial', description: 'Enviar correo electrónico de presentación' },
-    { id: 2, title: 'Llamada de seguimiento', description: 'Llamar para dar seguimiento a correo enviado' },
+    { id: 1, ContactName: "Petunia", Enterprise: 'FEMSA', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 2, ContactName: "Eduardo", Enterprise: 'Pepsico', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
   ],
   'Initial Contact': [
-    { id: 3, title: 'Preparar cotización', description: 'Crear cotización para cliente potencial' },
+    { id: 3, ContactName: "Maximo", Enterprise: 'BMV', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
   ],
   'Proposal': [
-    { id: 4, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
-    { id: 5, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+    { id: 4, ContactName: "Dana", Enterprise: 'Ferrari', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 5, ContactName: "MasterChief", Enterprise: 'Fresa', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
   ],
   'Negotiation': [
-    { id: 6, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
-    { id: 7, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+    { id: 6, ContactName: "Daniel", Enterprise: 'Bugati', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 7, ContactName: "Estefania", Enterprise: 'Pepinillo', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
   ],  
   'Closing': [
-    { id: 8, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
-    { id: 9, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+    { id: 8, ContactName: "Sandino", Enterprise: 'Maseca', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 9, ContactName: "Esteban", Enterprise: 'Hambre', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
   ],
   'Cancelled': [
-    { id: 10, title: 'Negociar términos', description: 'Negociar términos y condiciones del contrato' },
-    { id: 11, title: 'Cerrar venta', description: 'Finalizar y firmar contrato con el cliente' },
+    { id: 10, ContactName: "Fatima", Enterprise: 'Trebol', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 11, ContactName: "Carlos", Enterprise: 'Comida', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
   ],
 };
 

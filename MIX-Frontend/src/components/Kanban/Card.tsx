@@ -13,7 +13,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ task, onDelete, onDragStart, onDragEnd}) => {
-  const { title, description } = task;
+  const { ContactName, Enterprise, TotalProducts , TotalSale , TotalComission } = task;
 
   return (
     <div
@@ -24,19 +24,35 @@ const Card: React.FC<CardProps> = ({ task, onDelete, onDragStart, onDragEnd}) =>
     >
       {/* Contenido de la tarjeta */}
       <div className="flex justify-between items-start mb-1">
-        <h3 className="font-medium text-gray-800 break-words mr-6">{title}</h3>
+        <div>
+          <h3 className="font-medium text-gray-800 break-words mr-6">{Enterprise}</h3>
+          {ContactName && (
+            <p className="text-sm text-gray-600">Contacto: {ContactName}</p>
+          )}
+        </div>
         <button
           onClick={onDelete}
           className="absolute top-1 right-1 p-1 opacity-0 group-hover:opacity-100 hover:bg-gray-100 rounded-full text-gray-400 hover:text-red-500 transition-opacity"
-          aria-label={`Eliminar tarea ${title}`}
+          aria-label={`Eliminar ${Enterprise}`}
         >
           <X className="w-4 h-4" />
         </button>
       </div>
 
-      {description && (
-        <p className="text-sm text-gray-600 mt-1 break-words">{description}</p>
-      )}
+      <div className="grid grid-cols-2 gap-2 mt-3">
+        <div>
+          <p className="text-sm font-medium text-gray-500">Productos</p>
+          <p className="text-sm text-gray-800">{TotalProducts}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-gray-500">Ventas</p>
+          <p className="text-sm text-gray-800">{TotalSale}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium text-gray-500">Comisión</p>
+          <p className="text-sm text-gray-800">{TotalComission}</p>
+        </div>
+      </div>
     </div>
   );
 };
