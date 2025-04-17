@@ -9,7 +9,7 @@ import RoundedButton from '@/components/Buttons/RoundedButton';
 import Formulario, { ContactData, EnterpriseData } from '@/components/Forms/ContactsForms';
 import { CirclePlus } from 'lucide-react';
 
-import ContactDetailCard from '@/components/Cards/ContactDetailCard'
+import ContactDetailCard from '@/components/Cards/Tables/ContactDetailCard'
 
 interface ContactFromAPI {
   ID: number;

@@ -7,6 +7,7 @@ import { SignupFormData } from "@/types/signup";
 import Navbar from "@/components/NavBar";
 import { teams, jobPosition, educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 import Image from "next/image";
+import EmailVerification from '../../components/Cards/Autorizations/EmailVerification';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -27,9 +28,10 @@ export default function SignupForm() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
+  const [showVerification, setShowVerification] = useState(false);
 
   const requiredFields = ["name", "lastName", "birthDate", "phoneNumber", "email", "password", "education"];
-
+  
   const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const teamName = e.target.value;
     const team = teams.find((t) => t.name === teamName);
@@ -57,8 +59,8 @@ export default function SignupForm() {
       ? "Invalid email format"
       : name === "password" && !passwordRegex.test(value)
       ? "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
-      : name === "phoneNumber" && (!phoneRegex.test(value) || value.length < 13)
-      ? "Phone number must be at least 13 characters (including country code) with no spaces between numbers"
+      : name === "phoneNumber" && (!phoneRegex.test(value) || value.length < 10)
+      ? "Phone number must be at least 10 characters, with no spaces between numbers"
       : name === "birthDate" &&
         (value < birthDateRange.min || value > birthDateRange.max)
       ? "Birthdate must be between 1935 and 2009"
@@ -105,8 +107,14 @@ export default function SignupForm() {
     e.preventDefault();
     if (isStepValid()) {
       console.log("Form Data:", formData);
-      router.push("/crm/dashboard");
+      // En lugar de redirigir directamente, mostramos el modal de verificación
+      setShowVerification(true);
     }
+  };
+
+  const handleContinueToDashboard = () => {
+    setShowVerification(false);
+    router.push("/crm/dashboard");
   };
 
   return (
@@ -307,6 +315,14 @@ export default function SignupForm() {
                     Log In
                   </a>
                 </p>
+              )}
+
+              {/* Modal de verificación de email */}
+              {showVerification && (
+                <EmailVerification 
+                  isVerified={false}
+                  onContinue={handleContinueToDashboard}
+                />
               )}
             </div>
           </div>

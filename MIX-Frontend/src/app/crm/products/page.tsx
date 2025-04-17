@@ -7,7 +7,7 @@ import Formulario, { ProductData } from '@/components/Forms/ProductsForms';
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import { CirclePlus } from 'lucide-react';
-import ProductDetailCard from '@/components/Cards/ProductDetailCard';
+import ProductDetailCard from '@/components/Cards/Tables/ProductDetailCard';
 
 interface ProductFromAPI {
   RefNum: string;

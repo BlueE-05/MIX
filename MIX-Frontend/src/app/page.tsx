@@ -5,8 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      
       <Navbar />
     
       <section className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-r from-green-600 to-green-400 text-white">

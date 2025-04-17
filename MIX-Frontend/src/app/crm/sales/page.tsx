@@ -5,7 +5,7 @@ import CustomTable from "@/components/Tables/CustomTable";
 import { CirclePlus } from "lucide-react";
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import Formulario from '@/components/Forms/SalesForms';
-import SaleDetailCard from '@/components/Cards/SaleDetailCard';
+import SaleDetailCard from '@/components/Cards/Tables/SaleDetailCard';
 
 interface SaleFormData {
   contact: string;
