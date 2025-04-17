@@ -2,19 +2,18 @@
 //PARA EMERGENCIAS: VERIFICAR LA CONEXION CON LA BASE DE DATOS
 
 import express from 'express';
-import SaleHTTPHandler from './src/handlers/sale';
+import cors from 'cors';
 import sql from 'mssql';
 const app = express();
 import reportRoutes from './src/routes/report';
 import newsaleRoutes from './src/routes/newsale';
 import saleRoutes from './src/routes/sale';
-//import { poolPromise } from './src/database';
-//import  SaleService  from './src/db/sale';
-//import SaleController from './src/controllers/sale';
 
+app.use(cors());
 app.use(express.json());
 
 const PORT = 3001;
+
 
 app.use('/report', reportRoutes);
 app.use('/newsale', newsaleRoutes);

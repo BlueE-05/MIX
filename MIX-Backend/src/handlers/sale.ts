@@ -42,7 +42,7 @@ class SaleHTTPHandler {
       }
     }; 
 
-    getKNnumHandler= async (req: Request, res: Response, next: NextFunction) => {
+    getKNnum= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const idsale = Number(req.params.idsale);
         const iduser = Number(req.params.iduser);  
@@ -53,26 +53,19 @@ class SaleHTTPHandler {
       }
     }; 
 
-    /*
-    async getKNnumHandler(idsale: number, iduser: number) {
-      return await this.saleController.getKNnum(idsale, iduser);
-    }
-      */
 
-    
-
-    
-    /*
-    getKBNum= async (req: Request, res: Response, next: NextFunction) => {
+    getKNinfo= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const idsale = Number(req.params.idsale);
         const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getKBNum(idsale, iduser);
+        const resultado = await this.saleController.getKNinfo(idsale, iduser);
         res.json(resultado);
       } catch (error) {
         next(error);
       }
-    };  */
+    }; 
+
+    
     
 
 

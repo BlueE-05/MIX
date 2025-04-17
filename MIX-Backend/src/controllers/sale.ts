@@ -19,6 +19,10 @@ class SaleController {
     return this.saleService.getKNnum(idsale, iduser);
   }
 
+  async getKNinfo(idsale: number, iduser: number) {
+    return this.saleService.getKNinfo(idsale, iduser);
+  }
+
   
 
 

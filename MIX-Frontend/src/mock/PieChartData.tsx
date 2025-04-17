@@ -9,7 +9,7 @@ export default function PiechartData() {
     labels: ['Prospecto', 'Cotización', 'Cierre'],
     datasets: [{
       label: 'Ventas',
-      data: [0, 0, 0], // Valor inicial para "Cierre" es 0
+      data: [16, 0, 0], // Valor inicial para "Cierre" es 0
       backgroundColor: [
         'rgba(0, 255, 0, 0.5)',  // Verde para Prospecto
         'rgba(255, 99, 132, 0.5)', // Rojo para Cotización
