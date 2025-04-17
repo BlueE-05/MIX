@@ -6,7 +6,7 @@ import axios from 'axios';
 export default function BoxComisiones() {
   const [comision, setComision] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 1; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
+  const iduser = 3; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
 
   useEffect(() => {
     axios.get(`http://localhost:3001/report/totalComissions/${iduser}`)
@@ -27,7 +27,7 @@ export default function BoxComisiones() {
     if (loading) {
       return 'Loading...';
     } else if (comision === null) {
-      return 'No commissions this month';
+      return 'No commissions';
     } else if (comision !== null) {
       return `$${comision.toLocaleString(undefined, {
         minimumFractionDigits: 2,
