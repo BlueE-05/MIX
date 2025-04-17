@@ -4,7 +4,7 @@ import axios from 'axios';
 export default function BoxClosed() {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 3; // Ajusta esto dinámicamente si lo necesitas
+  const iduser = 1; // Ajusta esto dinámicamente si lo necesitas
 
   useEffect(() => {
     axios.get(`http://localhost:3001/report/allCierre/${iduser}`)

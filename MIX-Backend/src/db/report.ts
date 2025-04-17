@@ -10,7 +10,7 @@ class ReportService{
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
+        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) as TotalCierre FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
@@ -54,7 +54,7 @@ class ReportService{
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission FROM Users AS u JOIN Sale AS s ON u.ID = s.IDUser JOIN SaleArticle AS sa ON s.ID = sa.IDSale JOIN Product AS p ON sa.IDProduct = p.RefNum WHERE u.ID = @id GROUP BY u.ID, u.Name');
+        const result = await request.input('id', sql.Int, id).query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission FROM Users AS u JOIN Sale AS s ON u.ID = s.IDUser JOIN SaleArticle AS sa ON s.ID = sa.IDSale JOIN Product AS p ON sa.IDProduct = p.RefNum WHERE u.ID = @id AND s.IDPhase=3 GROUP BY u.ID, u.Name');
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en Prospecto:', error);
