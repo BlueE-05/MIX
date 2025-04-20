@@ -21,6 +21,7 @@ interface SaleFormData {
   status: string;
   startDate: Date | null;
   endDate: Date | null;
+  saleId?: number; // Nuevo campo para el ID
 }
 
 export default function SalesPage() {
@@ -30,6 +31,7 @@ export default function SalesPage() {
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastSaleId, setLastSaleId] = useState(0); // Para llevar el control del último ID
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -42,6 +44,10 @@ export default function SalesPage() {
         }
         
         const data: SaleFromAPI[] = await res.json();
+
+        // Encontrar el máximo SaleID para usarlo como referencia
+        const maxId = Math.max(...data.map(sale => sale.SaleID), 0);
+        setLastSaleId(maxId);
 
         const transformedData = data.map((sale) => {
           const formatDate = (dateString: string) => {
@@ -81,24 +87,28 @@ export default function SalesPage() {
   }, []);
 
   const handleNewSale = (newSaleData: SaleFormData) => {
+    // Usamos el último ID + 1 para la nueva venta
+    const newId = lastSaleId + 1;
+    setLastSaleId(newId);
+    
     const newRow = [
-      `REF-${10000 + salesData.length}`,
+      `#${newId}`, 
       newSaleData.contact || 'New Enterprise',
       '$0.00',
       <span 
-        key={`status-${newSaleData.contact}`} 
+        key={`status-${newId}`} 
         className={`px-2 py-1 rounded-full text-xs font-medium ${
           newSaleData.status === 'Acepted' ? 'bg-green-100 text-green-800' :
           newSaleData.status === 'Cancelled' ? 'bg-red-100 text-red-800' :
           'bg-blue-100 text-blue-800'
-      }`}
+        }`}
       >
         {newSaleData.status || 'Pending'}
       </span>,
       new Date().toLocaleDateString("en-US"),
       newSaleData.endDate?.toLocaleDateString("en-US") || '-',
       newSaleData.startDate?.toLocaleDateString("en-US") || new Date().toLocaleDateString("en-US"),
-      <ArrowRightButton key={salesData.length} />
+      <ArrowRightButton key={newId} />
     ];
     
     setSalesData([...salesData, newRow]);
@@ -137,7 +147,7 @@ export default function SalesPage() {
           <CustomTable headers={salesHeaders} data={salesData} color="#4209B0" />
         </div>
 
-        {/* New Sale Button (mantenido abajo a la izquierda) */}
+        {/* New Sale Button */}
         <div className="fixed bottom-6 right-6">
           <div onClick={() => setShowForm(true)} className='cursor-pointer'>
             <RoundedButton color="#4209B0" text="New Sale" Icon={CirclePlus} />
