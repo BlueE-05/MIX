@@ -33,6 +33,7 @@ export default function SalesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastSaleId, setLastSaleId] = useState(0);
+  const [searchPerformed, setSearchPerformed] = useState(false);
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -94,10 +95,12 @@ export default function SalesPage() {
     if (!enterpriseName.trim()) {
       // Si el campo está vacío, mostrar todos los datos
       setSalesData(originalData);
+      setSearchPerformed(false);
       return;
     }
 
     setIsLoading(true);
+    setError(null);
     try {
       const encodedName = encodeURIComponent(enterpriseName);
       const res = await fetch(`http://localhost:3001/sale/salebyent/${encodedName}/1`);
@@ -107,8 +110,17 @@ export default function SalesPage() {
       }
       
       const data: SaleFromAPI[] = await res.json();
-      const transformedData = transformData(data);
-      setSalesData(transformedData);
+      
+      if (data.length === 0) {
+        setSalesData([]);
+        setError(`No enterprise found by "${enterpriseName}"`);
+      } else {
+        const transformedData = transformData(data);
+        setSalesData(transformedData);
+        setError(null);
+      }
+      
+      setSearchPerformed(true);
     } catch (err) {
       console.error("Error searching:", err);
       setError("Failed to search sales data. Please try again later.");
@@ -145,20 +157,13 @@ export default function SalesPage() {
     setSalesData(updatedData);
     setOriginalData(updatedData);
     setShowForm(false);
+    setSearchPerformed(false);
   };
 
   if (isLoading) {
     return (
       <main className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
         <div>Loading sales data...</div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
-        <div className="text-red-500">{error}</div>
       </main>
     );
   }
@@ -174,6 +179,13 @@ export default function SalesPage() {
           </div>
         </div>
 
+        {/* Error message */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
+
         {/* Table with built-in search */}
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
           <CustomTable 
@@ -183,6 +195,13 @@ export default function SalesPage() {
             includeSearch={true}
             onSearch={handleEnterpriseSearch}
           />
+          
+          {/* Empty state */}
+          {searchPerformed && salesData.length === 0 && !error && (
+            <div className="text-center py-8 text-gray-500">
+              No found
+            </div>
+          )}
         </div>
 
         {/* New Sale Button */}
@@ -209,7 +228,7 @@ export default function SalesPage() {
 }
 
 
-/*
+/* //original
 'use client'
 import { useEffect, useState } from 'react';
 import RoundedButton from "@/components/Buttons/RoundedButton";
