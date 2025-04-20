@@ -23,20 +23,9 @@ class SaleController {
     return this.saleService.getKNinfo(idsale, iduser);
   }
 
-  
-
-
-/*
-  async getKBNum(idsale: number, iduser: number) {
-    return this.saleService.getKBNum(idsale, iduser);
-  } */
-
- 
-
-
-  
-
-
+  async deleteSale(idsale: number, iduser: number): Promise<boolean> {
+    return this.saleService.deleteSale(idsale, iduser);
+  }
 
 }
 

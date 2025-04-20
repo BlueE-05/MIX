@@ -39,7 +39,7 @@ export default function PiechartData() {
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const userId = 3;
+        const userId = 1;
         
         const [cierreResponse, cotizacionResponse, prospectoResponse] = await Promise.all([
           axios.get(`http://localhost:3001/report/allCierre/${userId}`),

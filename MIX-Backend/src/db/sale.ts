@@ -101,6 +101,29 @@ class SaleService{
       }
     };
 
+    //Eliminar una sale
+    
+    async deleteSale(idsale: number, iduser: number): Promise<boolean> {
+      const pool = await poolPromise;
+      try {
+          const result = await pool.request()
+              .input('idsale', sql.Int, idsale)
+              .input('iduser', sql.Int, iduser)
+              .query(`
+                  DELETE FROM Sale 
+                  OUTPUT DELETED.ID
+                  WHERE ID = @idsale AND IDUser = @iduser
+              `);
+          if (result.recordset.length > 0) {
+              return true; 
+          }
+          return false; 
+      } catch (error) {
+          console.error('❌ Error en deleteSale:', error);
+          return false; 
+      }
+    }
+
     
 
 

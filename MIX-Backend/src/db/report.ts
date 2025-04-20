@@ -5,7 +5,7 @@ class ReportService{
 
 
   //Considerar Cierre como ID=3 en Phase
-  //Nota: cuando se tenga la base de datos definitiva, cambiar para que se muestre las datos del mes actual
+  //Tmb para el total de ventas en el mes
   async getAllCierre(id: number) {
     try {
         const pool = await poolPromise;
@@ -19,7 +19,6 @@ class ReportService{
   }
 
   //Considerar Cotizacion como ID=2 en Phase
-  //Nota: cuando se tenga la base de datos definitiva, cambiar para que se muestre las datos del mes actual
   async getAllCotizacion(id: number) {
     try {
         const pool = await poolPromise;
@@ -33,7 +32,6 @@ class ReportService{
   }
 
   //Considerar Prospecto como ID=1 en Phase
-  //Nota: cuando se tenga la base de datos definitiva, cambiar para que se muestre las datos del mes actual
   async getAllProspecto(id: number) {
     try {
         const pool = await poolPromise;
@@ -46,10 +44,8 @@ class ReportService{
     }
   }
 
-  //NOTAS DE CAMBIOS: Agregar funcion para las nuevas fases
   
   //Calcular comisiones de un solo usuario
-  //Nota: cuando se tenga la base de datos definitiva, cambiar para que se muestre las comisiones del mes actual
   async getTotalComissions(id: number) {
     try {
         const pool = await poolPromise;
@@ -63,8 +59,7 @@ class ReportService{
   }
 
   //Lo que falta
-  //Trigger para que se actualice las tablas y graficas cada cambio de mes
-  //Hacer la gráfica de lineas
+  //Trigger para que se actualice las tablas y graficas cada cambio de mes**
 
 }
 export default ReportService;

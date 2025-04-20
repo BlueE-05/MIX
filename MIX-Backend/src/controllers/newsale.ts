@@ -15,11 +15,11 @@ class NewSaleController {
     return this.newsaleService.getPhases();
   }
 
-  /*
   async createSale(iduser: number, idcont: number, startdate: string, enddate: string, idphase: number) {
     return this.newsaleService.createSale(iduser, idcont, startdate, enddate, idphase);
   } 
-    */
+  
+    
 
 
     

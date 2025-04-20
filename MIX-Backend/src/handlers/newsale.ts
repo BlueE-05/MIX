@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import NewSaleController from '../controllers/newsale';
 
+import { poolPromise, sql } from 'database';
+
 class NewSaleHTTPHandler {
   private newsaleController: typeof NewSaleController;
 
@@ -42,6 +44,26 @@ class NewSaleHTTPHandler {
       }
     };
 
+  
+
+
+
+    //iduser: number, idcont: number, startdate: string, enddate: string, idphase: number
+    
+    createSale= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser = Number(req.params.iduser);
+        const idcont = Number(req.params.idcont);
+        const startdate = String(req.params.startdate);
+        const enddate = String(req.params.enddate);
+        const idphase = Number(req.params.idphase);
+        await this.newsaleController.createSale(iduser, idcont, startdate, enddate, idphase);
+        res.json({ message: 'Contact created successfully' });
+      } catch (error) {
+      next(error);
+      }
+    };
+    
     
     
   
