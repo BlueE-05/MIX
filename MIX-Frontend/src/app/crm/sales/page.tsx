@@ -21,17 +21,18 @@ interface SaleFormData {
   status: string;
   startDate: Date | null;
   endDate: Date | null;
-  saleId?: number; // Nuevo campo para el ID
+  saleId?: number;
 }
 
 export default function SalesPage() {
   const salesHeaders = ["RefNumber", "Enterprise", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
 
   const [salesData, setSalesData] = useState<React.ReactNode[][]>([]);
+  const [originalData, setOriginalData] = useState<React.ReactNode[][]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [lastSaleId, setLastSaleId] = useState(0); // Para llevar el control del último ID
+  const [lastSaleId, setLastSaleId] = useState(0);
 
   useEffect(() => {
     const fetchSales = async () => {
@@ -45,36 +46,12 @@ export default function SalesPage() {
         
         const data: SaleFromAPI[] = await res.json();
 
-        // Encontrar el máximo SaleID para usarlo como referencia
         const maxId = Math.max(...data.map(sale => sale.SaleID), 0);
         setLastSaleId(maxId);
 
-        const transformedData = data.map((sale) => {
-          const formatDate = (dateString: string) => {
-            return new Date(dateString).toLocaleDateString("en-US");
-          };
-
-          return [
-            `#${sale.SaleID}`,
-            sale.EnterpriseName,
-            sale.Total ? `$${sale.Total.toFixed(2)}` : '-',
-            <span 
-              key={`status-${sale.SaleID}`} 
-              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                sale.Status === 'Cierre' ? 'bg-green-100 text-green-800' :
-                'bg-blue-100 text-blue-800'
-              }`}
-            >
-              {sale.Status}
-            </span>,
-            formatDate(sale.LastContact),
-            formatDate(sale.ClosingDate),
-            formatDate(sale.CreationDate),
-            <ArrowRightButton key={`arrow-${sale.SaleID}`} />
-          ];
-        });
-
+        const transformedData = transformData(data);
         setSalesData(transformedData);
+        setOriginalData(transformedData);
       } catch (err) {
         console.error("Error fetching sales:", err);
         setError("Failed to load sales data. Please try again later.");
@@ -86,13 +63,66 @@ export default function SalesPage() {
     fetchSales();
   }, []);
 
+  const transformData = (data: SaleFromAPI[]): React.ReactNode[][] => {
+    return data.map((sale) => {
+      const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("en-US");
+      };
+
+      return [
+        `#${sale.SaleID}`,
+        sale.EnterpriseName,
+        sale.Total ? `$${sale.Total.toFixed(2)}` : '-',
+        <span 
+          key={`status-${sale.SaleID}`} 
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            sale.Status === 'Cierre' ? 'bg-green-100 text-green-800' :
+            'bg-blue-100 text-blue-800'
+          }`}
+        >
+          {sale.Status}
+        </span>,
+        formatDate(sale.LastContact),
+        formatDate(sale.ClosingDate),
+        formatDate(sale.CreationDate),
+        <ArrowRightButton key={`arrow-${sale.SaleID}`} />
+      ];
+    });
+  };
+
+  const handleEnterpriseSearch = async (enterpriseName: string) => {
+    if (!enterpriseName.trim()) {
+      // Si el campo está vacío, mostrar todos los datos
+      setSalesData(originalData);
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const encodedName = encodeURIComponent(enterpriseName);
+      const res = await fetch(`http://localhost:3001/sale/salebyent/${encodedName}/1`);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      
+      const data: SaleFromAPI[] = await res.json();
+      const transformedData = transformData(data);
+      setSalesData(transformedData);
+    } catch (err) {
+      console.error("Error searching:", err);
+      setError("Failed to search sales data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleNewSale = (newSaleData: SaleFormData) => {
-    // Usamos el último ID + 1 para la nueva venta
     const newId = lastSaleId + 1;
     setLastSaleId(newId);
     
     const newRow = [
-      `#${newId}`, 
+      `#${newId}`,
       newSaleData.contact || 'New Enterprise',
       '$0.00',
       <span 
@@ -111,7 +141,9 @@ export default function SalesPage() {
       <ArrowRightButton key={newId} />
     ];
     
-    setSalesData([...salesData, newRow]);
+    const updatedData = [...originalData, newRow];
+    setSalesData(updatedData);
+    setOriginalData(updatedData);
     setShowForm(false);
   };
 
@@ -142,9 +174,15 @@ export default function SalesPage() {
           </div>
         </div>
 
-        {/* Table */}
+        {/* Table with built-in search */}
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 overflow-x-auto">
-          <CustomTable headers={salesHeaders} data={salesData} color="#4209B0" />
+          <CustomTable 
+            headers={salesHeaders} 
+            data={salesData} 
+            color="#4209B0" 
+            includeSearch={true}
+            onSearch={handleEnterpriseSearch}
+          />
         </div>
 
         {/* New Sale Button */}

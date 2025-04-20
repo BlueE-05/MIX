@@ -1,15 +1,31 @@
 // components/CustomTable.js
 'use client'
 import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 interface CustomTableProps {
     headers: string[];
-    data: React.ReactNode[][]; // Permite cualquier tipo de dato en las celdas
+    data: React.ReactNode[][];
     color?: string;
     includeSearch?: boolean;
+    onSearch?: (searchTerm: string) => void; // Nueva prop para manejar búsqueda
 }
 
-const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }: CustomTableProps) => {
+const CustomTable = ({ 
+    headers, 
+    data, 
+    color = "#FFFFFF", 
+    includeSearch = true, 
+    onSearch 
+}: CustomTableProps) => {
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleSearch = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && onSearch) {
+            onSearch(searchTerm);
+        }
+    };
+
     return (
         <div className="flex flex-col w-full">
             <div className="overflow-x-auto">
@@ -18,7 +34,19 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true }:
                         {/** Buscador **/}
                         <div style={{ backgroundColor: color }} className="rounded-t-md h-14 flex items-center p-4 relative">
                             {includeSearch && (
-                                <><input placeholder="Search" className="w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-gray-100" /><Search className="absolute left-6 h-5 w-5 text-black" /></>
+                                <>
+                                    <input 
+                                        placeholder="Search" 
+                                        className="w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-gray-100"
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        onKeyDown={handleSearch}
+                                    />
+                                    <Search 
+                                        className="absolute left-6 h-5 w-5 text-black cursor-pointer" 
+                                        onClick={() => onSearch && onSearch(searchTerm)}
+                                    />
+                                </>
                             )}
                         </div>
 
