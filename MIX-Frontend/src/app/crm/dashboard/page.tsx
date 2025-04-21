@@ -101,7 +101,7 @@ const DashboardPage = () => {
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-white p-6 rounded-xl shadow-md">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Tareas Recientes
+              Recent sales
             </h2>
             <div className="overflow-x-auto">
               <CustomTable headers={headers} data={data} includeSearch={false} />
