@@ -21,13 +21,12 @@ interface SaleRow {
   amount: string;
   status: React.ReactNode;
   lastContact: string;
-  closingDate: string;
   creationDate: string;
   actions: React.ReactNode;
 }
 
 export default function SalesPage() {
-  const salesHeaders = ["#", "RefNumber", "Enterprise", "$", "Status", "Last Contact", "Closing Date", "Creation Date", ""];
+  const salesHeaders = ["#", "RefNumber", "Enterprise", "$", "Status", "Last Contact", "Creation Date", ""];
   const [salesData, setSalesData] = useState<SaleRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedSale, setSelectedSale] = useState<SaleRow | null>(null);
@@ -55,7 +54,6 @@ export default function SalesPage() {
           </span>
         ),
         lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
-        closingDate: new Date(2025, 2, (i % 28) + 10).toLocaleDateString("en-US"),
         creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
         actions: <ArrowRightButton color='#0C43A8'
                   key={`arrow-${i}`} 
@@ -68,7 +66,6 @@ export default function SalesPage() {
                       amount: `$${(Math.random() * 5000 + 500).toFixed(2)}`,
                       status: status,
                       lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
-                      closingDate: new Date(2025, 2, (i % 28) + 10).toLocaleDateString("en-US"),
                       creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
                       actions: <ArrowRightButton />
                     });
@@ -101,7 +98,6 @@ export default function SalesPage() {
         </span>
       ),
       lastContact: new Date().toLocaleDateString("en-US"),
-      closingDate: newSaleData.endDate?.toLocaleDateString("en-US") || "-",
       creationDate: newSaleData.startDate?.toLocaleDateString("en-US") || new Date().toLocaleDateString("en-US"),
       actions: <ArrowRightButton key={`arrow-${newId}`} />,
     };
@@ -117,7 +113,6 @@ export default function SalesPage() {
     sale.amount,
     sale.status,
     sale.lastContact,
-    sale.closingDate,
     sale.creationDate,
     sale.actions,
   ]);

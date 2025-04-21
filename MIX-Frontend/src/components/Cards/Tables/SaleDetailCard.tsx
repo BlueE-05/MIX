@@ -9,7 +9,6 @@ interface SaleDetailCardProps {
     amount: string
     status: ReactNode | string
     lastContact: string
-    closingDate: string
     creationDate: string
   }
   onClose: () => void
@@ -20,7 +19,6 @@ interface SaleDetailCardProps {
     amount: string
     status: string
     lastContact: string
-    closingDate: string
     creationDate: string
   }) => void
   editButtonText?: string
@@ -159,20 +157,6 @@ export default function SaleDetailCard({
               />
             ) : (
               <p className="text-gray-700">{editedSale.lastContact}</p>
-            )}
-          </div>
-          
-          <div className="border-b pb-2">
-            <h3 className="font-semibold text-gray-500">Closing Date</h3>
-            {isEditing ? (
-              <input
-                type="date"
-                value={editedSale.closingDate}
-                onChange={(e) => handleChange('closingDate', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            ) : (
-              <p className="text-gray-700">{editedSale.closingDate}</p>
             )}
           </div>
           

@@ -6,6 +6,7 @@ import CustomTable from "@/components/Tables/CustomTable";
 import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { teams, jobPosition } from "@/constants/formFields";
+import AwardsBox from "@/components/Dashboard/Awards";
 
 const DashboardPage = () => {
   const headers = ["ID", "Tarea", "Estado", "Fecha de Creación"];
@@ -41,7 +42,6 @@ const DashboardPage = () => {
       <div className="mb-8 flex justify-between items-start flex-col md:flex-row gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-          <p className="text-gray-600">Bienvenido al panel de control</p>
         </div>
         
         {/* Dropdowns Container */}
@@ -49,7 +49,7 @@ const DashboardPage = () => {
           {/* Team Dropdown */}
           <div className="relative w-full sm:w-64">
             <label htmlFor="team-select" className="block text-sm font-medium text-gray-700 mb-1">
-              Equipo
+              Team
             </label>
             <div className="relative">
               <select
@@ -72,7 +72,7 @@ const DashboardPage = () => {
           {/* Position Dropdown */}
           <div className="relative w-full sm:w-64">
             <label htmlFor="position-select" className="block text-sm font-medium text-gray-700 mb-1">
-              Posición
+              Position
             </label>
             <div className="relative">
               <select
@@ -111,14 +111,14 @@ const DashboardPage = () => {
 
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
-          <div className="p-6 bg-orange-300 rounded-xl shadow-md h-40 opacity-50">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Awards
-            </h2>
+
+          <div>
+            <AwardsBox/>
           </div>
+
           <div className="p-6 bg-white rounded-xl shadow-md h-80">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Distribución de Ventas
+              Sales Distribution
             </h2>
             <div className="">
               <PieChart />

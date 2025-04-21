@@ -9,8 +9,6 @@ interface ColumnProps {
   title: string;
   tasks: Task[];
   colorClass?: string;
-  deleteTask: (columnName: string, taskId: number) => void; // Recibe el nombre de la columna
-  onDeleteColumn: () => void;
   // Pasar los handlers unificados desde KanbanBoard
   onDragStart: (event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => void;
   onDragEnd: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -22,7 +20,6 @@ const Column: React.FC<ColumnProps> = ({
   title,
   tasks,
   colorClass,
-  deleteTask,
   onDragStart,
   onDragEnd, // Recibir onDragEnd
   onDrop,
@@ -52,7 +49,6 @@ const Column: React.FC<ColumnProps> = ({
           <Card
             key={task.id}
             task={task}
-            onDelete={() => deleteTask(title, task.id)}
             onDragStart={(e) => onDragStart(e, task.id, title)}
             onDragEnd={onDragEnd}
           />

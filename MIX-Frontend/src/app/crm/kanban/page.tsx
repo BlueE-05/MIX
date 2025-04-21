@@ -15,7 +15,7 @@ export default function KanbanPage() {
   };
 
   return (
-    <main>
+    <main className="flex justify-center items-center min-h-screen">
       <div className="flex gap-4 p-8">
         <KanbanBoard />
       </div>
@@ -32,7 +32,7 @@ export default function KanbanPage() {
         
         {showTooltip && (
           <div className="absolute bottom-14 right-0 bg-white p-4 rounded-lg shadow-lg w-64 z-10 border border-gray-200">
-            <h3 className="font-bold mb-2">Fases del Kanban</h3>
+            <h3 className="font-bold mb-2">Kanban Phases</h3>
             <ul className="space-y-2">
               {Object.entries(phasesInfo).map(([phase, info]) => (
                 <li key={phase} className="flex items-start">

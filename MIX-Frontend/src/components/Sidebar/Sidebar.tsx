@@ -108,7 +108,7 @@ const Sidebar = () => {
             href="/crm/information"
           >
             <HelpCircle className={isCollapsed ? '' : "mr-2"} />
-            {!isCollapsed && <span>Help & Information</span>}
+            {!isCollapsed && <span>Training</span>}
           </Link>
         </ul>
       </nav>

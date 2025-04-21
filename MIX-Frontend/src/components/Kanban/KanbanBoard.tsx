@@ -16,35 +16,34 @@ const columnColors: { [key: string]: string } = {
 
 const initialColumns: { [key: string]: Task[] } = {
   'Prospecting': [
-    { id: 1, ContactName: "Petunia", Enterprise: 'FEMSA', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
-    { id: 2, ContactName: "Eduardo", Enterprise: 'Pepsico', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
+    { id: 1, ContactName: "Petunia", Enterprise: 'FEMSA', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
+    { id: 2, ContactName: "Eduardo", Enterprise: 'Pepsico', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
   ],
   'Initial Contact': [
-    { id: 3, ContactName: "Maximo", Enterprise: 'BMV', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
+    { id: 3, ContactName: "Maximo", Enterprise: 'BMV', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
   ],
   'Proposal': [
-    { id: 4, ContactName: "Dana", Enterprise: 'Ferrari', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
-    { id: 5, ContactName: "MasterChief", Enterprise: 'Fresa', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
+    { id: 4, ContactName: "Dana", Enterprise: 'Ferrari', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
+    { id: 5, ContactName: "MasterChief", Enterprise: 'Fresa', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
   ],
   'Negotiation': [
-    { id: 6, ContactName: "Daniel", Enterprise: 'Bugati', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
-    { id: 7, ContactName: "Estefania", Enterprise: 'Pepinillo', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
-  ],  
+    { id: 6, ContactName: "Daniel", Enterprise: 'Bugati', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
+    { id: 7, ContactName: "Estefania", Enterprise: 'Pepinillo', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
+  ],
   'Closing': [
-    { id: 8, ContactName: "Sandino", Enterprise: 'Maseca', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
-    { id: 9, ContactName: "Esteban", Enterprise: 'Hambre', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 }
+    { id: 8, ContactName: "Sandino", Enterprise: 'Maseca', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
+    { id: 9, ContactName: "Esteban", Enterprise: 'Hambre', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
   ],
   'Cancelled': [
-    { id: 10, ContactName: "Fatima", Enterprise: 'Trebol', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
-    { id: 11, ContactName: "Carlos", Enterprise: 'Comida', TotalProducts: 20 , TotalSale: 7 , TotalComission: 5 },
+    { id: 10, ContactName: "Fatima", Enterprise: 'Trebol', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
+    { id: 11, ContactName: "Carlos", Enterprise: 'Comida', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
   ],
 };
 
 const KanbanBoard: React.FC = () => {
   const [columns, setColumns] = useState<{ [key: string]: Task[] }>(initialColumns);
-  const [selectedColumn, setSelectedColumn] = useState(Object.keys(initialColumns)[0] || '');
   const [currentPage, setCurrentPage] = useState(0);
-  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3);
+  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3); // Define el número inicial de columnas visibles
   const boardRef = useRef<HTMLDivElement>(null);
 
   // Calcular columnas visibles basado en el ancho del tablero
@@ -88,25 +87,6 @@ const KanbanBoard: React.FC = () => {
     }
   };
 
-  const deleteColumn = useCallback((columnName: string) => {
-    setColumns(prevColumns => {
-      const newColumns = { ...prevColumns };
-      delete newColumns[columnName];
-      // Si la columna eliminada era la seleccionada en el modal, resetea la selección
-      if (selectedColumn === columnName) {
-         setSelectedColumn(Object.keys(newColumns)[0] || '');
-      }
-      return newColumns;
-    });
-  }, [selectedColumn]);
-
-  const deleteTask = useCallback((columnName: string, taskId: number) => {
-    setColumns(prevColumns => ({
-      ...prevColumns,
-      [columnName]: prevColumns[columnName].filter(task => task.id !== taskId),
-    }));
-  }, []);
-
   const handleDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => {
     event.dataTransfer.setData('taskId', taskId.toString());
     event.dataTransfer.setData('fromColumn', fromColumn);
@@ -114,7 +94,7 @@ const KanbanBoard: React.FC = () => {
   }, []);
 
   const handleDragEnd = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-     event.currentTarget.classList.remove('dragging'); // Limpiar clase
+    event.currentTarget.classList.remove('dragging'); // Limpiar clase
   }, []);
 
 
@@ -124,20 +104,20 @@ const KanbanBoard: React.FC = () => {
     const fromColumn = event.dataTransfer.getData('fromColumn');
 
     if (!taskId || !fromColumn || !toColumn || fromColumn === toColumn || !columns[fromColumn] || !columns[toColumn]) {
-        // Validar que toda la información necesaria está presente
-        console.warn("Drop inválido - Faltan datos o columnas inválidas");
-        return;
+      // Validar que toda la información necesaria está presente
+      console.warn("Drop inválido - Faltan datos o columnas inválidas");
+      return;
     }
 
 
     setColumns(prevColumns => {
-        const taskToMove = prevColumns[fromColumn].find(task => task.id === taskId);
-        if (!taskToMove) return prevColumns; // La tarea no se encontró (raro, pero seguro)
+      const taskToMove = prevColumns[fromColumn].find(task => task.id === taskId);
+      if (!taskToMove) return prevColumns; // La tarea no se encontró (raro, pero seguro)
 
-        const newColumns = { ...prevColumns };
-        newColumns[fromColumn] = newColumns[fromColumn].filter(task => task.id !== taskId);
-        newColumns[toColumn] = [...newColumns[toColumn], taskToMove];
-        return newColumns;
+      const newColumns = { ...prevColumns };
+      newColumns[fromColumn] = newColumns[fromColumn].filter(task => task.id !== taskId);
+      newColumns[toColumn] = [...newColumns[toColumn], taskToMove];
+      return newColumns;
     });
   }, [columns]); // Depende de columns para encontrar la tarea
 
@@ -146,13 +126,12 @@ const KanbanBoard: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 overflow-x-hidden">
+    <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-full mx-auto" ref={boardRef}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
-            <p className="text-gray-600">Drag and Drop your tasks!</p>
           </div>
         </div>
 
@@ -160,7 +139,7 @@ const KanbanBoard: React.FC = () => {
         <div className="relative">
           {columnGroups.length > 1 && (
             <div className="flex items-center justify-between mb-4">
-              <button 
+              <button
                 onClick={goToPrevPage}
                 disabled={currentPage === 0}
                 className={`p-2 rounded-full ${currentPage === 0 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
@@ -168,9 +147,9 @@ const KanbanBoard: React.FC = () => {
                 <ChevronLeft size={24} />
               </button>
               <span className="text-gray-600">
-                Página {currentPage + 1} de {columnGroups.length}
+                Page {currentPage + 1} of {columnGroups.length}
               </span>
-              <button 
+              <button
                 onClick={goToNextPage}
                 disabled={currentPage === columnGroups.length - 1}
                 className={`p-2 rounded-full ${currentPage === columnGroups.length - 1 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
@@ -180,16 +159,14 @@ const KanbanBoard: React.FC = () => {
             </div>
           )}
 
-          <div className="kanban-board-container overflow-x-auto pb-4">
-            <div className="flex gap-6" style={{ minWidth: 'max-content' }}>
+          <div className="overflow-x-hidden"> {/* Oculta el scroll horizontal general */}
+            <div className="flex gap-6 transition-transform duration-300" style={{ transform: `translateX(-${currentPage * (300 + 24) * visibleColumnsCount / visibleColumns.length}px)` }}>
               {visibleColumns.map(columnName => (
                 <Column
                   key={columnName}
                   title={columnName}
                   tasks={columns[columnName]}
                   colorClass={columnColors[columnName] ?? 'bg-white'}
-                  deleteTask={deleteTask}
-                  onDeleteColumn={() => deleteColumn(columnName)}
                   onDragStart={handleDragStart}
                   onDragEnd={handleDragEnd}
                   onDrop={handleDrop}
