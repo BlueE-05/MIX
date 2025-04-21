@@ -3,10 +3,12 @@ import BoxClosed from "@/components/Dashboard/BoxClosed";
 import PieChart from "@/components/Dashboard/PieChart";
 import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 import CustomTable from "@/components/Tables/CustomTable";
-import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
-import { teams, jobPosition } from "@/constants/formFields";
 import AwardsBox from "@/components/Dashboard/Awards";
+
+const currentUser = {
+  team: "Marketing",
+  position: "Especialista de Contenido",
+};
 
 const DashboardPage = () => {
   const headers = ["ID", "Tarea", "Estado", "Fecha de Creación"];
@@ -17,24 +19,6 @@ const DashboardPage = () => {
     [4, "Tarea 4", "En progreso", "2025-03-10"],
   ];
 
-  const [selectedTeam, setSelectedTeam] = useState("");
-  const [selectedPosition, setSelectedPosition] = useState("");
-  const [filteredPositions, setFilteredPositions] = useState<typeof jobPosition>([]);
-
-  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const teamName = e.target.value;
-    setSelectedTeam(teamName);
-    setSelectedPosition("");
-    
-    // Filter positions based on selected team
-    const team = teams.find(t => t.name === teamName);
-    if (team) {
-      const filtered = jobPosition.filter(pos => pos.teamId === team.id);
-      setFilteredPositions(filtered);
-    } else {
-      setFilteredPositions([]);
-    }
-  };
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
@@ -44,53 +28,34 @@ const DashboardPage = () => {
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
         </div>
         
-        {/* Dropdowns Container */}
+        {/* User Info Cards */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          {/* Team Dropdown */}
-          <div className="relative w-full sm:w-64">
-            <label htmlFor="team-select" className="block text-sm font-medium text-gray-700 mb-1">
+          {/* Team Card */}
+          <div className="bg-white p-4 rounded-lg w-full sm:w-64">
+            <label htmlFor="team-display" className="block text-sm font-medium text-green-700 mb-1">
               Team
             </label>
-            <div className="relative">
-              <select
-                id="team-select"
-                value={selectedTeam}
-                onChange={handleTeamChange}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition appearance-none pr-8"
-              >
-                <option value="">Seleccionar equipo</option>
-                {teams.map((team) => (
-                  <option key={team.id} value={team.name}>
-                    {team.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
+            <input
+              type="text"
+              id="team-display"
+              className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
+              value={currentUser.team}
+              readOnly
+            />
           </div>
 
-          {/* Position Dropdown */}
-          <div className="relative w-full sm:w-64">
-            <label htmlFor="position-select" className="block text-sm font-medium text-gray-700 mb-1">
+          {/* Position Card */}
+          <div className="bg-white p-4 rounded-lg w-full sm:w-65">
+            <label htmlFor="position-display" className="block text-sm font-medium text-blue-700 mb-1">
               Position
             </label>
-            <div className="relative">
-              <select
-                id="position-select"
-                value={selectedPosition}
-                onChange={(e) => setSelectedPosition(e.target.value)}
-                disabled={!selectedTeam}
-                className={`w-full px-4 py-2 rounded-lg border ${!selectedTeam ? 'bg-gray-100' : 'bg-white'} border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition appearance-none pr-8`}
-              >
-                <option value="">{selectedTeam ? "Seleccionar posición" : "Seleccione un equipo primero"}</option>
-                {filteredPositions.map((position) => (
-                  <option key={position.id} value={position.name}>
-                    {position.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="absolute right-3 top-3 h-4 w-4 text-gray-400 pointer-events-none" />
-            </div>
+            <input
+              type="text"
+              id="position-display"
+              className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
+              value={currentUser.position}
+              readOnly
+            />
           </div>
         </div>
       </div>

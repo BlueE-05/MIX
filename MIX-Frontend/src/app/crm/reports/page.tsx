@@ -9,7 +9,7 @@ export default function Dashboard() {
     <main className="p-6 sm:pt-10">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Reports</h1>
       </div>
 
       {/* Grid Layout */}
