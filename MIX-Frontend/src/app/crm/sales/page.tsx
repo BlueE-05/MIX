@@ -134,7 +134,15 @@ export default function SalesPage() {
       {showForm && (
         <Formulario
           onClose={() => setShowForm(false)}
-          onSubmit={handleNewSale}
+          onSubmit={(data) => {
+            // Convert the new format to the expected format
+            const adaptedData = {
+              ...data,
+              startDate: null, // or some default date
+              endDate: null    // or some default date
+            };
+            handleNewSale(adaptedData);
+          }}
         />
       )}
 

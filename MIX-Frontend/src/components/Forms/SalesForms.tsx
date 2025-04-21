@@ -1,15 +1,17 @@
 'use client'
 
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 // Define la interfaz para los datos del formulario
 interface SaleFormData {
   contact: string;
   status: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  items: {
+    article: string;
+    quantity: number;
+    price: number;
+  }[];
 }
 
 // Define las props del componente
@@ -18,11 +20,18 @@ interface FormularioProps {
   onSubmit: (data: SaleFormData) => void;
 }
 
+interface Article {
+  id: string;
+  name: string;
+  price: number;
+}
+
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedContact, setSelectedContact] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [items, setItems] = useState<{article: string, quantity: number, price: number}[]>([
+    { article: '', quantity: 1, price: 0 }
+  ]);
 
   const contactOptions = [
     { id: '1', name: 'Cecilia' },
@@ -36,14 +45,57 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     { id: '3', name: 'Cancelled' },
   ];
 
-  const handleSubmit = () => { // Se cambiara con la conexion a la BD
+  const articleOptions: Article[] = [
+    { id: '1', name: 'Laptop', price: 999.99 },
+    { id: '2', name: 'Smartphone', price: 699.99 },
+    { id: '3', name: 'Monitor', price: 249.99 },
+    { id: '4', name: 'Keyboard', price: 49.99 },
+    { id: '5', name: 'Mouse', price: 29.99 },
+  ];
+
+  const handleSubmit = () => {
     const formData: SaleFormData = {
       contact: selectedContact,
       status: selectedStatus,
-      startDate,
-      endDate
+      items: items.filter(item => item.article !== '') // Filter out empty items
     };
     onSubmit(formData);
+  };
+
+  const handleAddItem = () => {
+    setItems([...items, { article: '', quantity: 1, price: 0 }]);
+  };
+
+  const handleArticleChange = (index: number, articleId: string) => {
+    const newItems = [...items];
+    const selectedArticle = articleOptions.find(a => a.id === articleId);
+    
+    newItems[index] = {
+      ...newItems[index],
+      article: articleId,
+      price: selectedArticle ? selectedArticle.price * newItems[index].quantity : 0
+    };
+    
+    setItems(newItems);
+  };
+
+  const handleQuantityChange = (index: number, quantity: number) => {
+    const newItems = [...items];
+    const article = articleOptions.find(a => a.id === newItems[index].article);
+    
+    newItems[index] = {
+      ...newItems[index],
+      quantity: quantity > 0 ? quantity : 1,
+      price: article ? article.price * (quantity > 0 ? quantity : 1) : 0
+    };
+    
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
   };
 
   return (
@@ -105,39 +157,84 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
           </div>
         </div>
 
-        {/* Dates and Status Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Start Day *
-            </label>
-            <DatePicker
-              id="startDate"
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+        {/* Articles Section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Articles</h3>
+          
+          {items.map((item, index) => (
+            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+              <div>
+                <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Article {index + 1}
+                </label>
+                <select
+                  id={`article-${index}`}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  value={item.article}
+                  onChange={(e) => handleArticleChange(index, e.target.value)}
+                >
+                  <option value="">Select article</option>
+                  {articleOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Expected End Day *
-            </label>
-            <DatePicker
-              id="endDate"
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+              <div>
+                <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  id={`quantity-${index}`}
+                  min="1"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  value={item.quantity}
+                  onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
+                />
+              </div>
 
-          <div>
+              <div>
+                <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Price
+                </label>
+                <input
+                  type="text"
+                  id={`price-${index}`}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                  value={`$${item.price.toFixed(2)}`}
+                  readOnly
+                />
+              </div>
+
+              {items.length > 1 && (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={handleAddItem}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Add Another Article
+          </button>
+        </div>
+
+        {/* Status Section */}
+        <div className="mb-8">
+          <div className="w-full md:w-1/3">
             <label htmlFor="saleStatus" className="block text-sm font-medium text-gray-700 mb-1">
               Sale Status *
             </label>
