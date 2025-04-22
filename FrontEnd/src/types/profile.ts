@@ -13,4 +13,5 @@ export interface LayOutProfileData {
     name: string;
     lastName: string;
     profilePic: string | null;
+    emailVerified: boolean;
 }

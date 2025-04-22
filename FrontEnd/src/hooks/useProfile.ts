@@ -22,7 +22,8 @@ export function useProfile() {
         setProfile({
           name: data.Name,
           lastName: data.LastName,
-          profilePic: data.ProfilePic || null
+          profilePic: data.ProfilePic || null,
+          emailVerified: data.EmailVerified
         });
       } catch (err) {
         console.error("Error fetching profile:", err);

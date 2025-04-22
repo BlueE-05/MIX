@@ -1,39 +1,41 @@
 import { Request, Response, NextFunction } from "express";
-import { UserController } from "../controllers/user.controller";
-import { auth0Service } from "../services";
-import { pool } from "../db";
-import { UserDbService } from "../db/user";
+import { userControllerPromise } from "../factories/controllerFactory";
 
-const controllerPromise = pool.then(
-  (db) => new UserController(auth0Service, new UserDbService(db))
-);
 
 export class UserHttpHandler {
-  async signup(req: Request, res: Response, next: NextFunction) {
+  public async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const controller = await controllerPromise;
+      const controller = await userControllerPromise;
       await controller.signup(req, res);
     } catch (error) {
       next(error);
     }
   }
 
-  async getProfile(req: Request, res: Response, next: NextFunction) {
+  public async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const controller = await controllerPromise;
+      const controller = await userControllerPromise;
       await controller.getProfile(req as any, res);
     } catch (error) {
       next(error);
     }
   }
 
-  async logout(req: Request, res: Response, next: NextFunction) {
+  public async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const controller = await controllerPromise;
+      const controller = await userControllerPromise;
       controller.logout(req, res);
     } catch (error) {
       next(error);
     }
   }
-  
+
+  public async resendVerificationEmail(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const controller = await userControllerPromise;
+      await controller.resendVerificationEmail(req as any, res);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

@@ -14,9 +14,5 @@ export interface CustomAuthClaims {
 }
 
 export interface AuthRequest extends Request {
-    auth: {
-      sub: string;
-      email?: string;
-      [key: string]: any;
-    };
+    auth?: CustomAuthClaims
 }

@@ -1,10 +1,12 @@
 "use client";
 
 import Sidebar from '@/components/Sidebar/Sidebar';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import Image from 'next/image';
 import { useProfile } from '@/hooks/useProfile';
 import { useSession } from '@/hooks/useSession';
+import UnauthorizedAccess from '@/components/Cards/Autorizations/UnautorizedAccess';
 
 interface CRMLayoutProps {
   children: ReactNode;
@@ -13,9 +15,28 @@ interface CRMLayoutProps {
 export default function CRMLayout({ children }: CRMLayoutProps) {
   const { isAuthenticated, loading } = useSession();
   const { profile } = useProfile();
+  const router = useRouter();
 
   if (loading) return <div className="p-8 text-center">Cargando sesión...</div>;
-  if (!isAuthenticated) return null;
+
+  if (!isAuthenticated) {
+    return <UnauthorizedAccess reason="forbidden" />;
+  }
+
+  if (profile?.emailVerified === false) {
+    return (
+      <UnauthorizedAccess
+        reason="not-verified"
+        onRetry={() => router.refresh()}
+        onResend={async () => {
+          await fetch('http://localhost:4000/api/resend-verification', {
+            method: 'POST',
+            credentials: 'include',
+          });
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex">
