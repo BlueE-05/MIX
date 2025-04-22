@@ -39,8 +39,8 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
     } else if (comision !== null) {
       return (
         <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
-          {comision}
-        </div>
+        {typeof comision === 'number' ? comision.toFixed(2) : comision}
+      </div>
       );
     } else {
       return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
