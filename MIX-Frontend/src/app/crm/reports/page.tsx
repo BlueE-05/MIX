@@ -123,7 +123,7 @@ export default function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-700 mb-4">
                 {reportType === 'team' ? 'Team Sales Distribution' : 'Individual Distribution'}
               </h2>
-                <PieChart distribution={currentData.distribution} />
+                <PieChart compact={true}/>
             </div>
           </div>
         </div>
