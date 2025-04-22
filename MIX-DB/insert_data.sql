@@ -13,7 +13,7 @@ INSERT INTO JobPosition (Name, IDTeam) VALUES
 ('Líder de Ventas', 2);
 
 -- Usuarios (8 en total, 4 por equipo)
-INSERT INTO [User] ([ID], [Name], [LastName], [PhoneNumber], [IDJobPos], [Education], [ProfilePic], [TeamID]) VALUES
+INSERT INTO [User] ([IDEmail], [Name], [LastName], [PhoneNumber], [IDJobPos], [Education], [ProfilePic], [TeamID]) VALUES
 ('ana.gomez@empresa.com', 'Ana', 'Gómez', '555-1234', 1, 'Licenciatura en Marketing', NULL, 1),
 ('luis.perez@empresa.com', 'Luis', 'Pérez', '555-5678', 1, 'Ingeniería Comercial', NULL, 1),
 ('carla.sanchez@empresa.com', 'Carla', 'Sánchez', '555-8765', 1, 'Lic. en Administración', NULL, 1),
