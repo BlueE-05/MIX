@@ -11,7 +11,7 @@ const currentUser = {
 };
 
 const DashboardPage = () => {
-  const headers = ["ID", "Tarea", "Estado", "Fecha de Creación"];
+  const headers = ["ID", "Contact Name", "Status", "Start Day", "Total Sale", "Product Num"];
   const data = [
     [1, "Tarea 1", "En progreso", "2025-03-13"],
     [2, "Tarea 2", "Completada", "2025-03-12"],
