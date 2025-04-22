@@ -1,9 +1,19 @@
-"use client";
+'use client';
+import { useEffect, useState } from 'react';
 import BoxClosed from "@/components/Dashboard/BoxClosed";
 import PieChart from "@/components/Dashboard/PieChart";
 import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 import CustomTable from "@/components/Tables/CustomTable";
 import AwardsBox from "@/components/Dashboard/Awards";
+
+interface TopSale {
+  SaleID: number;
+  ContactName: string;
+  Status: string;
+  StartDate: string;
+  TotalSaleAmount: number;
+  TotalProducts: number;
+}
 
 const currentUser = {
   team: "Marketing",
@@ -12,13 +22,66 @@ const currentUser = {
 
 const DashboardPage = () => {
   const headers = ["REF", "Contact Name", "Status", "Start Day", "Total Sale", "Product Num"];
-  const data = [
-    [1, "Tarea 1", "En progreso", "2025-03-13"],
-    [2, "Tarea 2", "Completada", "2025-03-12"],
-    [3, "Tarea 3", "Pendiente", "2025-03-11"],
-    [4, "Tarea 4", "En progreso", "2025-03-10"],
-  ];
+  const [tableData, setTableData] = useState<React.ReactNode[][]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const fetchTopSales = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost:3001/sale/TopSales/1');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: TopSale[] = await response.json();
+        const transformedData = transformData(data);
+        setTableData(transformedData);
+      } catch (err) {
+        console.error("Error fetching top sales:", err);
+        setError("Failed to load top sales data. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTopSales();
+  }, []);
+
+  const transformData = (data: TopSale[]): React.ReactNode[][] => {
+    return data.map((sale) => {
+      const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString("en-US");
+      };
+
+      return [
+        `#${sale.SaleID}`,
+        sale.ContactName,
+        <span 
+          key={`status-${sale.SaleID}`} 
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            sale.Status === 'Cierre' ? 'bg-green-100 text-green-800' :
+            'bg-blue-100 text-blue-800'
+          }`}
+        >
+          {sale.Status}
+        </span>,
+        formatDate(sale.StartDate),
+        `$${sale.TotalSaleAmount.toFixed(2)}`,
+        sale.TotalProducts.toString()
+      ];
+    });
+  };
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-gray-100 p-6">Loading top sales data...</div>;
+  }
+
+  if (error) {
+    return <div className="min-h-screen bg-gray-100 p-6">Error: {error}</div>;
+  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
@@ -69,14 +132,17 @@ const DashboardPage = () => {
               Recent sales
             </h2>
             <div className="overflow-x-auto">
-              <CustomTable headers={headers} data={data} includeSearch={false} />
+              <CustomTable 
+                headers={headers} 
+                data={tableData} 
+                includeSearch={false} 
+              />
             </div>
           </div>
         </div>
   
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
-
           <div>
             <AwardsBox award={"UwU"}/>
           </div>
