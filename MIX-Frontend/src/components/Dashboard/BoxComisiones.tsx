@@ -1,10 +1,17 @@
-export default function BoxComisiones() {
-    return (
-        <main className="">
-            <div className="w-50 h-50 flex flex-col items-center justify-center rounded-2xl p-4">
-                <p className="text-lg font-semibold">Commissions this month</p>
-                <p className="text-4xl font-bold mt-2">$30,000</p>
-            </div>
-        </main> 
-    );
-  }
+'use client';
+
+interface BoxComisionesProps {
+  comisiones?: number;
+}
+
+export default function BoxComisiones({ comisiones }: BoxComisionesProps = {}) {
+  // Valor por defecto si no se pasa la prop
+  const amount = comisiones ?? 12500;
+  
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mb-2">Commissions</h3>
+      <p className="text-3xl font-bold text-green-600">${amount.toLocaleString()}</p>
+    </div>
+  );
+}
