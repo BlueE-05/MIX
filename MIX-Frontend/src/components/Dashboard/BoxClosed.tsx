@@ -7,7 +7,7 @@ interface BoxClosedProps {
   justify?: string;
 }
 
-export default function BoxClosed({ closedDeals, justify }: BoxClosedProps = {}) {
+export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const iduser = 1; // Ajusta esto dinámicamente si lo necesitas
