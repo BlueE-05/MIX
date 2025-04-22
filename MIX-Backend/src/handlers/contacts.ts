@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from 'express';
 import ContactController from '@/controllers/contacts';
+import Contact from '@/types/db/ContactDB';
 
 export default class ContactHTTPHandler {
     private contactController: ContactController;
@@ -12,8 +13,8 @@ export default class ContactHTTPHandler {
 
     getContacts = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const idUser = Number(req.params.idUser);
-            const contacts = await this.contactController.getAllContacts(idUser);
+            const userEmail = "ana.gomez@empresa.com";
+            const contacts = await this.contactController.getAllContacts(userEmail);
             res.json(contacts);
         } catch (error) {
             next(error);
@@ -22,8 +23,9 @@ export default class ContactHTTPHandler {
 
     getContactById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = Number(req.params.id);
-            const contact = await this.contactController.getContactById(id);
+            const userEmail = "ana.gomez@empresa.com";
+            const contactID = Number(req.params.id);
+            const contact = await this.contactController.getContactById(userEmail, contactID);
             res.json(contact);
         } catch (error) {
             next(error);
@@ -32,8 +34,9 @@ export default class ContactHTTPHandler {
 
     getContactByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const idUser = Number(req.params.idUser);
-            const contact = await this.contactController.getContactByName(idUser, req.params.name);
+            const userEmail = "ana.gomez@empresa.com";
+            const contactName = req.params.name;
+            const contact = await this.contactController.getContactByName(userEmail, contactName);
             res.json(contact);
         } catch (error) {
             next(error);
@@ -42,8 +45,9 @@ export default class ContactHTTPHandler {
 
     getContactByEnterprise = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const idUser = Number(req.params.idUser);
-            const contact = await this.contactController.getContactByEnterprise(idUser, req.params.enterprise);
+            const userEmail = "ana.gomez@empresa.com";
+            const contactEnterprise = req.params.enterprise;
+            const contact = await this.contactController.getContactByEnterprise(userEmail, contactEnterprise);
             res.json(contact);
         } catch (error) {
             next(error);
@@ -52,8 +56,9 @@ export default class ContactHTTPHandler {
 
     createContact = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const idUser = Number(req.params.idUser);
-            await this.contactController.createContact(idUser, req.body);
+            const userEmail = "ana.gomez@empresa.com";
+            const contactData: Contact = req.body;
+            await this.contactController.createContact(userEmail, contactData);
             res.json({ message: 'Contact created successfully' });
         } catch (error) {
             next(error);
@@ -62,9 +67,10 @@ export default class ContactHTTPHandler {
 
     updateContact = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = Number(req.params.id);
-            const updated = await this.contactController.updateContact(id, req.body);
-            res.json(updated);
+            const contactID = Number(req.params.id);
+            const contactData: Contact = req.body;
+            const updated = await this.contactController.updateContact(contactID, contactData);
+            res.json({ message: 'Contact updated successfully' });
         } catch (error) {
             next(error);
         }
@@ -72,8 +78,8 @@ export default class ContactHTTPHandler {
 
     deleteContact = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = Number(req.params.id);
-            await this.contactController.deleteContact(id);
+            const contactID = Number(req.params.id);
+            await this.contactController.deleteContact(contactID);
             res.json({ message: 'Contact deleted successfully' });
         } catch (error) {
             next(error);

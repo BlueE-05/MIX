@@ -2,6 +2,8 @@
 
 import sql from 'mssql';
 import config from '@/db/config';
+import ContactDB from '@/types/db/ContactDB';
+import Contact from '@/types/controller/Contact';
 
 export default class ContactService {
   private pool: sql.ConnectionPool;
@@ -14,130 +16,185 @@ export default class ContactService {
     });
   }
 
-  async getAllContacts(idUser: number) {
+  async closePool(): Promise<void> {
+    try {
+      await this.pool.close();
+    } catch (err) {
+      console.error('Error closing connection pool', err);
+    }
+  }
+
+  async getAllContacts(userID: string): Promise<Contact[]> {
     const result = await this.pool
       .request()
-      .input('idUser', idUser)
+      .input('idUser', sql.VarChar, userID)
       .query(
         `SELECT 
           c.ID, 
           c.Name, 
           c.LastName, 
-          c.Email, 
-          c.PhoneNumber,
           e.Name AS EnterpriseName,
-          c.CreationDate, 
-          c.LastInteraction
+          CASE 
+            WHEN EXISTS (
+              SELECT 1
+              FROM Sale s
+              WHERE s.IDContact = c.ID
+                AND MONTH(s.StartDate) = MONTH(GETDATE())
+                AND YEAR(s.StartDate) = YEAR(GETDATE())
+                AND s.IDPhase NOT IN (5, 6)
+            ) THEN CAST(1 AS bit)
+            ELSE CAST(0 AS bit)
+          END AS Status,
+          c.PhoneNumber,
+          c.Email, 
+          c.CreationDate
         FROM Contact c
         JOIN Enterprise e ON c.IDEnterprise = e.ID
         WHERE c.IDUser = @idUser
-        ORDER BY c.LastInteraction DESC`
+        ORDER BY c.Name ASC;`
       );
     return result.recordset;
   }
 
-  async getContactById(id: number) {
+  async getContactById(userID: string, contactID: number): Promise<Contact[]> {
     const result = await this.pool.request()
-      .input('id', sql.Int, id)
+      .input('idUser', sql.VarChar, userID)
+      .input('id', sql.Int, contactID)
       .query(
         `SELECT 
           c.ID, 
           c.Name, 
           c.LastName, 
-          c.Email, 
-          c.PhoneNumber,
           e.Name AS EnterpriseName,
-          c.CreationDate, 
-          c.LastInteraction
-        FROM Contact c
+          CASE 
+            WHEN EXISTS (
+              SELECT 1
+              FROM Sale s
+              WHERE s.IDContact = c.ID
+                AND MONTH(s.StartDate) = MONTH(GETDATE())
+                AND YEAR(s.StartDate) = YEAR(GETDATE())
+                AND s.IDPhase NOT IN (5, 6)
+            ) THEN CAST(1 AS bit)
+            ELSE CAST(0 AS bit)
+          END AS Status,
+          c.PhoneNumber,
+          c.Email, 
+          c.CreationDate
+        FROM [Contact] c
         JOIN Enterprise e ON c.IDEnterprise = e.ID
-        WHERE c.ID = @id`
+        WHERE c.IDUser = @idUser AND c.ID = @id
+        ORDER BY c.Name ASC;`
       );
     return result.recordset;
   }
 
-  async getContactByName(idUser: number, name: string) {
+  async getContactByName(userID: string, contactName: string): Promise<Contact[]> {
     const result = await this.pool.request()
-      .input('name', sql.VarChar, name)
-      .input('idUser', sql.Int, idUser)
+      .input('name', sql.VarChar, `%${contactName}%`)
+      .input('idUser', sql.VarChar, userID)
+      .query(
+        `SELECT 
+            c.ID, 
+            c.Name, 
+            c.LastName, 
+            e.Name AS EnterpriseName,
+            CASE 
+              WHEN EXISTS (
+                SELECT 1
+                FROM Sale s
+                WHERE s.IDContact = c.ID
+                  AND MONTH(s.StartDate) = MONTH(GETDATE())
+                  AND YEAR(s.StartDate) = YEAR(GETDATE())
+                  AND s.IDPhase NOT IN (5, 6)
+              ) THEN CAST(1 AS bit)
+              ELSE CAST(0 AS bit)
+            END AS Status,
+            c.PhoneNumber,
+            c.Email, 
+            c.CreationDate
+          FROM [Contact] c
+          JOIN Enterprise e ON c.IDEnterprise = e.ID
+          WHERE c.IDUser = @idUser AND (c.Name LIKE @name OR c.LastName LIKE @name)
+          ORDER BY c.Name ASC;`
+      );
+    return result.recordset;
+  }
+
+  async getContactByEnterprise(userID: string, enterprise: string): Promise<Contact[]> {
+    const result = await this.pool.request()
+      .input('idUser', sql.VarChar, userID)
+      .input('enterprise', sql.VarChar, `%${enterprise}%`)
       .query(
         `SELECT 
           c.ID, 
           c.Name, 
-          c.LastName, 
-          c.Email, 
-          c.PhoneNumber,
+          c.LastName,
           e.Name AS EnterpriseName,
-          c.CreationDate, 
-          c.LastInteraction
-        FROM Contact c
-        JOIN Enterprise e ON c.IDEnterprise = e.ID
-        WHERE c.IDUser = @idUser 
-          AND (c.Name = @name OR c.LastName = @name)
-        ORDER BY c.LastInteraction DESC`
+          CASE 
+            WHEN EXISTS (
+              SELECT 1
+              FROM Sale s
+              WHERE s.IDContact = c.ID
+                AND MONTH(s.StartDate) = MONTH(GETDATE())
+                AND YEAR(s.StartDate) = YEAR(GETDATE())
+                AND s.IDPhase NOT IN (5, 6)
+            ) THEN CAST(1 AS bit)
+            ELSE CAST(0 AS bit)
+          END AS Status,
+          c.PhoneNumber,
+          c.Email, 
+          c.CreationDate
+        FROM [Contact] c
+        JOIN [Enterprise] e ON c.IDEnterprise = e.ID
+        WHERE c.IDUser = @idUser AND e.Name LIKE @enterprise;`
       );
     return result.recordset;
   }
 
-  async getContactByEnterprise(idUser: number, enterprise: string) {
-    const result = await this.pool.request()
-      .input('idUser', sql.Int, idUser)
-      .input('enterprise', sql.VarChar, enterprise)
-      .query(
-        `SELECT 
-          c.ID, 
-          c.Name, 
-          c.LastName, 
-          c.Email, 
-          c.PhoneNumber,
-          e.Name AS EnterpriseName,
-          c.CreationDate, 
-          c.LastInteraction
-        FROM Contact c
-        JOIN Enterprise e ON c.IDEnterprise = e.ID
-        WHERE c.IDUser = @idUser AND e.Name = @enterprise
-        ORDER BY c.LastInteraction DESC`
-      );
-    return result.recordset;
-  }
-
-  async createContact(idUser: number, data: { name: string; lastName: string; email: string; phoneNumber: number; nameEnterprise: string }) {
+  async createContact(userID: string, data: ContactDB): Promise<void> {
     await this.pool.request()
-      .input('idUser', sql.Int, idUser)
+      .input('idUser', sql.VarChar, userID)
       .input('name', sql.VarChar, data.name)
       .input('lastName', sql.VarChar, data.lastName)
       .input('email', sql.VarChar, data.email)
       .input('phoneNumber', sql.VarChar, data.phoneNumber)
-      .input('nameEnterprise', sql.VarChar, data.nameEnterprise)
+      .input('nameEnterprise', sql.VarChar, data.enterpriseName)
       .query(
-        `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, CreationDate, LastInteraction, IDUser, IDEnterprise)
-        SELECT @name, @lastName, @email, @phoneNumber, GETDATE(), GETDATE(), @idUser, e.ID
-        FROM Enterprise e WHERE e.Name = @nameEnterprise`
+        `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, IDEnterprise, IDUser)
+        VALUES (
+            @name,
+            @lastName,
+            @email,
+            @phoneNumber,
+            (SELECT ID FROM Enterprise WHERE Name = @nameEnterprise),
+            @idUser
+        );`
       );
   }
 
-  async updateContact(id: number, data: { name: string; lastName: string; email: string; phoneNumber: number }) {
+  async updateContact(id: number, data: ContactDB): Promise<void> {
     await this.pool.request()
       .input('id', sql.Int, id)
       .input('name', sql.VarChar, data.name)
       .input('lastName', sql.VarChar, data.lastName)
       .input('email', sql.VarChar, data.email)
       .input('phoneNumber', sql.VarChar, data.phoneNumber)
+      .input('enterpriseName', sql.VarChar, data.enterpriseName)
       .query(
-        `UPDATE Contact
+        `UPDATE [Contact]
         SET
           Name = @name,
           LastName = @lastName,
           Email = @email,
           PhoneNumber = @phoneNumber,
-          LastInteraction = GETDATE()
+          IDEnterprise = (SELECT ID FROM Enterprise WHERE Name = @enterpriseName)
         WHERE ID = @id`
       );
   }
 
-  async deleteContact(id: number) {
+  async deleteContact(contactID: number): Promise<void> {
     await this.pool.request()
-      .input('id', sql.Int, id)
+      .input('id', sql.Int, contactID)
       .query(
         'DELETE FROM Contact WHERE ID = @id'
       );

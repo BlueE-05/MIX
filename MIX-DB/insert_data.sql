@@ -115,26 +115,26 @@ INSERT INTO Phase (Name) VALUES
 -- Ventas
 
 -- Nueva venta para Ana Gómez
-INSERT INTO [Sale] ([IDUser], [IDContact], [StartDate], [EndDate], [IDPhase])
+INSERT INTO [Sale] ([IDUser], [IDContact], [StartDate], [IDPhase])
 VALUES
-('ana.gomez@empresa.com', 1, '2025-04-09', '2025-04-15', 1),
-('ana.gomez@empresa.com', 2, '2025-04-09', '2025-04-15', 2),
-('ana.gomez@empresa.com', 3, '2025-04-09', '2025-04-15', 3),
-('ana.gomez@empresa.com', 4, '2025-04-09', '2025-04-15', 4),
-('ana.gomez@empresa.com', 3, '2025-04-09', '2025-04-15', 5),
-('ana.gomez@empresa.com', 4, '2025-04-09', '2025-04-15', 6)
-('ana.gomez@empresa.com', 4, '2025-03-09', '2025-03-15', 5),
-('ana.gomez@empresa.com', 4, '2025-03-09', '2025-03-15', 5);
+('ana.gomez@empresa.com', 1, '2025-04-09', 1),
+('ana.gomez@empresa.com', 2, '2025-04-09', 2),
+('ana.gomez@empresa.com', 3, '2025-04-09', 3),
+('ana.gomez@empresa.com', 4, '2025-04-09', 4),
+('ana.gomez@empresa.com', 3, '2025-04-09', 5),
+('ana.gomez@empresa.com', 4, '2025-04-09', 6),
+('ana.gomez@empresa.com', 4, '2025-03-09', 5),
+('ana.gomez@empresa.com', 4, '2025-03-09', 5);
 
 -- Nueva venta para Diego Ramírez
-INSERT INTO [Sale] ([IDUser], [IDContact], [StartDate], [EndDate], [IDPhase])
+INSERT INTO [Sale] ([IDUser], [IDContact], [StartDate], [IDPhase])
 VALUES
-('diego.ramirez@empresa.com', 21, '2025-04-09', '2025-04-15', 2),
-('diego.ramirez@empresa.com', 23, '2025-04-09', '2025-04-15', 1),
-('diego.ramirez@empresa.com', 22, '2025-04-09', '2025-04-15', 3),
-('diego.ramirez@empresa.com', 24, '2025-04-09', '2025-04-15', 4),
-('diego.ramirez@empresa.com', 25, '2025-04-09', '2025-04-15', 5),
-('diego.ramirez@empresa.com', 21, '2025-04-09', '2025-04-15', 5);
+('diego.ramirez@empresa.com', 21, '2025-04-09', 2),
+('diego.ramirez@empresa.com', 23, '2025-04-09', 1),
+('diego.ramirez@empresa.com', 22, '2025-04-09', 3),
+('diego.ramirez@empresa.com', 24, '2025-04-09', 4),
+('diego.ramirez@empresa.com', 25, '2025-04-09', 5),
+('diego.ramirez@empresa.com', 21, '2025-04-09', 5);
 
 -- Insertamos artículos para la venta de Ana Gómez
 INSERT INTO [SaleArticle] ([IDSale], [IDProduct], [Quantity])
@@ -142,16 +142,7 @@ VALUES
 (1, 'PRD-001', 3),
 (1, 'PRD-008', 3),
 (7, 'PRD-002', 5),
-(5, 'PRD-003', 5),
-(13, 'PRD-010', 5),
-(14, 'PRD-011', 5),
-(14, 'PRD-012', 5);
-
-INSERT INTO [SaleArticle] ([IDSale], [IDProduct], [Quantity])
-VALUES
-(1, 'PRD-001', 3),
-(1, 'PRD-008', 3),
-(7, 'PRD-002', 5);
+(5, 'PRD-003', 5);
 
 -- Awards
 INSERT INTO [Award] ([Name])

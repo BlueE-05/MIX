@@ -1,35 +1,36 @@
 //* 3. Controller Conctacts
 
 import ContactService from '@/db/contacts';
+import Contact from '@/types/db/ContactDB';
 
 export default class ContactController {
     private service = new ContactService;
 
-    async getAllContacts(idUser: number) {
-        return this.service.getAllContacts(idUser);
+    async getAllContacts(userID: string): Promise<Contact[]> {
+        return this.service.getAllContacts(userID);
     }
 
-    async getContactById(id: number) {
-        return this.service.getContactById(id);
+    async getContactById(userID: string, contactID: number): Promise<Contact[]> {
+        return this.service.getContactById(userID, contactID);
     }
 
-    async getContactByName(idUser: number, name: string) {
-        return this.service.getContactByName(idUser, name);
+    async getContactByName(userID: string, contactName: string): Promise<Contact[]> {
+        return this.service.getContactByName(userID, contactName);
     }
 
-    async getContactByEnterprise(idUser: number, enterprise: string) {
-        return this.service.getContactByEnterprise(idUser, enterprise);
+    async getContactByEnterprise(userID: string, enterprise: string): Promise<Contact[]> {
+        return this.service.getContactByEnterprise(userID, enterprise);
     }
 
-    async createContact(idUser: number, data: { name: string; lastName: string; email: string; phoneNumber: number; nameEnterprise: string } ) {
-        return this.service.createContact(idUser, data);
+    async createContact(userID: string, data: Contact): Promise<void> {
+        return this.service.createContact(userID, data);
     }
 
-    async updateContact(id: number, data: { name: string; lastName: string; email: string; phoneNumber: number }) {
-        return this.service.updateContact(id, data);
+    async updateContact(contactID: number, data: Contact): Promise<void> {
+        return this.service.updateContact(contactID, data);
     }
 
-    async deleteContact(id: number) {
-        return this.service.deleteContact(id);
+    async deleteContact(contactID: number): Promise<void> {
+        return this.service.deleteContact(contactID);
     }
 }
