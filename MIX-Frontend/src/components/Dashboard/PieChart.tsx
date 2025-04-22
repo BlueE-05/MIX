@@ -83,7 +83,7 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
         setChartData(newData);
         setLoading(false);
       } catch (err) {
-        setError('Error al cargar los datos');
+        setError('Error loading data...');
         setLoading(false);
         console.error("Error fetching data:", err);
       }
@@ -95,7 +95,7 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
   if (loading) {
     return (
       <div className={`w-full ${compact ? 'h-[250px]' : 'h-full min-h-[300px]'} flex items-center justify-center`}>
-        <p>Cargando datos...</p>
+        <p className="text-center py-8 text-gray-500">Loading data...</p>
       </div>
     );
   }
@@ -103,7 +103,7 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
   if (error) {
     return (
       <div className={`w-full ${compact ? 'h-[250px]' : 'h-full min-h-[300px]'} flex items-center justify-center`}>
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-700 px-4 py-3">{error}</p>
       </div>
     );
   }

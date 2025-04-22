@@ -29,25 +29,28 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
       });
   }, [iduser]);
 
+ 
+
   const renderComision = () => {
     if (loading) {
-      return 'Loading...';
+      return <div className="text-center py-8 text-gray-500">Loading data...</div>;
     } else if (comision === 0) {
-      return 'No commissions';
+      return <div className="text-center py-8 text-gray-500">No commissions</div>;
     } else if (comision !== null) {
-      // Redondear a 2 decimales
-      return typeof comision === 'number' 
-        ? comision.toFixed(2) 
-        : parseFloat(comision).toFixed(2);
+      return (
+        <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
+          {comision}
+        </div>
+      );
     } else {
-      return 'Error loading';
+      return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
     }
   };
   
   return (
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-2">Commissions</h3>
-      <p className={`text-3xl font-bold text-green-600 ${justify}`}>{renderComision()}</p>
+      {renderComision()}
     </div>
   );
 }

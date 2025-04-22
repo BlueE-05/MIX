@@ -39,9 +39,11 @@ const DashboardPage = () => {
         const data: TopSale[] = await response.json();
         const transformedData = transformData(data);
         setTableData(transformedData);
+        setError(null); // Limpiar error si la solicitud es exitosa
       } catch (err) {
         console.error("Error fetching top sales:", err);
-        setError("Failed to load top sales data. Please try again later.");
+        setError("Error loading data...");
+        setTableData([]); // Limpiar datos si hay error
       } finally {
         setIsLoading(false);
       }
@@ -74,14 +76,6 @@ const DashboardPage = () => {
       ];
     });
   };
-
-  if (isLoading) {
-    return <div className="min-h-screen bg-gray-100 p-6">Loading top sales data...</div>;
-  }
-
-  if (error) {
-    return <div className="min-h-screen bg-gray-100 p-6">Error: {error}</div>;
-  }
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
@@ -132,11 +126,19 @@ const DashboardPage = () => {
               Recent sales
             </h2>
             <div className="overflow-x-auto">
-              <CustomTable 
-                headers={headers} 
-                data={tableData} 
-                includeSearch={false} 
-              />
+              {isLoading ? (
+                <div className="text-center py-8 text-gray-500">Loading data...</div>
+              ) : error ? (
+                <div className="text-red-700 px-4 py-3">
+                  {error}
+                </div>
+              ) : (
+                <CustomTable 
+                  headers={headers} 
+                  data={tableData} 
+                  includeSearch={false} 
+                />
+              )}
             </div>
           </div>
         </div>

@@ -30,20 +30,24 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
 
   const renderCierres = () => {
     if (loading) {
-      return 'Loading...';
+      return <div className="text-center py-8 text-gray-500">Loading data...</div>;
     } else if (cierres === 0) {
-      return 'No yet';
+      return <div className="text-center py-8 text-gray-500">No yet</div>;
     } else if (cierres !== null) {
-      return cierres;
+      return (
+        <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
+          {cierres}
+        </div>
+      );
     } else {
-      return 'Error loading';
+      return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
     }
   };
   
   return (
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-2">Closed Sales</h3>
-      <p className={`text-3xl font-bold text-blue-600 ${justify}`}>{renderCierres()}</p>
+      {renderCierres()}
     </div>
   );
 }
