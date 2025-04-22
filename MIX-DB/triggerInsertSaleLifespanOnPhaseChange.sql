@@ -33,3 +33,5 @@ BEGIN
         VALUES (@IDSale, @NewSalePhase, GETDATE());
     END;
 END;
+
+-- si se puede regresar a una fase anterior
