@@ -155,7 +155,6 @@ export default function ContactPage() {
     }
   };
 
-  // Convert ContactRow[] to ReactNode[][] const contactDataForTable: ReactNode[][] = contactData.map(contact => [
   const contactDataForTable: ReactNode[][] = contactData.map(contact => [
     contact.id,
     contact.name,
@@ -193,8 +192,8 @@ export default function ContactPage() {
         <ContactDetailCard
           contact={selectedContact}
           onClose={() => setSelectedContact(null)}
-          editButtonText="Editar Contacto"
-          closeButtonText="Cerrar"
+          editButtonText="Edit Contact"
+          closeButtonText="Close"
         />
       )}
 
