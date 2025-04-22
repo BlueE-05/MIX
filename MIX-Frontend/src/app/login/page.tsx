@@ -4,12 +4,14 @@ import Link from "next/link";
 import Navbar from "@/components/NavBar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import EmailVerification from '../../components/Cards/Autorizations/EmailVerification';
 
 export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [showVerification, setShowVerification] = useState(false); // Estado para controlar el modal
 
     const router = useRouter();
 
@@ -24,20 +26,30 @@ export default function Login() {
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
 
+        // Reset errors
+        setEmailError("");
+        setPasswordError("");
+
         // Validación de email
         const emailValidationError = validateEmail(email);
-        setEmailError(emailValidationError);
+        if (emailValidationError) {
+            setEmailError(emailValidationError);
+            return;
+        }
 
         // Validación de credenciales
-        if (!emailValidationError) {
-            if (email === correctEmail && password === correctPassword) {
-                console.log("Login successful for Mary Sue");
-                router.push("/crm/dashboard");
-            } else {
-                setEmailError("Invalid credentials");
-                setPasswordError("Invalid credentials");
-            }
+        if (email === correctEmail && password === correctPassword) {
+            console.log("Login successful for Mary Sue");
+            setShowVerification(true); // Mostrar modal de verificación
+        } else {
+            setEmailError("Invalid credentials");
+            setPasswordError("Invalid credentials");
         }
+    };
+
+    const handleContinueToDashboard = () => {
+        setShowVerification(false);
+        router.push("/crm/dashboard");
     };
 
     const isButtonDisabled = !email || !password;
@@ -118,6 +130,14 @@ export default function Login() {
                     </div>
                 </div>
             </div>
+
+            {/* Modal de verificación de email */}
+            {showVerification && (
+                <EmailVerification 
+                    isVerified={false} // Siempre mostrará el modal en este caso
+                    onContinue={handleContinueToDashboard} // Función para redirigir
+                />
+            )}
         </div>
     );
 }

@@ -1,557 +1,37 @@
-/*
-'use client'
-
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
-// Constantes de configuración
-const USER_ID = 1;
-const API_BASE_URL = 'http://localhost:3001/newsale';
-
-// Interfaces
-interface SaleFormData {
-  contact: string;
-  status: string;
-  startDate: Date | null;
-  endDate: Date | null;
-}
-
-interface Phase {
-  Name: string;
-}
-
-interface Contact {
-  FullName: string;
-}
-
-interface ContactInfo {
-  Email: string;
-  EnterpriseName: string;
-  PhoneNumber: string;
-}
-
-interface FormularioProps {
-  onClose: () => void;
-  onSubmit: (data: SaleFormData) => void;
-}
-
-export default function Formulario({ onClose, onSubmit }: FormularioProps) {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedContact, setSelectedContact] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
-  const [phases, setPhases] = useState<Phase[]>([]);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
-  const [loading, setLoading] = useState({
-    phases: true,
-    contacts: true,
-    contactInfo: false
-  });
-  const [error, setError] = useState({
-    phases: null as string | null,
-    contacts: null as string | null,
-    contactInfo: null as string | null
-  });
-
-  // Cargar datos iniciales
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        // Cargar fases
-        const phasesResponse = await fetch(`${API_BASE_URL}/Phases`);
-        if (!phasesResponse.ok) throw new Error(`Error en fases: ${phasesResponse.status}`);
-        const phasesData = await phasesResponse.json();
-        setPhases(phasesData);
-        
-        // Cargar contactos
-        const contactsResponse = await fetch(`${API_BASE_URL}/ContactsByUser/${USER_ID}`);
-        if (!contactsResponse.ok) throw new Error(`Error en contactos: ${contactsResponse.status}`);
-        const contactsData = await contactsResponse.json();
-        setContacts(contactsData);
-      } catch (err) {
-        const error = err as Error;
-        if (error.message.includes('fases')) {
-          setError(prev => ({ ...prev, phases: 'Error al cargar las fases' }));
-        } else {
-          setError(prev => ({ ...prev, contacts: 'Error al cargar los contactos' }));
-        }
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(prev => ({ ...prev, phases: false, contacts: false }));
-      }
-    };
-
-    fetchInitialData();
-  }, []);
-
-  
-  useEffect(() => {
-    if (!selectedContact) {
-      setContactInfo(null);
-      return;
-    }
-
-    const fetchContactInfo = async () => {
-      try {
-        setLoading(prev => ({ ...prev, contactInfo: true }));
-        setError(prev => ({ ...prev, contactInfo: null }));
-        
-        const response = await fetch(
-          `${API_BASE_URL}/ContactInfo/${USER_ID}/${encodeURIComponent(selectedContact)}`
-        );
-        
-        if (!response.ok) throw new Error(`Error: ${response.status}`);
-        
-        const data = await response.json();
-        if (data.length > 0) {
-          setContactInfo(data[0]);
-        } else {
-          setContactInfo(null);
-        }
-      } catch (err) {
-        setError(prev => ({ ...prev, contactInfo: 'Error al cargar la información del contacto' }));
-        console.error("Error fetching contact info:", err);
-      } finally {
-        setLoading(prev => ({ ...prev, contactInfo: false }));
-      }
-    };
-
-    fetchContactInfo();
-  }, [selectedContact]);
-
-  const handleSubmit = () => {
-    const formData: SaleFormData = {
-      contact: selectedContact,
-      status: selectedStatus,
-      startDate,
-      endDate
-    };
-    onSubmit(formData);
-  };
-
-  const isLoading = loading.phases || loading.contacts;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-xl shadow-md">
-        
-      <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h2 className="text-2xl font-bold text-gray-800">New Sale</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label="Close form"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Contact Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact *
-              </label>
-              {loading.contacts ? (
-                <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 animate-pulse">
-                  Cargando contactos...
-                </div>
-              ) : error.contacts ? (
-                <div className="text-red-500 text-sm">{error.contacts}</div>
-              ) : (
-                <select 
-                  id="contact" 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  value={selectedContact}
-                  onChange={(e) => setSelectedContact(e.target.value)}
-                  required
-                >
-                  <option value="">Select contact</option>
-                  {contacts.map((contact, index) => (
-                    <option key={index} value={contact.FullName}>
-                      {contact.FullName}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              {loading.contactInfo ? (
-                <div className="space-y-2 animate-pulse">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                  <div className="h-4 bg-gray-200 rounded w-4/5"></div>
-                </div>
-              ) : error.contactInfo ? (
-                <div className="text-red-500 text-sm">{error.contactInfo}</div>
-              ) : contactInfo ? (
-                <>
-                  <p className="text-gray-700">
-                    <span className="font-medium">E-Mail:</span>{' '}
-                    <a href={`mailto:${contactInfo.Email}`} className="text-blue-600 hover:underline">
-                      {contactInfo.Email}
-                    </a>
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Phone Number:</span> {contactInfo.PhoneNumber}
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Enterprise:</span> {contactInfo.EnterpriseName}
-                  </p>
-                </>
-              ) : (
-                <div className="text-gray-400 italic">Seleccione un contacto para ver su información</div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Start Day *
-            </label>
-            <DatePicker
-              id="startDate"
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Expected End Day *
-            </label>
-            <DatePicker
-              id="endDate"
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="saleStatus" className="block text-sm font-medium text-gray-700 mb-1">
-              Sale Status *
-            </label>
-            {loading.phases ? (
-              <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 animate-pulse">
-                Loading phases...
-              </div>
-            ) : error.phases ? (
-              <div className="text-red-500 text-sm">{error.phases}</div>
-            ) : (
-              <select 
-                id="saleStatus" 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                required
-              >
-                <option value="">Select status</option>
-                {phases.map((phase, index) => (
-                  <option key={index} value={phase.Name}>
-                    {phase.Name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-end border-t pt-6">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Loading...' : 'Done'}
-          </button>
-        </div>
-        
-
-      </div>
-    </div>
-  );
-}
-*/
-
-
-'use client'
-
-import React, { useState, useEffect } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
-const USER_ID = 1;
-
-interface SaleFormData {
-  contact: string;
-  status: string;
-  startDate: Date | null;
-  endDate: Date | null;
-}
-
-interface Phase {
-  Name: string;
-}
-
-interface Contact {
-  FullName: string;
-}
-
-interface FormularioProps {
-  onClose: () => void;
-  onSubmit: (data: SaleFormData) => void;
-}
-
-export default function Formulario({ onClose, onSubmit }: FormularioProps) {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedContact, setSelectedContact] = useState<string>('');
-  const [selectedStatus, setSelectedStatus] = useState<string>('');
-  const [phases, setPhases] = useState<Phase[]>([]);
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [loading, setLoading] = useState({
-    phases: true,
-    contacts: true
-  });
-  const [error, setError] = useState({
-    phases: null as string | null,
-    contacts: null as string | null
-  });
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-      
-        const phasesResponse = await fetch('http://localhost:3001/newsale/Phases');
-        if (!phasesResponse.ok) throw new Error(`Error phases: ${phasesResponse.status}`);
-        const phasesData = await phasesResponse.json();
-        setPhases(phasesData);
-        setLoading(prev => ({ ...prev, phases: false }));
-        
-      
-        const contactsResponse = await fetch(`http://localhost:3001/newsale/ContactsByUser/${USER_ID}`);
-        if (!contactsResponse.ok) throw new Error(`Error contacts: ${contactsResponse.status}`);
-        const contactsData = await contactsResponse.json();
-        setContacts(contactsData);
-        setLoading(prev => ({ ...prev, contacts: false }));
-      } catch (err) {
-        const error = err as Error;
-        if (error.message.includes('fases')) {
-          setError(prev => ({ ...prev, phases: 'Error loading phases' }));
-          setLoading(prev => ({ ...prev, phases: false }));
-        } else {
-          setError(prev => ({ ...prev, contacts: 'Error loading contacts' }));
-          setLoading(prev => ({ ...prev, contacts: false }));
-        }
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const handleSubmit = () => {
-    const formData: SaleFormData = {
-      contact: selectedContact,
-      status: selectedStatus,
-      startDate,
-      endDate
-    };
-    onSubmit(formData);
-  };
-
-  
-  const isLoading = loading.phases || loading.contacts;
-
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-xl shadow-md">
-        
-        <div className="flex justify-between items-center mb-6 border-b pb-4">
-          <h2 className="text-2xl font-bold text-gray-800">New Sale</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-            aria-label="Close form"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-700 mb-4">Contact Information</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
-                Contact *
-              </label>
-              {loading.contacts ? (
-                <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 animate-pulse">
-                  Loading contacts...
-                </div>
-              ) : error.contacts ? (
-                <div className="text-red-500 text-sm">{error.contacts}</div>
-              ) : (
-                <select 
-                  id="contact" 
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  value={selectedContact}
-                  onChange={(e) => setSelectedContact(e.target.value)}
-                  required
-                >
-                  <option value="">Select contact</option>
-                  {contacts.map((contact, index) => (
-                    <option key={index} value={contact.FullName}>
-                      {contact.FullName}
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-gray-700">
-                <span className="font-medium">E-Mail:</span>{' '}
-                <a href="mailto:Contact@Company.Com" className="text-blue-600 hover:underline">
-                  Contact@Company.Com
-                </a>
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Phone Number:</span> 555-454-987
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Enterprise:</span> Company Co.
-              </p>
-            </div>
-
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Start Day *
-            </label>
-            <DatePicker
-              id="startDate"
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Expected End Day *
-            </label>
-            <DatePicker
-              id="endDate"
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="saleStatus" className="block text-sm font-medium text-gray-700 mb-1">
-              Sale Status *
-            </label>
-            {loading.phases ? (
-              <div className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 animate-pulse">
-                Loading phases...
-              </div>
-            ) : error.phases ? (
-              <div className="text-red-500 text-sm">{error.phases}</div>
-            ) : (
-              <select 
-                id="saleStatus" 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
-                required
-              >
-                <option value="">Select status</option>
-                {phases.map((phase, index) => (
-                  <option key={index} value={phase.Name}>
-                    {phase.Name}
-                  </option>
-                ))}
-              </select>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-end border-t pt-6">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
-            disabled={isLoading}
-          >
-            {isLoading ? 'Loading...' : 'Done'}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-
-
-/* //ORIGINAL
 'use client'
 
 import React, { useState } from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-
+// Define la interfaz para los datos del formulario
 interface SaleFormData {
   contact: string;
   status: string;
-  startDate: Date | null;
-  endDate: Date | null;
+  items: {
+    article: string;
+    quantity: number;
+    price: number;
+  }[];
 }
 
-
+// Define las props del componente
 interface FormularioProps {
   onClose: () => void;
   onSubmit: (data: SaleFormData) => void;
 }
 
+interface Article {
+  id: string;
+  name: string;
+  price: number;
+}
+
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedContact, setSelectedContact] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
+  const [items, setItems] = useState<{article: string, quantity: number, price: number}[]>([
+    { article: '', quantity: 1, price: 0 }
+  ]);
 
   const contactOptions = [
     { id: '1', name: 'Cecilia' },
@@ -565,20 +45,63 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     { id: '3', name: 'Cancelled' },
   ];
 
-  const handleSubmit = () => { 
+  const articleOptions: Article[] = [
+    { id: '1', name: 'Laptop', price: 999.99 },
+    { id: '2', name: 'Smartphone', price: 699.99 },
+    { id: '3', name: 'Monitor', price: 249.99 },
+    { id: '4', name: 'Keyboard', price: 49.99 },
+    { id: '5', name: 'Mouse', price: 29.99 },
+  ];
+
+  const handleSubmit = () => {
     const formData: SaleFormData = {
       contact: selectedContact,
       status: selectedStatus,
-      startDate,
-      endDate
+      items: items.filter(item => item.article !== '') // Filter out empty items
     };
     onSubmit(formData);
+  };
+
+  const handleAddItem = () => {
+    setItems([...items, { article: '', quantity: 1, price: 0 }]);
+  };
+
+  const handleArticleChange = (index: number, articleId: string) => {
+    const newItems = [...items];
+    const selectedArticle = articleOptions.find(a => a.id === articleId);
+    
+    newItems[index] = {
+      ...newItems[index],
+      article: articleId,
+      price: selectedArticle ? selectedArticle.price * newItems[index].quantity : 0
+    };
+    
+    setItems(newItems);
+  };
+
+  const handleQuantityChange = (index: number, quantity: number) => {
+    const newItems = [...items];
+    const article = articleOptions.find(a => a.id === newItems[index].article);
+    
+    newItems[index] = {
+      ...newItems[index],
+      quantity: quantity > 0 ? quantity : 1,
+      price: article ? article.price * (quantity > 0 ? quantity : 1) : 0
+    };
+    
+    setItems(newItems);
+  };
+
+  const removeItem = (index: number) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-xl shadow-md">
-        
+        {/* Header with close button */}
         <div className="flex justify-between items-center mb-6 border-b pb-4">
           <h2 className="text-2xl font-bold text-gray-800">New Sale</h2>
           <button 
@@ -592,7 +115,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
           </button>
         </div>
 
-       
+        {/* Contact Information Section */}
         <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-700 mb-4">Contact Information</h3>
           
@@ -634,39 +157,84 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
           </div>
         </div>
 
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div>
-            <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Start Day *
-            </label>
-            <DatePicker
-              id="startDate"
-              selected={startDate}
-              onChange={(date: Date | null) => setStartDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+        {/* Articles Section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-gray-700 mb-4">Articles</h3>
+          
+          {items.map((item, index) => (
+            <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+              <div>
+                <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Article {index + 1}
+                </label>
+                <select
+                  id={`article-${index}`}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  value={item.article}
+                  onChange={(e) => handleArticleChange(index, e.target.value)}
+                >
+                  <option value="">Select article</option>
+                  {articleOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-          <div>
-            <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
-              Expected End Day *
-            </label>
-            <DatePicker
-              id="endDate"
-              selected={endDate}
-              onChange={(date: Date | null) => setEndDate(date)}
-              dateFormat="MM/dd/yyyy"
-              placeholderText="Select date"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              required
-            />
-          </div>
+              <div>
+                <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  id={`quantity-${index}`}
+                  min="1"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  value={item.quantity}
+                  onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
+                />
+              </div>
 
-          <div>
+              <div>
+                <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  Price
+                </label>
+                <input
+                  type="text"
+                  id={`price-${index}`}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100"
+                  value={`$${item.price.toFixed(2)}`}
+                  readOnly
+                />
+              </div>
+
+              {items.length > 1 && (
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={handleAddItem}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Add Another Article
+          </button>
+        </div>
+
+        {/* Status Section */}
+        <div className="mb-8">
+          <div className="w-full md:w-1/3">
             <label htmlFor="saleStatus" className="block text-sm font-medium text-gray-700 mb-1">
               Sale Status *
             </label>
@@ -687,12 +255,12 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
           </div>
         </div>
 
-        
+        {/* Footer with Done button */}
         <div className="flex justify-end border-t pt-6">
           <button
             type="button"
             onClick={handleSubmit}
-            className="px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
+            className="px-6 py-2 bg-[#4209B0] text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors"
           >
             Done
           </button>
@@ -701,5 +269,3 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     </div>
   );
 }
-
-*/

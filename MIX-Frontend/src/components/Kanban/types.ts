@@ -1,8 +1,11 @@
 // types.ts
 export interface Task {
-    id: number;
-    title: string;
-    description?: string;
+    id: number,
+    ContactName: string,
+    Enterprise: string,
+    TotalProducts: number,
+    TotalSale: number,
+    TotalComission: number
   }
   
   export interface ColumnData {

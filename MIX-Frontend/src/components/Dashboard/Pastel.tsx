@@ -1,4 +1,4 @@
-export default function Pastel() {
+export default function PieChartComponent() {
   return (
 
     <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -8,12 +8,12 @@ export default function Pastel() {
       <figure className="charts">
         <div className="pie donut"></div>
         <figcaption className="legends">
-          <span>En curso</span>
-          <span>Cancelado</span>
-          <span>Aprobado</span>
+          <span>In progress</span>
+          <span>Cancelled</span>
+          <span>Approved</span>
         </figcaption>
       </figure>
-
+      
     </main>
   );
 }

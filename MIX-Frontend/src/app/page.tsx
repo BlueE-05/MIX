@@ -2,10 +2,13 @@
 
 import Navbar from "@/components/NavBar";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+      
       <Navbar />
     
       <section className="flex flex-col items-center justify-center text-center py-20 bg-gradient-to-r from-green-600 to-green-400 text-white">
@@ -54,7 +57,7 @@ export default function Home() {
         <footer className="bg-gray-900 text-white text-center py-6 mt-10">
             <div className="flex flex-col items-center space-y-2">
                 <div className="flex items-center space-x-2">
-                    <img src="/raydevRv2.svg" alt="Raydev Logo" className="h-6 w-auto" />
+                <Image src="/raydevRv2.svg" alt="Raydev Logo" width={100} height={24} className="h-6 w-auto" />
                     <p className="text-sm">By Raydev</p>
                 </div>
 

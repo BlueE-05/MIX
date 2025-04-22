@@ -17,7 +17,7 @@ export default function CRMLayout({ children }: CRMLayoutProps) {
       <aside className="flex-shrink-0 sticky top-0 h-screen">
         <Sidebar />
       </aside>
-      <main className="flex-grow overflow-y-auto">
+      <main className="flex-grow overflow-visible">
         <div className="sticky top-0 z-10 flex items-center justify-end p-4 pr-5 bg-gray-800 text-white shadow-md">
           <Image 
             src="/MarySue.png" 

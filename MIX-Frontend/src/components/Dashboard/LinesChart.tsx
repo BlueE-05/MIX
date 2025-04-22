@@ -1,18 +1,58 @@
 import React from "react";
-import LinesChartData from "@/mock/LinesChartData";
+import { Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
 
-export default function LinesChart() {
-    return (
-        <div className="w-120 h-80 rounded-2xl p-2">
-            <div className="p-1">
-                <p className="text-2xl font-bold">March 2025</p>
-                <p className="text-lg font-semibold">Sales Metrics</p>
-            </div>
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-            <div className="flex flex-col items-center justify-center p-4">
-                <LinesChartData/>    
-            </div>
-        </div>
-    
-    );
-  }
+interface LinesChartProps {
+  salesData: number[];
+  reportType: 'team' | 'individual';
+}
+
+export default function LinesChart({ salesData, reportType }: LinesChartProps) {
+  const data = {
+    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    datasets: [
+      {
+        label: 'Sales',
+        data: salesData,
+        borderColor: reportType === 'team' ? 'rgb(75, 192, 192)' : 'rgb(153, 102, 255)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.1
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+    },
+  };
+
+  return (
+    <div className="w-full h-full">
+      <Line data={data} options={options} />
+    </div>
+  );
+}
