@@ -19,6 +19,7 @@ class ReportService{
   }
 
   //Considerar Cotizacion como ID=2 en Phase
+  //MODIFICAR: Mes actual
   async getAllCotizacion(id: number) {
     try {
         const pool = await poolPromise;
@@ -32,6 +33,7 @@ class ReportService{
   }
 
   //Considerar Prospecto como ID=1 en Phase
+  //MODIFICAR: Mes actual
   async getAllProspecto(id: number) {
     try {
         const pool = await poolPromise;
@@ -46,6 +48,7 @@ class ReportService{
 
   
   //Calcular comisiones de un solo usuario
+  //MODIFICAR: Mes actual
   async getTotalComissions(id: number) {
     try {
         const pool = await poolPromise;

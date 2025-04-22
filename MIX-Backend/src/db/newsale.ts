@@ -49,19 +49,17 @@ class NewSaleService{
     //NOTA: Pendiente
     //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
     //Nota:*** Recordar que hay que cambair la fecha de fin con un triger o algo al momento de cerrar realmente la venta 
-    
-    //Revisar y corregir
-    async createSale(iduser: number, idcont: number, startdate: string, enddate: string, idphase: number) {
+    //MODIFICAR: Quitar enddate, startdate automatimo la fecha actual
+   /*
+    async createSale(data: {iduser: number; idcont: number; idphase: number}) {
           const pool = await poolPromise;
           const result = await pool.request()
-              .input('iduser', sql.Int, iduser)  
-              .input('idcont', sql.Int, idcont)  
-              .input('startdate', sql.Date, startdate)
-              .input('enddate', sql.Date, enddate)
-              .input('idphase', sql.Int, idphase)
-              .query('INSERT INTO Sale (IDUser, IDContact, StartDate, EndDate, IDPhase)VALUES (@iduser, @idcont, @startdate, @enddate, @idphase)');
-          return result.recordset[0];
+              .input('iduser', sql.Int, data.iduser)  
+              .input('idcont', sql.Int, data.idcont)  
+              .input('idphase', sql.Int, data.idphase)
+              .query('INSERT INTO Sale (IDUser, IDContact, StartDate, EndDate, IDPhase)VALUES (@iduser, @idcont, GETDATE(), GETDATE(), @idphase)');
     }
+              */
       
 
   

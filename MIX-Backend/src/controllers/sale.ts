@@ -23,9 +23,31 @@ class SaleController {
     return this.saleService.getKNinfo(idsale, iduser);
   }
 
+  async getFormInfo(idsale: number, iduser: number) {
+    return this.saleService.getFormInfo(idsale, iduser);
+  }
+
+  async getFormNum(idsale: number, iduser: number) {
+    return this.saleService.getFormNum(idsale, iduser);
+  }
+
   async deleteSale(idsale: number, iduser: number): Promise<boolean> {
     return this.saleService.deleteSale(idsale, iduser);
   }
+
+  async getAllEnt() {
+    return this.saleService.getAllEnt();
+  }
+
+  async getAllProd() {
+    return this.saleService.getAllProd();
+  }
+
+  async getTopSales(iduser: number) {
+    return this.saleService.getTopSales(iduser);
+  }
+
+  
 
 }
 

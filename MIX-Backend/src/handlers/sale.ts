@@ -65,6 +65,56 @@ class SaleHTTPHandler {
       }
     }; 
 
+    getFormInfo= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const idsale = Number(req.params.idsale);
+        const iduser = Number(req.params.iduser);  
+        const resultado = await this.saleController.getFormInfo(idsale, iduser);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    }; 
+
+    getFormNum= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const idsale = Number(req.params.idsale);
+        const iduser = Number(req.params.iduser);  
+        const resultado = await this.saleController.getFormNum(idsale, iduser);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    }; 
+
+    getAllEnt= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const resultado = await this.saleController.getAllEnt();
+        res.json(resultado);
+      } catch (error) {
+      next(error);
+      }
+    };
+
+    getAllProd= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const resultado = await this.saleController.getAllProd();
+        res.json(resultado);
+      } catch (error) {
+      next(error);
+      }
+    };
+
+    getTopSales= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser = Number(req.params.iduser);  
+        const resultado = await this.saleController.getTopSales(iduser);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    }; 
+
 
     deleteSale = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
       try {
