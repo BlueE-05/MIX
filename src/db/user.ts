@@ -5,7 +5,7 @@ import { Auth0User } from "../types/auth0";
 export class UserDbService {
   constructor(private db: sql.ConnectionPool) {}
 
-  async createUser(user: UserDTO & Pick<Auth0User, "email_verified">) {
+  public async createUser(user: UserDTO & Pick<Auth0User, "email_verified">): Promise<void> {
     const bufferPic = user.ProfilePic
       ? Buffer.from(user.ProfilePic.replace(/^data:image\/\w+;base64,/, ""), "base64")
       : null;
@@ -32,41 +32,68 @@ export class UserDbService {
         )
       `);
   }
-  async getUserByEmail(email: string) {
-    try {
-      console.log("Searching getUserByEmail()", email);
-      
-      const result = await this.db.request()
-        .input("email", sql.NVarChar, email.toLowerCase())
-        .query(`
-          SELECT 
-            u.ID,
-            u.Name,
-            u.LastName,
-            u.PhoneNumber,
-            u.JoiningDate,
-            u.Education,
-            jp.Name AS JobPositionName,
-            u.ProfilePic
-          FROM [User] u
-          INNER JOIN [JobPosition] jp ON u.IDJobPosition = jp.ID
-          WHERE LOWER(u.ID) = @email
-        `);
-  
-      console.log("getUserByEmail():", result.recordset[0]);
-      
-      const user = result.recordset[0];
-      if (!user) return null;
-  
-      return {
-        ...user,
-        ProfilePic: user.ProfilePic 
-          ? `data:image/png;base64,${user.ProfilePic.toString("base64")}` 
-          : null,
-      };
-    } catch (error) {
-      console.error("ERROR getUserByEmail():", error);
-      throw error;
-    }
-  }  
+
+  public async getUserByEmail(email: string): Promise<UserDTO | null> {
+    const result = await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .query(`
+        SELECT 
+          u.ID,
+          u.Name,
+          u.LastName,
+          u.PhoneNumber,
+          u.JoiningDate,
+          u.Education,
+          u.EmailVerified,
+          jp.Name AS JobPositionName,
+          u.ProfilePic
+        FROM [User] u
+        INNER JOIN [JobPosition] jp ON u.IDJobPosition = jp.ID
+        WHERE LOWER(u.ID) = @email
+      `);
+
+    const user = result.recordset[0];
+    if (!user) return null;
+
+    return {
+      ...user,
+      EmailVerified: user.EmailVerified,
+      ProfilePic: user.ProfilePic 
+        ? `data:image/png;base64,${user.ProfilePic.toString("base64")}` 
+        : null,
+    };
+  }
+
+  public async updateEmailVerified(email: string, email_verified: boolean): Promise<void> {
+    await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .input("emailVerified", sql.Bit, email_verified)
+      .query(`
+        UPDATE [User]
+        SET EmailVerified = @emailVerified
+        WHERE LOWER(ID) = @email
+      `);
+  }
+
+  public async getLastVerificationSent(email: string): Promise<Date | null> {
+    const result = await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .query(`
+        SELECT LastVerificationSent
+        FROM [User]
+        WHERE LOWER(ID) = @email
+      `);
+
+    return result.recordset[0]?.LastVerificationSent ?? null;
+  }
+
+  public async updateLastVerificationSent(email: string): Promise<void> {
+    await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .query(`
+        UPDATE [User]
+        SET LastVerificationSent = GETDATE()
+        WHERE LOWER(ID) = @email
+      `);
+  }
 }

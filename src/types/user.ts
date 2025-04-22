@@ -7,5 +7,6 @@ export interface UserDTO {
     BirthDate: string;
     Education: string;
     ProfilePic: string | null;
+    EmailVerified: boolean;
     IDJobPosition: string | null;
 }

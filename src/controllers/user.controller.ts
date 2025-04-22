@@ -6,70 +6,90 @@ import { AuthRequest } from "../types/auth0";
 import { setAuthCookies, clearAuthCookies } from "../utils/cookieManager";
 
 export class UserController {
-  private auth0Service: Auth0Service;
-  private userDbService: UserDbService;
-  
-  constructor(auth0Service: Auth0Service, userDbService: UserDbService){
-    this.auth0Service = auth0Service;
-    this.userDbService = userDbService;
-  }
+  constructor(
+    private auth0Service: Auth0Service,
+    private userDbService: UserDbService
+  ) {}
 
-  public async signup(req: Request, res: Response): Promise<void> {
+  public async signup(req: Request, res: Response): Promise<Response> {
     const userData: UserDTO = req.body;
     const { Email, Password } = userData;
-  
+
     if (!Email || !Password) {
-      res.status(400).json({ error: "Email and password are required" });
-      return;
+      return res.status(400).json({ error: "Email and password are required" });
     }
-  
+
     try {
       if (await this.auth0Service.userExists(Email)) {
-        res.status(409).json({ error: "Email already exists in Auth0" });
-        return;
+        return res.status(409).json({ error: "Email already exists in Auth0" });
       }
-  
+
       const auth0User = await this.auth0Service.createUser(Email, Password);
-  
+
       await this.userDbService.createUser({
         ...userData,
-        email_verified: auth0User.email_verified
+        email_verified: auth0User.email_verified,
       });
-  
+
       const tokens = await this.auth0Service.loginWithEmailPassword(Email, Password);
-  
       setAuthCookies(res, tokens);
-  
-      res.status(201).json({ message: "User created and logged in" });
+
+      return res.status(201).json({ message: "User created and logged in" });
     } catch (error: any) {
       console.error("Error creating Auth0 user:", error.response?.data || error.message);
-      res.status(500).json({ error: "Error creating user" });
+      return res.status(500).json({ error: "Error creating user" });
     }
   }
 
-  public async getProfile(req: AuthRequest, res: Response) {
+  public async getProfile(req: AuthRequest, res: Response): Promise<Response> {
     const sub = req.auth?.sub;
-    console.log("sub from token:", sub);
-  
     if (!sub) return res.status(400).json({ error: "Token without sub" });
-  
+
     try {
-      const { email } = await this.auth0Service.getUserBySub(sub);
-      console.log("email from Auth0 Management API:", email);
-  
+      const { email, email_verified } = await this.auth0Service.getUserBySub(sub);
+
+      await this.userDbService.updateEmailVerified(email, email_verified);
+
       const user = await this.userDbService.getUserByEmail(email);
       if (!user) return res.status(404).json({ error: "User not found" });
-  
-      return res.status(200).json(user);
+
+      return res.status(200).json({
+        ...user, 
+        email_verified,
+      });
     } catch (err: any) {
       console.error("Error in getProfile():", err.message);
       return res.status(500).json({ error: "Intern error" });
     }
   }
+
+  public async resendVerificationEmail(req: AuthRequest, res: Response): Promise<Response> {
+    const sub = req.auth?.sub;
+    if (!sub) return res.status(400).json({ error: "Token without sub" });
   
-  public logout(req: Request, res: Response) {
+    try {
+      const { email } = await this.auth0Service.getUserBySub(sub);
+  
+      const lastSent = await this.userDbService.getLastVerificationSent(email);
+      const now = new Date();
+  
+      if (lastSent && now.getTime() - new Date(lastSent).getTime() < 10 * 60 * 1000) {
+        const minutesLeft = 10 - Math.floor((now.getTime() - new Date(lastSent).getTime()) / 60000);
+        return res.status(429).json({ error: `Please wait ${minutesLeft} more minute(s)` });
+      }
+  
+      await this.auth0Service.resendVerificationEmail(email);
+      await this.userDbService.updateLastVerificationSent(email);
+  
+      return res.status(200).json({ message: "Verification email resent" });
+    } catch (err: any) {
+      console.error("Error resending verification email:", err.message);
+      return res.status(500).json({ error: "Failed to resend verification email" });
+    }
+  }
+  
+  public logout(req: Request, res: Response): void {
     clearAuthCookies(res);
     res.status(200).json({ message: "Sesión cerrada correctamente" });
   }
-  
 }

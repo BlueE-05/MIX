@@ -42,8 +42,8 @@ export class Auth0Service {
         },
       }
     );
-    const {email_verified: boolean} = response.data;
-    return {email_verified: boolean};
+    const { email_verified } = response.data;
+    return { email_verified };
   }
 
   public async userExists(email: string): Promise<boolean> {
@@ -75,7 +75,7 @@ export class Auth0Service {
 
     return response.data; // access_token, id_token, etc.
   }
-  public async getUserBySub(sub: string): Promise<{ email: string }> {
+  public async getUserBySub(sub: string): Promise<{ email: string; email_verified: boolean }> {
     const token = await this.getAccessToken(this.managementAudience);
   
     const response = await axios.get(
@@ -87,6 +87,27 @@ export class Auth0Service {
       }
     );
 
-    return { email: response.data.email };
+    return { 
+      email: response.data.email,
+      email_verified: response.data.email_verified, 
+    };
+  }
+
+  public async resendVerificationEmail(email: string): Promise<void> {
+    const token = await this.getAccessToken(this.managementAudience);
+  
+    await axios.post(
+      `https://${this.domain}/api/v2/jobs/verification-email`,
+      {
+        client_id: this.clientId,
+        email,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 }
