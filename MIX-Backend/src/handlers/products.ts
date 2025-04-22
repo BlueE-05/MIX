@@ -39,8 +39,8 @@ export default class ProductHTTPHandler {
 
     createProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const newProduct = await this.productController.createProduct(req.body);
-            res.json(newProduct);
+            await this.productController.createProduct(req.body);
+            res.json({ message: 'Product created successfully' });
         } catch (error) {
             next(error);
         }
@@ -48,8 +48,8 @@ export default class ProductHTTPHandler {
 
     updateProduct = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const updated = await this.productController.updateProduct(req.params.id, req.body);
-            res.json(updated);
+            await this.productController.updateProduct(req.params.id, req.body);
+            res.json({ message: 'Product updated successfully' });
         } catch (error) {
             next(error);
         }

@@ -1,6 +1,8 @@
 import sql from 'mssql';
 
 import config from '@/db/config';
+import Product from '@/types/controller/Product';
+import ProductDB from '@/types/db/ProductDB';
 
 export default class ProductService {
   private pool: sql.ConnectionPool;
@@ -13,72 +15,69 @@ export default class ProductService {
     });
   }
 
-  async getAllProducts() {
+  async getAllProducts(): Promise<Product[]> {
     const result = await this.pool.request().query(
-      'SELECT * FROM Product ORDER BY RefNum ASC'
+      'SELECT * FROM Product ORDER BY RefNum ASC;'
     );
     return result.recordset;
   }
 
-  async getProductById(id: string) {
+  async getProductById(id: string): Promise<Product[]> {
     const result = await this.pool.request()
-      .input('id', sql.VarChar, id)
+      .input('id', sql.VarChar, `%${id}%`)
       .query(
-        'SELECT * FROM Product WHERE RefNum = @id ORDER BY RefNum ASC'
+        'SELECT * FROM Product WHERE RefNum LIKE @id ORDER BY RefNum ASC;'
       );
     return result.recordset;
   }
 
-  async getProductByName(name: string) {
+  async getProductByName(name: string): Promise<Product[]> {
     const result = await this.pool.request()
-      .input('name', sql.VarChar, name)
+      .input('name', sql.VarChar, `%${name}%`)
       .query(
-        'SELECT * FROM Product WHERE name = @name'
+        'SELECT * FROM Product WHERE name LIKE @name ORDER BY RefNum ASC;'
       );
     return result.recordset;
   }
 
-  async createProduct(data: { id: string; name: string; description: string; type: boolean; price: number; commission: number }) {
+  async createProduct(data: ProductDB): Promise<void> {
     const result = await this.pool.request()
-      .input('id', sql.VarChar, data.id)
+      .input('refNum', sql.VarChar, data.refNum)
       .input('name', sql.VarChar, data.name)
       .input('description', sql.VarChar, data.description)
-      .input('type', sql.Bit, data.type)
-      .input('price', sql.Decimal(18, 2), data.price)
-      .input('commission', sql.Decimal(18, 2), data.commission)
+      .input('unitaryPrice', sql.Float, data.unitaryPrice)
+      .input('commission', sql.Float, data.commission)
+      .input('productSheetURL', sql.VarChar, data.productSheetURL)
       .query(
-              `INSERT INTO Product (RefNum, Name, Description, ArticleType, UnitaryPrice, Commission, CreationDate)
-              OUTPUT INSERTED.*
-              VALUES (@id, @name, @description, @type, @price, @commission, GETDATE())`
+              `INSERT INTO Product (RefNum, Name, Description, UnitaryPrice, Commission, ProductSheetURL)
+              VALUES (@refNum, @name, @description, @unitaryPrice, @commission, @productSheetURL);`
             );
-    //return result.recordset[0];
   }
 
-  async updateProduct(id: string, data: { name: string; description: string; type: boolean ; price: number; commission: number }) {
+  async updateProduct(id: string, data: ProductDB): Promise<void> {
     const result = await this.pool.request()
       .input('id', sql.VarChar, id)
       .input('name', sql.VarChar, data.name)
       .input('description', sql.VarChar, data.description)
-      .input('type', sql.Bit, data.type)
-      .input('price', sql.Decimal(18, 2), data.price)
-      .input('commission', sql.Decimal(18, 2), data.commission)
+      .input('unitaryPrice', sql.Float, data.unitaryPrice)
+      .input('commission', sql.Float, data.commission)
+      .input('productSheetURL', sql.VarChar, data.productSheetURL)
       .query(`UPDATE Product
-              SET Name = @name,
+              SET
+                Name = @name,
                 Description = @description,
-                ArticleType = @type,
-                UnitaryPrice = @price,
-                Commission = @commission
-              OUTPUT INSERTED.*
-              WHERE RefNum = @id`
+                UnitaryPrice = @unitaryPrice,
+                Commission = @commission,
+                ProductSheetURL = @productSheetURL
+              WHERE RefNum = @id;`
             );
-    //return result.recordset[0];
   }
 
-  async deleteProduct(id: string) {
+  async deleteProduct(id: string): Promise<void> {
     await this.pool.request()
       .input('id', sql.VarChar, id)
       .query(
-        'DELETE FROM Product WHERE RefNum = @id'
+        'DELETE FROM Product WHERE RefNum = @id;'
       );
   }
 }
