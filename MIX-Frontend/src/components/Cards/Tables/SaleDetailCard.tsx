@@ -8,7 +8,6 @@ interface SaleDetailCardProps {
     enterprise: string
     amount: string
     status: ReactNode | string
-    lastContact: string
     creationDate: string
   }
   onClose: () => void
@@ -18,7 +17,6 @@ interface SaleDetailCardProps {
     enterprise: string
     amount: string
     status: string
-    lastContact: string
     creationDate: string
   }) => void
   editButtonText?: string
@@ -30,9 +28,9 @@ export default function SaleDetailCard({
   sale,
   onClose,
   onSave = () => {},
-  editButtonText = 'Editar',
-  closeButtonText = 'Cerrar',
-  saveButtonText = 'Guardar'
+  editButtonText = 'Edit',
+  closeButtonText = 'Clase',
+  saveButtonText = 'Save'
 }: SaleDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   
@@ -143,20 +141,6 @@ export default function SaleDetailCard({
               </select>
             ) : (
               <div className="mt-1">{renderStatus()}</div>
-            )}
-          </div>
-          
-          <div className="border-b pb-2">
-            <h3 className="font-semibold text-gray-500">Last Contact</h3>
-            {isEditing ? (
-              <input
-                type="date"
-                value={editedSale.lastContact}
-                onChange={(e) => handleChange('lastContact', e.target.value)}
-                className="w-full p-2 border rounded"
-              />
-            ) : (
-              <p className="text-gray-700">{editedSale.lastContact}</p>
             )}
           </div>
           

@@ -67,10 +67,6 @@ export default function ProductPage() {
     setProductData(transformed);
   };
 
-  const handleEditProduct = () => {
-    // Lógica para editar el producto seleccionado
-  }
-
   const fetchProducts = useCallback(async (searchTerm?: string) => {
     try {
       const baseUrl = "http://localhost:5000/api/products";
@@ -178,9 +174,8 @@ export default function ProductPage() {
         <ProductDetailCard
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onEdit={handleEditProduct}
-          editButtonText="Editar Producto"
-          closeButtonText="Cerrar"
+          editButtonText="Edit Product"
+          closeButtonText="Close"
         />
       )}
 
@@ -198,3 +193,55 @@ export default function ProductPage() {
     </main>
   );
 }
+
+/*
+
+  const mockProducts: ProductRow[] = [
+    {
+      id: 1,
+      name: "John",
+      refNum: "Doe",
+      unitaryPrice: 1,
+      commission: 24,
+      productSheet: 'si' ,
+      actions: <ArrowRightButton color='orange' onClick={() => setSelectedProduct(mockProducts[0])} />
+    },
+    {
+      id: 2,
+      name: "John",
+      refNum: "Doe",
+      unitaryPrice: 1,
+      commission: 24,
+      productSheet: 'si' ,
+      actions: <ArrowRightButton color='orange' onClick={() => setSelectedProduct(mockProducts[0])} />
+    },
+    {
+      id: 3,
+      name: "John",
+      refNum: "Doe",
+      unitaryPrice: 1,
+      commission: 24,
+      productSheet: 'si' ,
+      actions: <ArrowRightButton color='orange' onClick={() => setSelectedProduct(mockProducts[0])} />
+    },
+    {
+      id: 4,
+      name: "John",
+      refNum: "Doe",
+      unitaryPrice: 1,
+      commission: 24,
+      productSheet: 'si' ,
+      actions: <ArrowRightButton color='orange' onClick={() => setSelectedProduct(mockProducts[0])} />
+    },
+    {
+      id: 5,
+      name: "John",
+      refNum: "Doe",
+      unitaryPrice: 1,
+      commission: 24,
+      productSheet: 'si' ,
+      actions: <ArrowRightButton color='orange' onClick={() => setSelectedProduct(mockProducts[0])} />
+    },
+  ];
+
+*/

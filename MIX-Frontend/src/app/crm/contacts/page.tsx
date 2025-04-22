@@ -112,10 +112,6 @@ export default function ContactPage() {
     setContactData(transformed);
   };
 
-  const handleEditContact = () => {
-    // Implementar aqui la lógica de edición
-  }
-
   useEffect(() => {
     fetchContacts();
   }, [fetchContacts]);
@@ -159,7 +155,7 @@ export default function ContactPage() {
     }
   };
 
-  // Convert ContactRow[] to ReactNode[][]
+  // Convert ContactRow[] to ReactNode[][] const contactDataForTable: ReactNode[][] = contactData.map(contact => [
   const contactDataForTable: ReactNode[][] = contactData.map(contact => [
     contact.id,
     contact.name,
@@ -197,7 +193,6 @@ export default function ContactPage() {
         <ContactDetailCard
           contact={selectedContact}
           onClose={() => setSelectedContact(null)}
-          onEdit={handleEditContact}
           editButtonText="Editar Contacto"
           closeButtonText="Cerrar"
         />
@@ -206,3 +201,60 @@ export default function ContactPage() {
     </main>
   );
 };
+
+/*
+
+  const mockContacts: ContactRow[] = [
+    {
+      id: 1,
+      name: "John",
+      lastName: "Doe",
+      enterprise: "Tech Solutions Inc.",
+      status: <LabelOval color="green" data="Active" />,
+      phone: "+1 555-123-4567",
+      email: "john.doe@techsolutions.com",
+      actions: <ArrowRightButton color='green' onClick={() => setSelectedContact(mockContacts[0])} />
+    },
+    {
+      id: 2,
+      name: "Jane",
+      lastName: "Smith",
+      enterprise: "Innovate Corp",
+      status: <LabelOval color="red" data="Inactive" />,
+      phone: "+1 555-987-6543",
+      email: "jane.smith@innovate.com",
+      actions: <ArrowRightButton color='green' onClick={() => setSelectedContact(mockContacts[1])} />
+    },
+    {
+      id: 3,
+      name: "Robert",
+      lastName: "Johnson",
+      enterprise: "Digital Futures",
+      status: <LabelOval color="green" data="Active" />,
+      phone: "+1 555-456-7890",
+      email: "robert.j@digitalfutures.com",
+      actions: <ArrowRightButton color='green' onClick={() => setSelectedContact(mockContacts[2])} />
+    },
+    {
+      id: 4,
+      name: "Emily",
+      lastName: "Williams",
+      enterprise: "Cloud Networks",
+      status: <LabelOval color="green" data="Active" />,
+      phone: "+1 555-789-0123",
+      email: "emily.w@cloudnet.com",
+      actions: <ArrowRightButton color='green' onClick={() => setSelectedContact(mockContacts[3])} />
+    },
+    {
+      id: 5,
+      name: "Michael",
+      lastName: "Brown",
+      enterprise: "Data Systems",
+      status: <LabelOval color="red" data="Inactive" />,
+      phone: "+1 555-234-5678",
+      email: "michael.b@datasystems.com",
+      actions: <ArrowRightButton color='green' onClick={() => setSelectedContact(mockContacts[4])} />
+    }
+  ];
+
+*/

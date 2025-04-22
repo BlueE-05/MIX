@@ -30,11 +30,8 @@ const DashboardPage = () => {
         
         {/* User Info Cards */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-        <div>
-            <AwardsBox/>
-          </div>
           {/* Team Card */}
-          <div className="bg-white p-4 rounded-lg w-full sm:w-40">
+          <div className="bg-white p-4 rounded-lg w-full sm:w-60">
             <label htmlFor="team-display" className="block text-sm font-medium text-green-700 mb-1">
               Team
             </label>
@@ -48,7 +45,7 @@ const DashboardPage = () => {
           </div>
   
           {/* Position Card */}
-          <div className="bg-white p-4 rounded-lg w-full sm:w-64">
+          <div className="bg-white p-4 rounded-lg w-full sm:w-65">
             <label htmlFor="position-display" className="block text-sm font-medium text-blue-700 mb-1">
               Position
             </label>
@@ -79,6 +76,10 @@ const DashboardPage = () => {
   
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
+
+          <div>
+            <AwardsBox award={"UwU"}/>
+          </div>
   
           <div className="p-6 bg-white rounded-xl shadow-md flex flex-col items-center justify-center">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">

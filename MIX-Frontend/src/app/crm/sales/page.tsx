@@ -20,13 +20,12 @@ interface SaleRow {
   enterprise: string;
   amount: string;
   status: React.ReactNode;
-  lastContact: string;
   creationDate: string;
   actions: React.ReactNode;
 }
 
 export default function SalesPage() {
-  const salesHeaders = ["#", "RefNumber", "Enterprise", "$", "Status", "Last Contact", "Creation Date", ""];
+  const salesHeaders = ["#", "RefNumber", "Enterprise", "$", "Status", "Creation Date", ""];
   const [salesData, setSalesData] = useState<SaleRow[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [selectedSale, setSelectedSale] = useState<SaleRow | null>(null);
@@ -53,7 +52,6 @@ export default function SalesPage() {
             {status}
           </span>
         ),
-        lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
         creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
         actions: <ArrowRightButton color='#0C43A8'
                   key={`arrow-${i}`} 
@@ -65,7 +63,6 @@ export default function SalesPage() {
                       enterprise: `Company ${i + 1}`,
                       amount: `$${(Math.random() * 5000 + 500).toFixed(2)}`,
                       status: status,
-                      lastContact: new Date(2025, 2, (i % 28) + 1).toLocaleDateString("en-US"),
                       creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
                       actions: <ArrowRightButton />
                     });
@@ -97,7 +94,6 @@ export default function SalesPage() {
           {newSaleData.status || 'Pending'}
         </span>
       ),
-      lastContact: new Date().toLocaleDateString("en-US"),
       creationDate: newSaleData.startDate?.toLocaleDateString("en-US") || new Date().toLocaleDateString("en-US"),
       actions: <ArrowRightButton key={`arrow-${newId}`} />,
     };
@@ -112,7 +108,6 @@ export default function SalesPage() {
     sale.enterprise,
     sale.amount,
     sale.status,
-    sale.lastContact,
     sale.creationDate,
     sale.actions,
   ]);
@@ -130,11 +125,10 @@ export default function SalesPage() {
         <Formulario
           onClose={() => setShowForm(false)}
           onSubmit={(data) => {
-            // Convert the new format to the expected format
             const adaptedData = {
               ...data,
-              startDate: null, // or some default date
-              endDate: null    // or some default date
+              startDate: null, 
+              endDate: null    
             };
             handleNewSale(adaptedData);
           }}
@@ -146,7 +140,7 @@ export default function SalesPage() {
         <SaleDetailCard
           sale={{
             ...selectedSale,
-            status: selectedSale.status // Pasa el status como está
+            status: selectedSale.status
           }}
           onClose={() => setSelectedSale(null)}
         />
