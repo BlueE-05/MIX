@@ -19,7 +19,6 @@ const DashboardPage = () => {
     [4, "Tarea 4", "En progreso", "2025-03-10"],
   ];
 
-
   return (
     <main className="min-h-screen bg-gray-100 p-6">
       {/* Header */}

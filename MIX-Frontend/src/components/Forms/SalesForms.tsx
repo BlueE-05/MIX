@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
-// Define la interfaz para los datos del formulario
 interface SaleFormData {
   contact: string;
   status: string;
@@ -14,7 +13,6 @@ interface SaleFormData {
   }[];
 }
 
-// Define las props del componente
 interface FormularioProps {
   onClose: () => void;
   onSubmit: (data: SaleFormData) => void;

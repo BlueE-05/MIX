@@ -22,6 +22,11 @@ interface SaleRow {
   status: React.ReactNode;
   creationDate: string;
   actions: React.ReactNode;
+  items?: {  // Añade esta propiedad como opcional
+    article: string;
+    quantity: number;
+    price: number;
+  }[];
 }
 
 export default function SalesPage() {
@@ -36,7 +41,7 @@ export default function SalesPage() {
       const statusOptions = ["Closed", "In Progress", "Pending"];
       const status = statusOptions[i % 3];
       const color = status === "Closed" ? "green" : status === "In Progress" ? "blue" : "yellow";
-
+  
       return {
         id: i + 1,
         refNumber: `REF-${1000 + i}`,
@@ -56,7 +61,6 @@ export default function SalesPage() {
         actions: <ArrowRightButton color='#0C43A8'
                   key={`arrow-${i}`} 
                   onClick={() => {
-                    // 3. Asignar el sale seleccionado al hacer click
                     setSelectedSale({
                       id: i + 1,
                       refNumber: `REF-${1000 + i}`,
@@ -64,13 +68,25 @@ export default function SalesPage() {
                       amount: `$${(Math.random() * 5000 + 500).toFixed(2)}`,
                       status: status,
                       creationDate: new Date(2025, 1, (i % 28) + 1).toLocaleDateString("en-US"),
-                      actions: <ArrowRightButton />
+                      actions: <ArrowRightButton />,
+                      items: [  // Añade algunos items de ejemplo
+                        {
+                          article: '1', // ID del artículo
+                          quantity: 2,
+                          price: 1999.98 // Precio total (2 laptops)
+                        },
+                        {
+                          article: '3',
+                          quantity: 1,
+                          price: 249.99 // 1 monitor
+                        }
+                      ]
                     });
                   }}
                 />,
       };
     });
-
+  
     setSalesData(sampleSales);
   }, []);
 
@@ -140,7 +156,8 @@ export default function SalesPage() {
         <SaleDetailCard
           sale={{
             ...selectedSale,
-            status: selectedSale.status
+            status: selectedSale.status,
+            items: selectedSale.items || [] // Proporciona array vacío si no hay items
           }}
           onClose={() => setSelectedSale(null)}
         />

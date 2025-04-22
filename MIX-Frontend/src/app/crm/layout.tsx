@@ -14,6 +14,9 @@ interface CRMLayoutProps {
 export default function CRMLayout({ children }: CRMLayoutProps) {
   return (
     <div className="min-h-screen flex">
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
       <aside className="flex-shrink-0 sticky top-0 h-screen">
         <Sidebar />
       </aside>

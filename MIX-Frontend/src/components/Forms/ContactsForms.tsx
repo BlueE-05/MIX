@@ -59,7 +59,6 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
   const handleSubmitContact = (e: FormEvent): void => {
     e.preventDefault();
   
-    // Prepara los datos para enviar en el formato correcto
     const dataToSend = {
       name: contactData.name,
       lastName: contactData.lastName,
@@ -68,7 +67,6 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
       enterprise: contactData.enterprise,  // Nombre de la empresa seleccionado en el dropdown
     };
   
-    // Llamada a la función onSubmit pasando los datos formateados
     onSubmit(dataToSend);
   };
 
