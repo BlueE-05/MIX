@@ -30,7 +30,7 @@ interface ProductRow {
 }
 
 export default function ProductPage() {
-  const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission$", "Product Sheet", ""];
+  const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission(%)", "Product Sheet", ""];
 
   const [productData, setProductData] = useState<ProductRow[]>([]);
   const [showForm, setShowForm] = useState(false);
