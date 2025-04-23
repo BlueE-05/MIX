@@ -39,7 +39,7 @@ export default function SignupForm() {
     setFormData({
       ...formData,
       idTeam: teamName,
-      jobPosition: "", // Resetear puesto al cambiar equipo
+      jobPosition: "", // Reset position when changing team
     });
   };
 
@@ -47,12 +47,38 @@ export default function SignupForm() {
     setFormData({ ...formData, jobPosition: e.target.value });
   };
 
-  // Filtrar puestos por equipo seleccionado
+  // Filter positions by selected team
   const filteredPositions = selectedTeamId
     ? jobPosition.filter((job) => job.teamId === selectedTeamId)
     : [];
 
   const validateField = (name: string, value: string) => {
+    // Length validations
+    if (name === "name" && value.length > 100) {
+      return "First name must be 100 characters or less";
+    }
+    if (name === "lastName" && value.length > 100) {
+      return "Last name must be 100 characters or less";
+    }
+    if (name === "phoneNumber" && value.length > 30) {
+      return "Phone number must be 30 characters or less";
+    }
+    if (name === "education" && value.length > 255) {
+      return "Education level must be 255 characters or less";
+    }
+
+    // Birth date validation
+    if (name === "birthDate" && value) {
+      const birthDate = new Date(value);
+      const minDate = new Date(birthDateRange.min);
+      const maxDate = new Date(birthDateRange.max);
+      
+      if (birthDate < minDate || birthDate > maxDate) {
+        return "Birthdate must be between 1935 and 2009";
+      }
+    }
+    
+    // Required fields and format validations
     return requiredFields.includes(name) && !value
       ? `${fieldLabels[name]} is required`
       : name === "email" && !emailRegex.test(value)
@@ -61,9 +87,6 @@ export default function SignupForm() {
       ? "Password must be at least 8 characters, include an uppercase letter, a number, and a special character"
       : name === "phoneNumber" && (!phoneRegex.test(value) || value.length < 10)
       ? "Phone number must be at least 10 characters, with no spaces between numbers"
-      : name === "birthDate" &&
-        (value < birthDateRange.min || value > birthDateRange.max)
-      ? "Birthdate must be between 1935 and 2009"
       : "";
   };
 
@@ -86,6 +109,17 @@ export default function SignupForm() {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    
+    // Special handling for birthDate to prevent future dates
+    if (name === "birthDate") {
+      const inputDate = new Date(value);
+      const currentDate = new Date();
+      if (inputDate > currentDate) {
+        setErrors((prev) => ({ ...prev, [name]: "Birthdate cannot be in the future" }));
+        return;
+      }
+    }
+    
     setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   };
 
@@ -97,6 +131,15 @@ export default function SignupForm() {
         ? ["email", "password"]
         : ["education"];
 
+    // Additional check for birthDate in step 1
+    if (currentStep === 1 && formData.birthDate) {
+      const birthDate = new Date(formData.birthDate);
+      const maxDate = new Date(birthDateRange.max);
+      if (birthDate > maxDate) {
+        return false;
+      }
+    }
+
     return stepFields.every((field) => !errors[field] && formData[field]);
   };
 
@@ -107,7 +150,7 @@ export default function SignupForm() {
     e.preventDefault();
     if (isStepValid()) {
       console.log("Form Data:", formData);
-      // En lugar de redirigir directamente, mostramos el modal de verificación
+      // Instead of redirecting directly, show verification modal
       setShowVerification(true);
     }
   };
@@ -140,52 +183,118 @@ export default function SignupForm() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {currentStep === 1 && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {["name", "lastName", "birthDate", "phoneNumber"].map((field) => (
-                      <div key={field} className={field === "birthDate" ? "md:col-span-2" : ""}>
-                        <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
-                          {fieldLabels[field]} <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          id={field}
-                          type={field === "birthDate" ? "date" : "text"}
-                          name={field}
-                          placeholder={fieldLabels[field]}
-                          className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
-                          onChange={handleChange}
-                        />
-                        {errors[field] && (
-                          <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
-                        )}
-                      </div>
-                    ))}
+                    <div>
+                      <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["name"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="name"
+                        type="text"
+                        name="name"
+                        maxLength={100}
+                        placeholder={fieldLabels["name"]}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.name && (
+                        <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["lastName"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="lastName"
+                        type="text"
+                        name="lastName"
+                        maxLength={100}
+                        placeholder={fieldLabels["lastName"]}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.lastName ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.lastName && (
+                        <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label htmlFor="birthDate" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["birthDate"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="birthDate"
+                        type="date"
+                        name="birthDate"
+                        placeholder={fieldLabels["birthDate"]}
+                        max={birthDateRange.max}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.birthDate ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.birthDate && (
+                        <p className="mt-2 text-sm text-red-600">{errors.birthDate}</p>
+                      )}
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["phoneNumber"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="phoneNumber"
+                        type="text"
+                        name="phoneNumber"
+                        maxLength={30}
+                        placeholder={fieldLabels["phoneNumber"]}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.phoneNumber ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.phoneNumber && (
+                        <p className="mt-2 text-sm text-red-600">{errors.phoneNumber}</p>
+                      )}
+                    </div>
                   </div>
                 )}
 
                 {currentStep === 2 && (
                   <div className="space-y-6">
-                    {["email", "password"].map((field) => (
-                      <div key={field}>
-                        <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
-                          {fieldLabels[field]} <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          id={field}
-                          type={field}
-                          name={field}
-                          placeholder={fieldLabels[field]}
-                          className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
-                          onChange={handleChange}
-                        />
-                        {errors[field] && (
-                          <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
-                        )}
-                        {field === "password" && (
-                          <p className="mt-2 text-xs text-gray-500">
-                            Password must be at least 8 characters, include an uppercase letter, a number, and a special character
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["email"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        name="email"
+                        placeholder={fieldLabels["email"]}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.email ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.email && (
+                        <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                        {fieldLabels["password"]} <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder={fieldLabels["password"]}
+                        className={`w-full px-4 py-3 rounded-lg border ${errors.password ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                        onChange={handleChange}
+                      />
+                      {errors.password && (
+                        <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+                      )}
+                      <p className="mt-2 text-xs text-gray-500">
+                        Password must be at least 8 characters, include an uppercase letter, a number, and a special character
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -271,7 +380,7 @@ export default function SignupForm() {
                         value={formData.jobPosition}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 focus:outline-none focus:ring-2 transition"
                         onChange={handlePositionChange}
-                        disabled={!selectedTeamId} // Deshabilitar si no hay equipo seleccionado
+                        disabled={!selectedTeamId}
                       >
                         <option value="">Job Position (To be confirmed)</option>
                         {filteredPositions.map((job) => (
@@ -317,7 +426,6 @@ export default function SignupForm() {
                 </p>
               )}
 
-              {/* Modal de verificación de email */}
               {showVerification && (
                 <EmailVerification 
                   isVerified={false}

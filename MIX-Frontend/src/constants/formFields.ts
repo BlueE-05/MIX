@@ -20,6 +20,15 @@ export const educationLevels = [
   "Higher Education",
 ];
 
+// Add this to your constants/formFields.ts file
+export const fieldMaxLengths: { [key: string]: number } = {
+  name: 100,
+  lastName: 100,
+  phoneNumber: 30,
+  education: 255,
+};
+
+// Update your fieldLabels to include the max length information if needed
 export const fieldLabels: { [key: string]: string } = {
   name: "First Name",
   lastName: "Last Name",
