@@ -52,6 +52,16 @@ class ReportHTTPHandler {
       }
     };
 
+    getAward = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const IDEmail = 'ana.gomez@empresa.com'; //harcoded para pruebas
+        const awards = await this.reportController.getAward(IDEmail);
+        res.json(awards);
+      } catch (error) {
+        next(error);
+      }
+    }
+
 }
 
 export default new ReportHTTPHandler();

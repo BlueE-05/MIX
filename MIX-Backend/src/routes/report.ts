@@ -8,5 +8,7 @@ router.get('/allActive/:id', ReportHTTPHandler.getAllActive);
 router.get('/allCancelled/:id', ReportHTTPHandler.getAllCancelled);
 router.get('/totalComissions/:id', ReportHTTPHandler.getTotalComissions);
 
+router.get('/award', ReportHTTPHandler.getAward);
+
 
 export default router;

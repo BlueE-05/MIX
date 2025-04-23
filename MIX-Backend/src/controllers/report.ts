@@ -19,7 +19,9 @@ class ReportController {
     return this.reportService.getTotalComissions(IDUser);
   }
 
-
+  async getAward(IDEmail: string): Promise<string | null> {
+    return this.reportService.getLastAward(IDEmail);
+  }
 
 }
 

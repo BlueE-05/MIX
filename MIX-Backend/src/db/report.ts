@@ -87,6 +87,20 @@ class ReportService{
     }
   }
 
+  async getLastAward(IDEmail: string): Promise<string | null> {
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('idUser', sql.VarChar, IDEmail)
+      .query(
+        `SELECT TOP 1 A.Name
+        FROM UserAward UA
+        JOIN Award A ON UA.IDAward = A.ID
+        WHERE UA.IDUser = @idUser
+        ORDER BY UA.WinDate DESC;`
+      );
+    return result.recordset;
+  }
+
   //Lo que falta
   //Trigger para que se actualice las tablas y graficas cada cambio de mes**
 
