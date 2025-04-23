@@ -8,11 +8,10 @@ interface BoxComisionesProps {
 }
 
 export default function BoxComisiones({ comisiones, justify }: BoxComisionesProps = {}) {
-  // Valor por defecto si no se pasa la prop
-  //const amount = comisiones ?? 12500;
+  
   const [comision, setComision] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 1; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
+  const iduser = 'ana.gomez@empresa.com'; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
 
   useEffect(() => {
     axios.get(`http://localhost:3001/report/totalComissions/${iduser}`)
@@ -38,7 +37,7 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
       return <div className="text-center py-8 text-gray-500">No commissions</div>;
     } else if (comision !== null) {
       return (
-        <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
+        <div className={`text-3xl font-bold text-blue-600 ${justify}`}> $ 
         {typeof comision === 'number' ? comision.toFixed(2) : comision}
       </div>
       );

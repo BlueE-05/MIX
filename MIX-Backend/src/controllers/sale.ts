@@ -3,15 +3,12 @@ import SaleService from "../db/sale";
 class SaleController {
   private saleService = new SaleService;
 
-  async getAllSales(id: number) {
+  async getAllSales(id: string) {
     return this.saleService.getAllSales(id);
   }
 
-  async getSaleByFase(idfase: number, iduser: number) {
-    return this.saleService.getSaleByFase(idfase, iduser);
-  }
-
-  async getSaleByEnt(ent: string, iduser: number) {
+ 
+  async getSaleByEnt(ent: string, iduser: string) {
     return this.saleService.getSaleByEnt(ent, iduser);
   }
 
@@ -43,7 +40,7 @@ class SaleController {
     return this.saleService.getAllProd();
   }
 
-  async getTopSales(iduser: number) {
+  async getTopSales(iduser: string) {
     return this.saleService.getTopSales(iduser);
   }
 

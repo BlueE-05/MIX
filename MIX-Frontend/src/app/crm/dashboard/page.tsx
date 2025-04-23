@@ -25,12 +25,13 @@ const DashboardPage = () => {
   const [tableData, setTableData] = useState<React.ReactNode[][]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const iduser = 'ana.gomez@empresa.com';
 
   useEffect(() => {
     const fetchTopSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:3001/sale/TopSales/1');
+        const response = await fetch(`http://localhost:3001/sale/TopSales/${iduser}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

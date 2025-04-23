@@ -31,7 +31,7 @@ const options = {
 
 // Datos iniciales para la gráfica
 const initialData = {
-  labels: ['Prospecto', 'Cotización', 'Cierre'],
+  labels: ['Cancelled', 'Active', 'Closed'],
   datasets: [
     {
       label: 'Total',
@@ -54,21 +54,21 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const userId = 1;
+        const userId = 'ana.gomez@empresa.com';
         
-        const [cierreResponse, cotizacionResponse, prospectoResponse] = await Promise.all([
+        const [cierreResponse, activeResponse, prospectoResponse] = await Promise.all([
           axios.get(`http://localhost:3001/report/allCierre/${userId}`),
-          axios.get(`http://localhost:3001/report/allCotizacion/${userId}`),
-          axios.get(`http://localhost:3001/report/allProspecto/${userId}`)
+          axios.get(`http://localhost:3001/report/allActive/${userId}`),
+          axios.get(`http://localhost:3001/report/allCancelled/${userId}`)
         ]);
 
         // Extraer los datos de las respuestas
         const cierreData = cierreResponse.data[0]?.TotalCierre || 0;
-        const cotizacionData = cotizacionResponse.data[0]?.Total_Cotizacion || 0;
-        const prospectoData = prospectoResponse.data[0]?.Total_Prospecto || 0;
+        const activeData = activeResponse.data[0]?.Active || 0;
+        const cancelledData = prospectoResponse.data[0]?.TotalCancelled || 0;
 
         // Usar los datos de distribution si vienen por props, sino usar los del API
-        const finalData = distribution || [prospectoData, cotizacionData, cierreData];
+        const finalData = distribution || [cancelledData, activeData, cierreData];
 
         const newData = {
           ...initialData,

@@ -3,19 +3,19 @@ import ReportService from "../db/report";
 class ReportController {
   private reportService = new ReportService;
 
-  async getAllCierre(IDUser: number) {
+  async getAllCierre(IDUser: string) {
     return this.reportService.getAllCierre(IDUser);
   }
 
-  async getAllCotizacion(IDUser: number) {
-    return this.reportService.getAllCotizacion(IDUser);
+  async getAllActive(IDUser: string) {
+    return this.reportService.getAllActive(IDUser);
   }
 
-  async getAllProspecto(IDUser: number) {
-    return this.reportService.getAllProspecto(IDUser);
+  async getAllCancelled(IDUser: string) {
+    return this.reportService.getAllCancelled(IDUser);
   }
 
-  async getTotalComissions(IDUser: number) {
+  async getTotalComissions(IDUser: string) {
     return this.reportService.getTotalComissions(IDUser);
   }
 

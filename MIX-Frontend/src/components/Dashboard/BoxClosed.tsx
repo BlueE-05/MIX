@@ -10,7 +10,7 @@ interface BoxClosedProps {
 export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 1; // Ajusta esto dinámicamente si lo necesitas
+  const iduser = 'ana.gomez@empresa.com'; // Ajusta esto dinámicamente si lo necesitas
 
   //const deals = closedDeals ?? 42;
 

@@ -11,7 +11,7 @@ class ReportHTTPHandler {
 
     getAllCierre = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = parseInt(req.params.id); 
+        const id = String(req.params.id); 
         const products = await this.reportController.getAllCierre(id);
         res.json(products);
       } catch (error) {
@@ -20,10 +20,10 @@ class ReportHTTPHandler {
     };
 
 
-    getAllCotizacion = async (req: Request, res: Response, next: NextFunction) => {
+    getAllActive = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = parseInt(req.params.id); 
-        const products = await this.reportController.getAllCotizacion(id);
+        const id = String(req.params.id); 
+        const products = await this.reportController.getAllActive(id);
         res.json(products);
       } catch (error) {
         next(error);
@@ -31,10 +31,10 @@ class ReportHTTPHandler {
     };
 
 
-    getAllProspecto = async (req: Request, res: Response, next: NextFunction) => {
+      getAllCancelled = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = parseInt(req.params.id); 
-        const products = await this.reportController.getAllProspecto(id);
+        const id = String(req.params.id); 
+        const products = await this.reportController.getAllCancelled(id);
         res.json(products);
       } catch (error) {
         next(error);
@@ -44,7 +44,7 @@ class ReportHTTPHandler {
 
     getTotalComissions = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = parseInt(req.params.id); 
+        const id = String(req.params.id); 
         const products = await this.reportController.getTotalComissions(id);
         res.json(products);
       } catch (error) {

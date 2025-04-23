@@ -4,8 +4,8 @@ import ReportHTTPHandler from '../handlers/report';
 const router = Router();
 
 router.get('/allCierre/:id', ReportHTTPHandler.getAllCierre);
-router.get('/allCotizacion/:id', ReportHTTPHandler.getAllCotizacion);
-router.get('/allProspecto/:id', ReportHTTPHandler.getAllProspecto);
+router.get('/allActive/:id', ReportHTTPHandler.getAllActive);
+router.get('/allCancelled/:id', ReportHTTPHandler.getAllCancelled);
 router.get('/totalComissions/:id', ReportHTTPHandler.getTotalComissions);
 
 

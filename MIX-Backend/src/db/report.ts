@@ -4,13 +4,19 @@ import sql from 'mssql';
 class ReportService{
 
 
-  //Considerar Cierre como ID=3 en Phase
-  //Tmb para el total de ventas en el mes
-  async getAllCierre(id: number) {
+  //Considerar Cierre como ID=5 en Phase en el mes actual
+  //LISTO
+  async getAllCierre(id: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) as TotalCierre FROM Sale WHERE IDPhase = 3 AND IDUser = @id');
+        const result = await request.input('id', sql.VarChar, id).query(
+        `SELECT COUNT(*) AS TotalCierre 
+        FROM Sale as s
+        WHERE IDUser = @id
+		    AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+        AND IDPhase = 5`);
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
@@ -18,13 +24,19 @@ class ReportService{
     }
   }
 
-  //Considerar Cotizacion como ID=2 en Phase
-  //MODIFICAR: Mes actual
-  async getAllCotizacion(id: number) {
+  //Considerar Actives como ID=2,3,4 en Phase
+  //LISTO
+  async getAllActive(id: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Cotizacion FROM Sale WHERE IDPhase = 2 AND IDUser = @id');
+        const result = await request.input('id', sql.VarChar, id).query(
+        `SELECT COUNT(*) AS Active
+        FROM Sale as s
+        WHERE s.IDUser = @id
+        AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+        AND s.IDPhase IN (2, 3, 4)`);
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCotizacion:', error);
@@ -34,11 +46,16 @@ class ReportService{
 
   //Considerar Prospecto como ID=1 en Phase
   //MODIFICAR: Mes actual
-  async getAllProspecto(id: number) {
+  async getAllCancelled(id: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT COUNT(ID) AS Total_Prospecto FROM Sale WHERE IDPhase = 1 AND IDUser = @id');
+        const result = await request.input('id', sql.VarChar, id).query(`SELECT COUNT(*) AS TotalCancelled
+        FROM Sale as s
+        WHERE IDUser = @id
+		    AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+        AND IDPhase = 6`);
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en Prospecto:', error);
@@ -47,17 +64,26 @@ class ReportService{
   }
 
   
-  //Calcular comisiones de un solo usuario
-  //MODIFICAR: Mes actual
-  async getTotalComissions(id: number) {
+  //Calcular comisiones de un solo usuario en el mes actual
+  //LISTO
+  async getTotalComissions(id: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission FROM Users AS u JOIN Sale AS s ON u.ID = s.IDUser JOIN SaleArticle AS sa ON s.ID = sa.IDSale JOIN Product AS p ON sa.IDProduct = p.RefNum WHERE u.ID = @id AND s.IDPhase=3 GROUP BY u.ID, u.Name');
+        const result = await request.input('id', sql.VarChar, id).query(
+        `SELECT 
+        SUM(sa.Quantity * p.Commission) AS TotalCommission
+        FROM Users u
+        JOIN Sale s ON u.IDEmail = s.IDUser
+        JOIN SaleArticle sa ON s.ID = sa.IDSale
+        JOIN Product p ON sa.IDProduct = p.RefNum
+        WHERE u.IDEmail = @id
+		    AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE());` );
         return result.recordset;
     } catch (error) {
-        console.error('❌ Error en Prospecto:', error);
-        throw new Error('Error al obtener prospecto');
+        console.error('❌ Error en comision:', error);
+        throw new Error('Error al obtener comision');
     }
   }
 

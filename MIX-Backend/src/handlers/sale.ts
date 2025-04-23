@@ -10,7 +10,7 @@ class SaleHTTPHandler {
 
     getAllSales = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = Number(req.params.id); 
+        const id = String(req.params.id); 
         const resultado = await this.saleController.getAllSales(id);
         res.json(resultado);
       } catch (error) {
@@ -18,23 +18,11 @@ class SaleHTTPHandler {
       }
     };    
 
-    getSaleByFase= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idfase = Number(req.params.idfase);
-        const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getSaleByFase(idfase, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-
 
     getSaleByEnt= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const ent = String(req.params.ent);
-        const iduser = Number(req.params.iduser);  
+        const iduser = String(req.params.iduser);  
         const resultado = await this.saleController.getSaleByEnt(ent, iduser);
         res.json(resultado);
       } catch (error) {
@@ -107,7 +95,7 @@ class SaleHTTPHandler {
 
     getTopSales= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser = Number(req.params.iduser);  
+        const iduser = String(req.params.iduser);  
         const resultado = await this.saleController.getTopSales(iduser);
         res.json(resultado);
       } catch (error) {
