@@ -103,7 +103,7 @@ CREATE TABLE [Award] (
 CREATE TABLE [UserAward] (
   [IDUser] varchar(255) NOT NULL,
   [IDAward] integer,
-  [WinDate] date DEFAULT GETDATE(),
+  [WinDate] datetime DEFAULT GETDATE(),
   PRIMARY KEY ([IDUser], [WinDate]),
   FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail]),
   FOREIGN KEY ([IDAward]) REFERENCES [Award] ([ID])
