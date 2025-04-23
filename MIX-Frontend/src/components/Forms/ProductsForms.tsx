@@ -4,29 +4,21 @@ import Input from "@/components/Forms/Input";
 import NumberInput from "@/components/Forms/NumberInput"; // New component for numbers
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
-
-export interface ProductData {
-  refNum: string;
-  name: string;
-  description: string;
-  unitaryPrice: number;
-  commission: number;
-  productSheet: string;
-}
+import { ProductSent } from '@/types/Product';
 
 interface FormularioProps {
   onClose: () => void;
-  onSubmit: (data: ProductData) => void;
+  onSubmit: (data: ProductSent) => void;
 }
 
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {
-  const [productData, setProductData] = useState<ProductData>({
+  const [productData, setProductData] = useState<ProductSent>({
     refNum: "",
     name: "",
     description: "",
     unitaryPrice: 0,
     commission: 0,
-    productSheet: "",
+    productSheetURL: "",
   });
 
   const handleStringChange = (
@@ -134,7 +126,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
               label="Product Sheet URL" 
               name="productSheet" 
               type="url" 
-              value={productData.productSheet} 
+              value={productData.productSheetURL} 
               onChange={handleStringChange} 
             />
           </div>
