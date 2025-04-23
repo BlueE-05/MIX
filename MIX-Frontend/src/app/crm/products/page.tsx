@@ -17,7 +17,7 @@ export default function ProductPage() {
   const [productData, setProductData] = useState<ProductView[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
-  const [selectedProduct, setSelectedProduct] = useState<ProductView | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<ProductView | null>(null); void setIsAdmin // Quitar este setIsAdmin, solo se agrego para el build...
 
   const transformAndSetData = (data: ProductFromAPI[]) => {
     const transformed: ProductView[] = data.map((product, index) => {
@@ -112,7 +112,7 @@ export default function ProductPage() {
     fetchProducts(searchTerm);
   };
 
-  const handleNewProduct = async (data: ProductData) => {
+  const handleNewProduct = async (data: ProductData) => { // ProductData ahora cuenta con un error: Menciona que no se le puede encontrar... eso estaba ayer .-.
     const productDataToSend: ProductSent = {
       refNum: data.refNum,
       name: data.name,

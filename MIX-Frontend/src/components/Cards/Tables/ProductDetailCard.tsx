@@ -1,5 +1,5 @@
 'use client'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useState, useEffect } from 'react'
 
 interface ProductDetailCardProps {
   product: {
@@ -7,7 +7,7 @@ interface ProductDetailCardProps {
     name: string
     refNum: string
     unitaryPrice: number
-    commission: number
+    commission: number // 0-100%
     productSheet: ReactNode
   }
   onClose: () => void
@@ -25,7 +25,7 @@ interface ProductDetailCardProps {
 }
 
 export default function ProductDetailCard({
-  product,
+  product: initialProduct,
   onClose,
   onSave = () => {},
   editButtonText = 'Edit',
@@ -33,20 +33,44 @@ export default function ProductDetailCard({
   saveButtonText = 'Save'
 }: ProductDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
-  const [editedProduct, setEditedProduct] = useState({ ...product })
+  const [currentProduct, setCurrentProduct] = useState(initialProduct)
+  const [editedProduct, setEditedProduct] = useState(initialProduct)
+  const [commissionError, setCommissionError] = useState('')
+  const [commissionInput, setCommissionInput] = useState(initialProduct.commission.toString())
+
+  // Actualizar estados cuando cambia el prop initialProduct
+  useEffect(() => {
+    setCurrentProduct(initialProduct)
+    setEditedProduct(initialProduct)
+    setCommissionInput(initialProduct.commission.toString())
+  }, [initialProduct])
 
   const handleEdit = () => {
     setIsEditing(true)
+    setCommissionError('')
+    setCommissionInput(editedProduct.commission.toString())
   }
 
   const handleSave = () => {
-    onSave(editedProduct)
+    if (commissionError) return
+    
+    // Asegurar valores válidos
+    const finalCommission = parseFloat(commissionInput) || 0
+    const updatedProduct = {
+      ...editedProduct,
+      commission: Math.min(100, Math.max(0, finalCommission))
+    }
+
+    setCurrentProduct(updatedProduct) // Actualizar la vista inmediatamente
+    onSave(updatedProduct) // Notificar al componente padre
     setIsEditing(false)
   }
 
   const handleCancel = () => {
-    setEditedProduct({ ...product })
+    setEditedProduct(currentProduct)
+    setCommissionInput(currentProduct.commission.toString())
     setIsEditing(false)
+    setCommissionError('')
   }
 
   const handleChange = (field: keyof typeof editedProduct, value: string | number) => {
@@ -63,8 +87,37 @@ export default function ProductDetailCard({
     }).format(value)
   }
 
-  const parseCurrency = (value: string) => {
-    return parseFloat(value.replace(/[^0-9.-]+/g, ''))
+  const handleCommissionChange = (value: string) => {
+    if (value === '') {
+      setCommissionInput('')
+      setCommissionError('')
+      handleChange('commission', 0)
+      return
+    }
+
+    const numValue = parseFloat(value)
+    if (isNaN(numValue)) {
+      setCommissionError('Please enter a valid number')
+      return
+    }
+
+    if (numValue < 0) {
+      setCommissionError('Commission cannot be less than 0%')
+      setCommissionInput('0')
+      handleChange('commission', 0)
+      return
+    }
+
+    if (numValue > 100) {
+      setCommissionError('Commission cannot be more than 100%')
+      setCommissionInput('100')
+      handleChange('commission', 100)
+      return
+    }
+
+    setCommissionError('')
+    setCommissionInput(value)
+    handleChange('commission', numValue)
   }
 
   return (
@@ -80,7 +133,7 @@ export default function ProductDetailCard({
                 className="w-full p-2 border rounded"
               />
             ) : (
-              product.name
+              currentProduct.name
             )}
           </h2>
           <button 
@@ -102,7 +155,7 @@ export default function ProductDetailCard({
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{product.refNum}</p>
+              <p className="text-gray-700">{currentProduct.refNum}</p>
             )}
           </div>
           
@@ -112,25 +165,34 @@ export default function ProductDetailCard({
               <input
                 type="text"
                 value={formatCurrency(editedProduct.unitaryPrice)}
-                onChange={(e) => handleChange('unitaryPrice', parseCurrency(e.target.value))}
+                onChange={(e) => handleChange('unitaryPrice', parseFloat(e.target.value.replace(/[^0-9.-]+/g, '')))}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{formatCurrency(product.unitaryPrice)}</p>
+              <p className="text-gray-700">{formatCurrency(currentProduct.unitaryPrice)}</p>
             )}
           </div>
           
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Commission</h3>
             {isEditing ? (
-              <input
-                type="text"
-                value={formatCurrency(editedProduct.commission)}
-                onChange={(e) => handleChange('commission', parseCurrency(e.target.value))}
-                className="w-full p-2 border rounded"
-              />
+              <div>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={commissionInput}
+                    onChange={(e) => handleCommissionChange(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    placeholder="0-100"
+                  />
+                  <span className="ml-2">%</span>
+                </div>
+                {commissionError && (
+                  <p className="text-red-500 text-sm mt-1">{commissionError}</p>
+                )}
+              </div>
             ) : (
-              <p className="text-gray-700">{formatCurrency(product.commission)}</p>
+              <p className="text-gray-700">{currentProduct.commission}%</p>
             )}
           </div>
           
@@ -142,7 +204,7 @@ export default function ProductDetailCard({
                   [File editing not implemented]
                 </div>
               ) : (
-                product.productSheet
+                currentProduct.productSheet
               )}
             </div>
           </div>
@@ -159,7 +221,12 @@ export default function ProductDetailCard({
               </button>
               <button 
                 onClick={handleSave}
-                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                disabled={!!commissionError || commissionInput === ''}
+                className={`px-4 py-2 rounded-md transition-colors ${
+                  commissionError || commissionInput === ''
+                    ? 'bg-gray-400 cursor-not-allowed' 
+                    : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
               >
                 {saveButtonText}
               </button>
