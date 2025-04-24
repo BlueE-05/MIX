@@ -13,4 +13,11 @@ export class Auth0HttpHandler {
       next(error);
     }
   }
+  public exists = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      await controller.exists(req, res);
+    } catch (error) {
+      next(error);
+    }
+  };  
 }

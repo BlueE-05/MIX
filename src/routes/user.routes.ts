@@ -7,8 +7,9 @@ const handler = new UserHttpHandler();
 
 router.post("/signup", handler.signup);
 router.get("/profile", jwtCheckFromCookie, handler.getProfile);
+router.get("/session", jwtCheckFromCookie, handler.sessionStatus.bind(handler));
 router.post("/logout", handler.logout);
+router.get("/email-status", jwtCheckFromCookie, handler.getEmailStatus.bind(handler));
 router.post("/resend-verification", jwtCheckFromCookie, handler.resendVerificationEmail.bind(handler));
-  
 
 export default router;

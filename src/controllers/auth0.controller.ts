@@ -26,4 +26,21 @@ export class AuthController {
       return res.status(401).json({ message: "Credenciales incorrectas" });
     }
   }
+
+  public async exists(req: Request, res: Response): Promise<Response> {
+    const email = req.query.email;
+  
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({ error: "Email query param required" });
+    }
+  
+    try {
+      const exists = await this.auth0Service.userExists(email);
+      return res.status(200).json({ exists });
+    } catch (error: any) {
+      console.error("Error checking if user exists:", error.message);
+      return res.status(500).json({ error: "Error verifying email" });
+    }
+  }
+  
 }

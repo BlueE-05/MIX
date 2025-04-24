@@ -1,6 +1,7 @@
 import axios from "axios";
 import { auth0Config } from "../config/auth0";
 import { Auth0User } from "../types/auth0";
+import { verify } from "crypto";
 
 export class Auth0Service {
   private domain = auth0Config.domain;
@@ -34,6 +35,7 @@ export class Auth0Service {
         email,
         password,
         connection: "Username-Password-Authentication",
+        verify_email: false
       },
       {
         headers: {
@@ -42,8 +44,8 @@ export class Auth0Service {
         },
       }
     );
-    const { email_verified } = response.data;
-    return { email_verified };
+    const { email_verified, user_id } = response.data;
+    return { email_verified, user_id };
   }
 
   public async userExists(email: string): Promise<boolean> {
@@ -93,14 +95,14 @@ export class Auth0Service {
     };
   }
 
-  public async resendVerificationEmail(email: string): Promise<void> {
+  public async sendVerificationEmail(sub: string): Promise<void> {
     const token = await this.getAccessToken(this.managementAudience);
-  
+
     await axios.post(
       `https://${this.domain}/api/v2/jobs/verification-email`,
       {
         client_id: this.clientId,
-        email,
+        user_id: sub
       },
       {
         headers: {
