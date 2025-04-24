@@ -34,18 +34,22 @@ interface SaleDetailCardProps {
     creationDate: string;
     items?: SaleItem[];
   }) => void;
+  onDelete?: (saleId: number) => void
   editButtonText?: string;
   closeButtonText?: string;
   saveButtonText?: string;
+  deleteButtonText?: string;
 }
 
 export default function SaleDetailCard({
   sale,
   onClose,
   onSave = () => {},
+  onDelete = () => {},
   editButtonText = 'Edit',
   closeButtonText = 'Close',
-  saveButtonText = 'Save'
+  saveButtonText = 'Save',
+  deleteButtonText = 'Delete'
 }: SaleDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   
@@ -108,6 +112,13 @@ export default function SaleDetailCard({
     setIsEditing(false);
   };
 
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this contact?')) {
+      onDelete(sale.id)
+      onClose()
+    }
+  }
+
   const handleChange = (field: keyof typeof editedSale, value: string) => {
     setEditedSale(prev => ({
       ...prev,
@@ -154,7 +165,7 @@ export default function SaleDetailCard({
   const [contactData, setContactData] = useState<ContactData>({
     name: "",
     lastName: "",
-    enterprise: "",
+    enterprise: sale.enterprise || "", // Inicializar con el valor de la venta
     phone: "",
     email: "",
   });
@@ -165,6 +176,7 @@ export default function SaleDetailCard({
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ): void => {
     setContactData({ ...contactData, [e.target.name]: e.target.value });
+    handleChange('enterprise', e.target.value);
   };
 
   return (
@@ -190,20 +202,24 @@ export default function SaleDetailCard({
               </label>
               <span className="font-bold text-md text-red-600">*</span>
             </div>
-            <select
-              name="enterprise"
-              value={contactData.enterprise}
-              onChange={handleChangeContact}
-              required
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-900"
-            >
-              <option value="">Select Enterprise</option>
-              {enterprises.map((enterprise, index) => (
-                <option key={index} value={enterprise}>
-                  {enterprise}
-                </option>
-              ))}
-            </select>
+            {isEditing ? (
+              <select
+                name="enterprise"
+                value={contactData.enterprise}
+                onChange={handleChangeContact}
+                required
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-900"
+              >
+                <option value="">Select Enterprise</option>
+                {enterprises.map((enterprise, index) => (
+                  <option key={index} value={enterprise}>
+                    {enterprise}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <p className="text-gray-700">{contactData.enterprise}</p>
+            )}
           </div>
           
           {/* Articles Section */}
@@ -216,48 +232,50 @@ export default function SaleDetailCard({
                   <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
                     Article {index + 1}
                   </label>
-                  <select
-                    id={`article-${index}`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    value={item.article}
-                    onChange={(e) => handleArticleChange(index, e.target.value)}
-                    disabled={!isEditing}
-                  >
-                    <option value="">Select article</option>
-                    {articleOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
+                  {isEditing ? (
+                    <select
+                      id={`article-${index}`}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      value={item.article}
+                      onChange={(e) => handleArticleChange(index, e.target.value)}
+                    >
+                      <option value="">Select article</option>
+                      {articleOptions.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <p className="text-gray-700">
+                      {articleOptions.find(a => a.id === item.article)?.name || 'Not selected'}
+                    </p>
+                  )}
                 </div>
 
                 <div>
                   <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
                     Quantity
                   </label>
-                  <input
-                    type="number"
-                    id={`quantity-${index}`}
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    value={item.quantity}
-                    onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                    disabled={!isEditing}
-                  />
+                  {isEditing ? (
+                    <input
+                      type="number"
+                      id={`quantity-${index}`}
+                      min="1"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      value={item.quantity}
+                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
+                    />
+                  ) : (
+                    <p className="text-gray-700">{item.quantity}</p>
+                  )}
                 </div>
 
                 <div>
                   <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
                     Price
                   </label>
-                  <input
-                    type="text"
-                    id={`price-${index}`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100"
-                    value={`$${item.price.toFixed(2)}`}
-                    readOnly
-                  />
+                  <p className="text-gray-700">${item.price.toFixed(2)}</p>
                 </div>
 
                 {isEditing && items.length > 1 && (
@@ -288,13 +306,6 @@ export default function SaleDetailCard({
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Amount</h3>
             <p className="text-gray-700">{editedSale.amount}</p>
-            {isEditing && (
-              <input 
-                type="hidden" 
-                name="amount" 
-                value={editedSale.amount} 
-              />
-            )}
           </div>
           
           <div className="border-b pb-2">
@@ -329,12 +340,20 @@ export default function SaleDetailCard({
               >
                 Cancel
               </button>
-              <button 
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
-              >
-                {saveButtonText}
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  {deleteButtonText}
+                </button>
+                <button 
+                  onClick={handleSave}
+                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+                >
+                  {saveButtonText}
+                </button>
+              </div>
             </>
           ) : (
             <>

@@ -19,18 +19,22 @@ interface ProductDetailCardProps {
     commission: number
     productSheet: ReactNode
   }) => void
+  onDelete?: (productId: number) => void
   editButtonText?: string
   closeButtonText?: string
   saveButtonText?: string
+  deleteButtonText?: string;
 }
 
 export default function ProductDetailCard({
   product: initialProduct,
   onClose,
   onSave = () => {},
+  onDelete = () => {},
   editButtonText = 'Edit',
   closeButtonText = 'Close',
-  saveButtonText = 'Save'
+  saveButtonText = 'Save',
+  deleteButtonText = 'Delete'
 }: ProductDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [currentProduct, setCurrentProduct] = useState(initialProduct)
@@ -71,6 +75,13 @@ export default function ProductDetailCard({
     setCommissionInput(currentProduct.commission.toString())
     setIsEditing(false)
     setCommissionError('')
+  }
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      onDelete(initialProduct.id)
+      onClose()
+    }
   }
 
   const handleChange = (field: keyof typeof editedProduct, value: string | number) => {
@@ -213,12 +224,20 @@ export default function ProductDetailCard({
         <div className="mt-6 flex justify-between">
           {isEditing ? (
             <>
-              <button 
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-red-600 transition-colors"
-              >
-                Cancel
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors" 
+                >
+                  {deleteButtonText}
+                </button>
+              </div>
               <button 
                 onClick={handleSave}
                 disabled={!!commissionError || commissionInput === ''}
@@ -241,7 +260,7 @@ export default function ProductDetailCard({
               </button>
               <button 
                 onClick={onClose}
-                className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+                className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
               >
                 {closeButtonText}
               </button>
