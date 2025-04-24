@@ -1,27 +1,12 @@
 'use client'
-import { ReactNode, useState } from 'react'
+import { useState } from 'react'
 import LabelOval from '@/components/Buttons/LabelOval'
+import { ContactUpdate, ContactView } from '@/types/Contact'
 
 interface ContactDetailCardProps {
-  contact: {
-    id: number
-    name: string
-    lastName: string
-    enterprise: string
-    status: ReactNode | string
-    phone: string
-    email: string
-  }
+  contact: ContactView
   onClose: () => void
-  onSave?: (updatedContact: {
-    id: number
-    name: string
-    lastName: string
-    enterprise: string
-    status: string
-    phone: string
-    email: string
-  }) => void
+  onSave?: (updatedContact: ContactUpdate & { id: number }) => void
   onDelete?: (contactId: number) => void
   editButtonText?: string
   closeButtonText?: string
@@ -41,20 +26,19 @@ export default function ContactDetailCard({
 }: ContactDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   
-  // Función para normalizar el status a string
-  const normalizeStatus = (status: ReactNode | string): string => {
-    if (typeof status === 'string') return status
-    return 'Active' 
-  }
-
-  const [editedContact, setEditedContact] = useState({
-    ...contact,
-    status: normalizeStatus(contact.status)
+  const [editedContact, setEditedContact] = useState<ContactUpdate & { id: number }>({
+    id: contact.ID,
+    Name: contact.Name,
+    LastName: contact.LastName,
+    EnterpriseName: contact.EnterpriseName,
+    Status: contact.Status,
+    PhoneNumber: contact.PhoneNumber,
+    Email: contact.Email
   })
 
   const renderStatus = () => {
-    const statusString = normalizeStatus(contact.status)
-    const color = statusString === 'Active' ? 'green' : 'red'
+    const statusString = editedContact.Status ? 'Active' : 'Inactive'
+    const color = editedContact.Status ? 'green' : 'red'
     return <LabelOval color={color} data={statusString} />
   }
 
@@ -69,21 +53,26 @@ export default function ContactDetailCard({
 
   const handleCancel = () => {
     setEditedContact({
-      ...contact,
-      status: normalizeStatus(contact.status)
+      id: contact.ID,
+      Name: contact.Name,
+      LastName: contact.LastName,
+      EnterpriseName: contact.EnterpriseName,
+      Status: contact.Status,
+      PhoneNumber: contact.PhoneNumber,
+      Email: contact.Email
     })
     setIsEditing(false)
   }
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this contact?')) {
-      onDelete(contact.id)
+      onDelete(contact.ID)
       onClose()
     }
   }
 
-  const handleChange = (field: keyof typeof editedContact, value: string) => {
-    setEditedContact(prev => ({
+  const handleChange = (field: keyof ContactUpdate, value: string | boolean) => {
+    setEditedContact((prev: any) => ({
       ...prev,
       [field]: value
     }))
@@ -98,19 +87,19 @@ export default function ContactDetailCard({
               <>
                 <input
                   type="text"
-                  value={editedContact.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
+                  value={editedContact.Name}
+                  onChange={(e) => handleChange('Name', e.target.value)}
                   className="w-full p-2 border rounded mb-2"
                 />
                 <input
                   type="text"
-                  value={editedContact.lastName}
-                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  value={editedContact.LastName}
+                  onChange={(e) => handleChange('LastName', e.target.value)}
                   className="w-full p-2 border rounded"
                 />
               </>
             ) : (
-              `${contact.name} ${contact.lastName}`
+              `${contact.Name} ${contact.LastName}`
             )}
           </h2>
           <button 
@@ -127,12 +116,12 @@ export default function ContactDetailCard({
             {isEditing ? (
               <input
                 type="text"
-                value={editedContact.enterprise}
-                onChange={(e) => handleChange('enterprise', e.target.value)}
+                value={editedContact.EnterpriseName}
+                onChange={(e) => handleChange('EnterpriseName', e.target.value)}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{contact.enterprise}</p>
+              <p className="text-gray-700">{contact.EnterpriseName}</p>
             )}
           </div>
           
@@ -140,13 +129,12 @@ export default function ContactDetailCard({
             <h3 className="font-semibold text-gray-500">Status</h3>
             {isEditing ? (
               <select
-                value={editedContact.status}
-                onChange={(e) => handleChange('status', e.target.value)}
+                value={editedContact.Status ? 'Active' : 'Inactive'}
+                onChange={(e) => handleChange('Status', e.target.value === 'Active')}
                 className="w-full p-2 border rounded"
               >
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
-                <option value="Pending">Pending</option>
               </select>
             ) : (
               <div className="mt-1">{renderStatus()}</div>
@@ -158,12 +146,12 @@ export default function ContactDetailCard({
             {isEditing ? (
               <input
                 type="text"
-                value={editedContact.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
+                value={editedContact.PhoneNumber}
+                onChange={(e) => handleChange('PhoneNumber', e.target.value)}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{contact.phone}</p>
+              <p className="text-gray-700">{contact.PhoneNumber}</p>
             )}
           </div>
           
@@ -172,12 +160,12 @@ export default function ContactDetailCard({
             {isEditing ? (
               <input
                 type="email"
-                value={editedContact.email}
-                onChange={(e) => handleChange('email', e.target.value)}
+                value={editedContact.Email}
+                onChange={(e) => handleChange('Email', e.target.value)}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{contact.email}</p>
+              <p className="text-gray-700">{contact.Email}</p>
             )}
           </div>
         </div>
@@ -214,20 +202,12 @@ export default function ContactDetailCard({
               >
                 {editButtonText}
               </button>
-              <div className="flex space-x-2">
-                <button 
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-                >
-                  {deleteButtonText}
-                </button>
-                <button 
-                  onClick={onClose}
-                  className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
-                >
-                  {closeButtonText}
-                </button>
-              </div>
+              <button 
+                onClick={onClose}
+                className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
+              >
+                {closeButtonText}
+              </button>
             </>
           )}
         </div>

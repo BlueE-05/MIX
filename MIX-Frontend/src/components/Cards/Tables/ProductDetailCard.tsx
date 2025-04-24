@@ -1,29 +1,16 @@
 'use client'
 import { ReactNode, useState, useEffect } from 'react'
+import { ProductUpdate, ProductView } from '@/types/Product'
 
 interface ProductDetailCardProps {
-  product: {
-    id: number
-    name: string
-    refNum: string
-    unitaryPrice: number
-    commission: number // 0-100%
-    productSheet: ReactNode
-  }
+  product: ProductView
   onClose: () => void
-  onSave?: (updatedProduct: {
-    id: number
-    name: string
-    refNum: string
-    unitaryPrice: number
-    commission: number
-    productSheet: ReactNode
-  }) => void
+  onSave?: (updatedProduct: ProductUpdate & { refNum: string }) => void
   onDelete?: (productId: number) => void
   editButtonText?: string
   closeButtonText?: string
   saveButtonText?: string
-  deleteButtonText?: string;
+  deleteButtonText?: string
 }
 
 export default function ProductDetailCard({
@@ -38,53 +25,81 @@ export default function ProductDetailCard({
 }: ProductDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [currentProduct, setCurrentProduct] = useState(initialProduct)
-  const [editedProduct, setEditedProduct] = useState(initialProduct)
+  const [editedProduct, setEditedProduct] = useState<ProductUpdate & { refNum: string }>({
+    refNum: initialProduct.RefNum,
+    Name: initialProduct.Name,
+    Description: '',
+    UnitaryPrice: initialProduct.UnitaryPrice,
+    Commission: initialProduct.Commission,
+    ProductSheetURL: ''
+  })
   const [commissionError, setCommissionError] = useState('')
-  const [commissionInput, setCommissionInput] = useState(initialProduct.commission.toString())
+  const [commissionInput, setCommissionInput] = useState(initialProduct.Commission.toString())
 
-  // Actualizar estados cuando cambia el prop initialProduct
+  // Update states when initialProduct prop changes
   useEffect(() => {
     setCurrentProduct(initialProduct)
-    setEditedProduct(initialProduct)
-    setCommissionInput(initialProduct.commission.toString())
+    setEditedProduct({
+      refNum: initialProduct.RefNum,
+      Name: initialProduct.Name,
+      Description: '',
+      UnitaryPrice: initialProduct.UnitaryPrice,
+      Commission: initialProduct.Commission,
+      ProductSheetURL: ''
+    })
+    setCommissionInput(initialProduct.Commission.toString())
   }, [initialProduct])
 
   const handleEdit = () => {
     setIsEditing(true)
     setCommissionError('')
-    setCommissionInput(editedProduct.commission.toString())
+    setCommissionInput(editedProduct.Commission.toString())
   }
 
   const handleSave = () => {
     if (commissionError) return
     
-    // Asegurar valores válidos
+    // Ensure valid values
     const finalCommission = parseFloat(commissionInput) || 0
-    const updatedProduct = {
+    const updatedProduct: ProductUpdate & { refNum: string } = {
       ...editedProduct,
-      commission: Math.min(100, Math.max(0, finalCommission))
+      Commission: Math.min(100, Math.max(0, finalCommission))
     }
 
-    setCurrentProduct(updatedProduct) // Actualizar la vista inmediatamente
-    onSave(updatedProduct) // Notificar al componente padre
+    setCurrentProduct({
+      ...currentProduct,
+      RefNum: updatedProduct.refNum,
+      Name: updatedProduct.Name,
+      UnitaryPrice: updatedProduct.UnitaryPrice,
+      Commission: updatedProduct.Commission,
+    })
+    
+    onSave(updatedProduct)
     setIsEditing(false)
   }
 
   const handleCancel = () => {
-    setEditedProduct(currentProduct)
-    setCommissionInput(currentProduct.commission.toString())
+    setEditedProduct({
+      refNum: currentProduct.RefNum,
+      Name: currentProduct.Name,
+      Description: '',
+      UnitaryPrice: currentProduct.UnitaryPrice,
+      Commission: currentProduct.Commission,
+      ProductSheetURL: ''
+    })
+    setCommissionInput(currentProduct.Commission.toString())
     setIsEditing(false)
     setCommissionError('')
   }
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
-      onDelete(initialProduct.id)
+      onDelete(initialProduct.Index)
       onClose()
     }
   }
 
-  const handleChange = (field: keyof typeof editedProduct, value: string | number) => {
+  const handleChange = (field: keyof ProductUpdate, value: string | number) => {
     setEditedProduct(prev => ({
       ...prev,
       [field]: value
@@ -102,7 +117,7 @@ export default function ProductDetailCard({
     if (value === '') {
       setCommissionInput('')
       setCommissionError('')
-      handleChange('commission', 0)
+      handleChange('Commission', 0)
       return
     }
 
@@ -115,20 +130,20 @@ export default function ProductDetailCard({
     if (numValue < 0) {
       setCommissionError('Commission cannot be less than 0%')
       setCommissionInput('0')
-      handleChange('commission', 0)
+      handleChange('Commission', 0)
       return
     }
 
     if (numValue > 100) {
       setCommissionError('Commission cannot be more than 100%')
       setCommissionInput('100')
-      handleChange('commission', 100)
+      handleChange('Commission', 100)
       return
     }
 
     setCommissionError('')
     setCommissionInput(value)
-    handleChange('commission', numValue)
+    handleChange('Commission', numValue)
   }
 
   return (
@@ -139,12 +154,12 @@ export default function ProductDetailCard({
             {isEditing ? (
               <input
                 type="text"
-                value={editedProduct.name}
-                onChange={(e) => handleChange('name', e.target.value)}
+                value={editedProduct.Name}
+                onChange={(e) => handleChange('Name', e.target.value)}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              currentProduct.name
+              currentProduct.Name
             )}
           </h2>
           <button 
@@ -162,11 +177,11 @@ export default function ProductDetailCard({
               <input
                 type="text"
                 value={editedProduct.refNum}
-                onChange={(e) => handleChange('refNum', e.target.value)}
+                onChange={(e) => setEditedProduct(prev => ({...prev, refNum: e.target.value}))}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{currentProduct.refNum}</p>
+              <p className="text-gray-700">{currentProduct.RefNum}</p>
             )}
           </div>
           
@@ -175,12 +190,12 @@ export default function ProductDetailCard({
             {isEditing ? (
               <input
                 type="text"
-                value={formatCurrency(editedProduct.unitaryPrice)}
-                onChange={(e) => handleChange('unitaryPrice', parseFloat(e.target.value.replace(/[^0-9.-]+/g, '')))}
+                value={formatCurrency(editedProduct.UnitaryPrice)}
+                onChange={(e) => handleChange('UnitaryPrice', parseFloat(e.target.value.replace(/[^0-9.-]+/g, '')))}
                 className="w-full p-2 border rounded"
               />
             ) : (
-              <p className="text-gray-700">{formatCurrency(currentProduct.unitaryPrice)}</p>
+              <p className="text-gray-700">{formatCurrency(currentProduct.UnitaryPrice)}</p>
             )}
           </div>
           
@@ -203,7 +218,7 @@ export default function ProductDetailCard({
                 )}
               </div>
             ) : (
-              <p className="text-gray-700">{currentProduct.commission}%</p>
+              <p className="text-gray-700">{currentProduct.Commission}%</p>
             )}
           </div>
           
@@ -215,7 +230,7 @@ export default function ProductDetailCard({
                   [File editing not implemented]
                 </div>
               ) : (
-                currentProduct.productSheet
+                currentProduct.ProductSheetURL
               )}
             </div>
           </div>
