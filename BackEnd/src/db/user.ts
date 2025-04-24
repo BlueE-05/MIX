@@ -34,6 +34,7 @@ export class UserDbService {
   }
 
   public async getUserByEmail(email: string): Promise<UserDTO | null> {
+    const isAdmin = await this.isUserAdmin(email);
     const result = await this.db.request()
       .input("email", sql.NVarChar, email.toLowerCase())
       .query(`
@@ -61,6 +62,7 @@ export class UserDbService {
       ProfilePic: user.ProfilePic 
         ? `data:image/png;base64,${user.ProfilePic.toString("base64")}` 
         : null,
+      isAdmin,
     };
   }
 
@@ -96,4 +98,18 @@ export class UserDbService {
         WHERE LOWER(ID) = @email
       `);
   }
+
+  public async isUserAdmin(email: string): Promise<boolean> {
+    const result = await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .query(`
+        SELECT 1
+        FROM [Admin] a
+        INNER JOIN [User] u ON a.IDUser = u.ID
+        WHERE LOWER(u.ID) = @email
+      `);
+  
+    return result.recordset.length > 0;
+  }
+  
 }

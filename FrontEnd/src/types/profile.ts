@@ -7,6 +7,7 @@ export interface ProfileData {
     dateOfJoining: string;
     education: string;
     profilePic: string | null;
+    isAdmin: boolean;
 }
 
 export interface LayOutProfileData {

@@ -1,16 +1,31 @@
-'use client'
+'use client';
 
-import { CirclePlus } from "lucide-react";
+import { useEffect } from 'react';
+import { CirclePlus } from 'lucide-react';
 
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
 import PointsButton from '@/components/Buttons/PointsButton';
 import RoundedButton from '@/components/Buttons/RoundedButton';
+import { useFullProfile } from '@/hooks/useFullProfile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 const ProductPage = () => {
-  const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Billing Frecuency", "Product Type", "Product Sheet", ""];
-  
-  {/**Data random para rellenar la tabla **/}
+  const { profile, loading } = useFullProfile();
+
+  useEffect(() => {
+    if (!loading && profile) {
+      console.log(`isAdmin: ${profile.isAdmin}`);
+    }
+  }, [loading, profile]);
+
+  if (loading || !profile) return <LoadingSpinner />;
+
+  const productHeaders = [
+    "#", "Name of Product", "Ref. Number", "Unitary Price", "Billing Frecuency",
+    "Product Type", "Product Sheet", ""
+  ];
+
   const productData = Array.from({ length: 25 }, (_, i) => [
     i + 1,
     `MIX CRM ${["Basic", "Pro", "Enterprise"][i % 3]}`,
@@ -25,12 +40,11 @@ const ProductPage = () => {
   return (
     <main className="min-h-screen p-6">
       <h1 className="font-bold text-3xl mb-5">Products List</h1>
-      <CustomTable headers={productHeaders} data={productData} color="orange"/>
+      <CustomTable headers={productHeaders} data={productData} color="orange" />
 
       <div className="fixed bottom-6 right-6">
-        <RoundedButton color="orange" text="New Product" Icon={CirclePlus}/>
+        <RoundedButton color="orange" text="New Product" Icon={CirclePlus} />
       </div>
-
     </main>
   );
 };

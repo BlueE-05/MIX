@@ -25,6 +25,7 @@ const fetchFullProfile = async (): Promise<ProfileData> => {
     }),
     position: data.JobPositionName || "N/A",
     profilePic: data.ProfilePic || null,
+    isAdmin: data.isAdmin
   };
 };
 
