@@ -26,16 +26,16 @@ const CustomTable = ({ headers, data, color = "#FFFFFF", includeSearch = true, o
                 <div className="inline-block min-w-full py-2">
                     <div className="overflow-hidden">
                         {/** Buscador **/}
-                        <div style={{ backgroundColor: color }} className="rounded-t-md h-14 flex items-center p-4 relative">
+                        <div style={{ backgroundColor: color }} className="rounded-t-md h-14 flex items-center p-4">
                             {includeSearch && (
-                                <>
+                                <div className="flex items-center flex-1 bg-gray-100 rounded-full pl-3 pr-4 max-w-xs">
+                                    <Search className="h-5 w-5 text-black mr-2" />
                                     <input 
                                         placeholder="Search" 
-                                        className="w-xl rounded-full py-1 px-10 focus:outline-none focus:ring-2 focus:ring-stone-900 bg-gray-100" 
+                                        className="w-full py-1 bg-transparent focus:outline-none focus:ring-2 focus:ring-stone-900" 
                                         onChange={handleSearchChange}
                                     />
-                                    <Search className="absolute left-6 h-5 w-5 text-black" />
-                                </>
+                                </div>
                             )}
                         </div>
 

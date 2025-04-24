@@ -22,11 +22,37 @@ const DashboardPage = () => {
   return (
     <main className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
-      <div className="mb-8 flex justify-between items-start flex-col md:flex-row gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+        <div className="mb-8 flex justify-between items-start flex-col md:flex-row gap-4">
+          {/* Título (se mantiene igual) */}
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
+          </div>
+          
+          {/* Tarjetas Modificadas - ¡Clave! */}
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {/* Team Card */}
+            <div className="bg-white p-4 rounded-lg w-full sm:w-60 transition-all duration-300">
+              <label className="block text-sm font-medium text-green-700 mb-1">Team</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
+                value={currentUser.team}
+                readOnly
+              />
+            </div>
+            
+            {/* Position Card */}
+            <div className="bg-white p-4 rounded-lg w-full sm:w-60 transition-all duration-300">
+              <label className="block text-sm font-medium text-blue-700 mb-1">Position</label>
+              <input
+                type="text"
+                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
+                value={currentUser.position}
+                readOnly
+              />
+            </div>
+          </div>
         </div>
-      </div>
   
       {/* Resto del contenido */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -44,37 +70,6 @@ const DashboardPage = () => {
   
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
-          
-          {/* User Info Cards */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto absolute top-20">
-            {/* Team Card */}
-            <div className="bg-white p-4 rounded-lg w-full sm:w-60">
-              <label htmlFor="team-display" className="block text-sm font-medium text-green-700 mb-1">
-                Team
-              </label>
-              <input
-                type="text"
-                id="team-display"
-                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-                value={currentUser.team}
-                readOnly
-              />
-            </div>
-    
-            {/* Position Card */}
-            <div className="bg-white p-4 rounded-lg w-full sm:w-65">
-              <label htmlFor="position-display" className="block text-sm font-medium text-blue-700 mb-1">
-                Position
-              </label>
-              <input
-                type="text"
-                id="position-display"
-                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-                value={currentUser.position}
-                readOnly
-              />
-            </div>
-          </div>
 
           <div>
             <AwardsBox award={"UwU"}/>

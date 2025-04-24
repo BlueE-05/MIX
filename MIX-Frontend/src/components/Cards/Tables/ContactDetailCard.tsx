@@ -22,18 +22,22 @@ interface ContactDetailCardProps {
     phone: string
     email: string
   }) => void
+  onDelete?: (contactId: number) => void
   editButtonText?: string
   closeButtonText?: string
   saveButtonText?: string
+  deleteButtonText?: string
 }
 
 export default function ContactDetailCard({
   contact,
   onClose,
   onSave = () => {},
+  onDelete = () => {},
   editButtonText = 'Edit',
   closeButtonText = 'Close',
-  saveButtonText = 'Save'
+  saveButtonText = 'Save',
+  deleteButtonText = 'Delete'
 }: ContactDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false)
   
@@ -69,6 +73,13 @@ export default function ContactDetailCard({
       status: normalizeStatus(contact.status)
     })
     setIsEditing(false)
+  }
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this contact?')) {
+      onDelete(contact.id)
+      onClose()
+    }
   }
 
   const handleChange = (field: keyof typeof editedContact, value: string) => {
@@ -174,12 +185,20 @@ export default function ContactDetailCard({
         <div className="mt-6 flex justify-between">
           {isEditing ? (
             <>
-              <button 
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-red-600 transition-colors"
-              >
-                Cancel
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  {deleteButtonText}
+                </button>
+              </div>
               <button 
                 onClick={handleSave}
                 className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
@@ -195,12 +214,20 @@ export default function ContactDetailCard({
               >
                 {editButtonText}
               </button>
-              <button 
-                onClick={onClose}
-                className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
-              >
-                {closeButtonText}
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={handleDelete}
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  {deleteButtonText}
+                </button>
+                <button 
+                  onClick={onClose}
+                  className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  {closeButtonText}
+                </button>
+              </div>
             </>
           )}
         </div>
