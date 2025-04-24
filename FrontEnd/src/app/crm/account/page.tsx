@@ -5,29 +5,27 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ProfileData } from "@/types/profile";
+import { useFullProfile } from "@/hooks/useFullProfile";
+import { LoadingSpinner } from "@/components/LoadingSpinner";
 
 export default function Profile() {
+  const { profile, loading } = useFullProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState<ProfileData>({
-    name: "",
-    lastName: "",
-    position: "",
-    email: "",
-    phone: "",
-    dateOfJoining: "",
-    education: "",
-    profilePic: null,
-  });
-
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const router = useRouter();
-  
+
+  useEffect(() => {
+    if (profile) {
+      setProfileData(profile);
+    }
+  }, [profile]);
+
   const handleLogout = async () => {
     try {
       await fetch("http://localhost:4000/api/logout", {
         method: "POST",
         credentials: "include",
       });
-  
       router.push("/login");
     } catch (err) {
       console.error("Logout error:", err);
@@ -35,9 +33,10 @@ export default function Profile() {
     }
   };
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+    if (!profileData) return;
+    const { name, value } = e.target;
+    setProfileData({ ...profileData, [name]: value });
   };
 
   const handleSave = () => {
@@ -45,56 +44,22 @@ export default function Profile() {
     console.log("Profile saved:", profileData);
   };
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/profile", {
-          method: "GET",
-          credentials: "include",
-        });
-  
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || "Unauthorized");
-        
-        setProfileData({
-          name: data.Name,
-          lastName: data.LastName,
-          email: data.ID,
-          phone: data.PhoneNumber,
-          education: data.Education,
-          dateOfJoining: new Date(data.JoiningDate).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric",
-              }),
-          position: data.JobPositionName || "N/A",
-          profilePic: data.ProfilePic || null,
-        });
-      } catch (err) {
-        console.error("Failed to load profile:", err);
-      }
-    };
-  
-    fetchProfile();
-  }, []);
-  
+  if (loading || !profileData) return <LoadingSpinner />;
 
-  if (!profileData) return <p className="text-center mt-10">Cargando perfil...</p>;
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
-      
       <div className="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg flex flex-col justify-between min-h-[400px]">
         <div className="flex items-center space-x-6">
           {profileData.profilePic ? (
-                <Image
-                  src={profileData.profilePic}
-                  alt="Profile Picture"
-                  width={80}
-                  height={80}
-                  className="rounded-full object-cover"
-                />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-gray-300" />
+            <Image
+              src={profileData.profilePic}
+              alt="Profile Picture"
+              width={80}
+              height={80}
+              className="rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-full bg-gray-300" />
           )}
           <div>
             {isEditing ? (
@@ -191,9 +156,7 @@ export default function Profile() {
 
         <h3 className="mt-6 font-semibold text-black">Description:</h3>
         <p className="text-gray-700">
-          NexaCorp Solutions is a leading provider of innovative business solutions, specializing in sales optimization,
-          customer relationship management, and digital transformation. With cutting-edge technology and data-driven
-          strategies, NexaCorp helps businesses maximize efficiency and growth.
+          NexaCorp Solutions is a leading provider of innovative business solutions...
         </p>
 
         <h3 className="mt-6 font-semibold text-black">Headquarters Location:</h3>

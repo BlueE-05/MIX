@@ -38,4 +38,23 @@ export class UserHttpHandler {
       next(error);
     }
   }
+
+
+  public async getEmailStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const controller = await userControllerPromise;
+      await controller.getEmailStatus(req as any, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async sessionStatus(req: Request, res: Response): Promise<void> {
+    try {
+      res.status(200).json({ authenticated: true });
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }  
+
 }

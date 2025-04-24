@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useEmailVerification } from "@/hooks/useEmailVerification";
+import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAccess";
 import { SignupFormProps, SignupFormData } from "@/types/signup";
+import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import Navbar from "@/components/NavBar";
 import { educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
-import EmailVerification from "@/components/Cards/Autorizations/EmailVerification";
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
   const router = useRouter();
@@ -40,40 +40,30 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedTeamId, setSelectedTeamId] = useState("");
+  const [showVerification, setShowVerification] = useState(false);
   const {
     emailVerified,
-    showVerification,
-    setShowVerification,
-    checkManually,
+    secondsLeft,
+    loading: resendLoading,
+    checkStatus,
+    resend,
     isChecking,
-  } = useEmailVerification();
+    redirecting,
+  } = useEmailVerificationStatus();
 
   useEffect(() => {
-    const fetchTeams = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/teams");
-        const data = await res.json();
-        setTeamsFromDb(data);
-      } catch (err) {
-        console.error("Error fetching teams:", err);
-      }
-    };
-    fetchTeams();
+    fetch("http://localhost:4000/api/teams")
+      .then(res => res.json())
+      .then(setTeamsFromDb)
+      .catch(err => console.error("Error fetching teams:", err));
   }, []);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/jobs");
-        const data = await res.json();
-        setJobsFromDb(data);
-      } catch (err) {
-        console.error("Error fetching jobs:", err);
-      }
-    };
-    fetchJobs();
+    fetch("http://localhost:4000/api/jobs")
+      .then(res => res.json())
+      .then(setJobsFromDb)
+      .catch(err => console.error("Error fetching jobs:", err));
   }, []);
-
 
   const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
 
@@ -95,11 +85,12 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     return stepFields.every((field) => formData[field] && !validateField(field, formData[field] as string));
   };
 
+
+
   const handleFormSubmit = async (e: React.FormEvent, data: SignupFormData) => {
     e.preventDefault();
-  
     const cleaned = cleanFormData(data);
-  
+
     try {
       const response = await fetch("http://localhost:4000/api/signup", {
         method: "POST",
@@ -107,24 +98,20 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
         body: JSON.stringify(cleaned),
         credentials: "include",
       });
-  
+
       if (!response.ok) throw new Error("Signup failed");
-  
-      const profileRes = await fetch("http://localhost:4000/api/profile", {
-        credentials: "include",
-      });
-      
+
+      const profileRes = await fetch("http://localhost:4000/api/email-status", { credentials: "include" });
       if (profileRes.status === 403) {
         setShowVerification(true);
         return;
       }
-      
+
       if (!profileRes.ok) throw new Error("Error fetching profile");
-      
-      const profile = await profileRes.json();      
-  
+
+      const profile = await profileRes.json();
       const verified = Boolean(profile.email_verified ?? profile.EmailVerified);
-      
+
       if (!verified) {
         setShowVerification(true);
       } else {
@@ -135,7 +122,6 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       alert("Error al registrar usuario");
     }
   };
-  
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -171,30 +157,41 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
   };
 
-  const handleNext = () => isStepValid() && setCurrentStep((prev) => prev + 1);
+  const handleNext = async () => {
+    if (!isStepValid()) return;
+  
+    if (currentStep === 2) {
+      try {
+        const res = await fetch(`http://localhost:4000/api/users/exists?email=${formData.Email}`);
+        const data = await res.json();
+        if (data.exists) {
+          setErrors(prev => ({ ...prev, Email: "Email is already registered" }));
+          return;
+        }
+      } catch (err) {
+        console.error("Error checking email:", err);
+        setErrors(prev => ({ ...prev, Email: "Error verifying email" }));
+        return;
+      }
+    }
+  
+    setCurrentStep((prev) => prev + 1);
+  };
+  
   const handleBack = () => setCurrentStep((prev) => prev - 1);
   const handleSubmit = (e: React.FormEvent) => isStepValid() && handleFormSubmit(e, formData);
+
     return (
         <>
-            {showVerification && emailVerified === false && !isChecking && (
-                <EmailVerification
-                isVerified={emailVerified}
-                onContinue={async () => {
-                    const profileRes = await fetch("http://localhost:4000/api/profile", {
-                    credentials: "include",
-                    });
-            
-                    if (!profileRes.ok) return alert("Error verificando");
-            
-                    const profile = await profileRes.json();
-            
-                    if (profile.EmailVerified) {
-                    router.push("/crm/dashboard");
-                    } else {
-                    alert("Tu email aún no está verificado");
-                    }
-                }}
-                origin ="signup"
+            {!emailVerified && showVerification && !isChecking && (
+                <UnauthorizedAccess
+                    reason="not-verified"
+                    onRetry={checkStatus}
+                    onResend={resend}
+                    loading={resendLoading}
+                    emailVerified={!!emailVerified}
+                    secondsLeft={secondsLeft}
+                    redirecting={redirecting}
                 />
             )}
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">

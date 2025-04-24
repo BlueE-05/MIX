@@ -20,11 +20,8 @@ export class UserController {
     }
 
     try {
-      if (await this.auth0Service.userExists(Email)) {
-        return res.status(409).json({ error: "Email already exists in Auth0" });
-      }
-
       const auth0User = await this.auth0Service.createUser(Email, Password);
+      await this.auth0Service.sendVerificationEmail(auth0User.user_id);
 
       await this.userDbService.createUser({
         ...userData,
@@ -72,24 +69,47 @@ export class UserController {
   
       const lastSent = await this.userDbService.getLastVerificationSent(email);
       const now = new Date();
+      const cooldownMs = 10 * 60 * 1000;
   
-      if (lastSent && now.getTime() - new Date(lastSent).getTime() < 10 * 60 * 1000) {
-        const minutesLeft = 10 - Math.floor((now.getTime() - new Date(lastSent).getTime()) / 60000);
-        return res.status(429).json({ error: `Please wait ${minutesLeft} more minute(s)` });
+      if (lastSent) {
+        const elapsed = now.getTime() - new Date(lastSent).getTime();
+        const remainingMs = Math.max(0, cooldownMs - elapsed);
+  
+        if (remainingMs > 0) {
+          const secondsLeft = Math.ceil(remainingMs / 1000);
+          return res.status(429).json({
+            secondsLeft
+          });
+        }
       }
   
-      await this.auth0Service.resendVerificationEmail(email);
+      await this.auth0Service.sendVerificationEmail(sub);
       await this.userDbService.updateLastVerificationSent(email);
   
-      return res.status(200).json({ message: "Verification email resent" });
+      return res.status(200).json({ message: "Verification email resent", secondsLeft: Math.ceil(cooldownMs / 1000) });
     } catch (err: any) {
       console.error("Error resending verification email:", err.message);
       return res.status(500).json({ error: "Failed to resend verification email" });
     }
   }
   
+  
   public logout(req: Request, res: Response): void {
     clearAuthCookies(res);
     res.status(200).json({ message: "Sesión cerrada correctamente" });
   }
+
+  public async getEmailStatus(req: AuthRequest, res: Response): Promise<Response> {
+    const sub = req.auth?.sub;
+    if (!sub) return res.status(400).json({ error: "Token without sub" });
+  
+    try {
+      const { email, email_verified } = await this.auth0Service.getUserBySub(sub);
+      return res.status(200).json({ email, email_verified });
+    } catch (err: any) {
+      console.error("Error fetching email status:", err.message);
+      return res.status(500).json({ error: "Failed to get email status" });
+    }
+  }
+  
 }

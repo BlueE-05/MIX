@@ -1,81 +1,95 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useCallback, useEffect } from 'react';
 
-export function useEmailVerification(autoStart = false) {
+export function useEmailVerificationStatus() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isChecking, setIsChecking] = useState(false);
-  const [showVerification, setShowVerification] = useState(autoStart);
-  const [emailSent, setEmailSent] = useState(false);
-  const router = useRouter();
+  const [redirecting, setRedirecting] = useState(false);
+
+  const fetchStatus = async () => {
+    try {
+      const statusRes = await fetch("http://localhost:4000/api/email-status", {
+        credentials: "include",
+      });
+      if (statusRes.ok) {
+        const data = await statusRes.json();
+        const verified = Boolean(data.EmailVerified ?? data.email_verified ?? false);
+        setEmailVerified(verified);
+        return verified;
+      }
+    } catch (err: any) {
+      setError(err.message);
+    }
+    return false;
+  };
 
   useEffect(() => {
-    if (!showVerification) return;
+    fetchStatus();
+  }, []);
 
-    if (!emailSent) {
-      fetch("http://localhost:4000/api/resend-verification", {
-        method: "POST",
-        credentials: "include",
-      }).then(() => setEmailSent(true));
+  const checkStatus = useCallback(async () => {
+    setIsChecking(true);
+    try {
+      const verified = await fetchStatus();
+      setEmailVerified(verified);
+      if (verified) {
+        setRedirecting(true);
+        window.location.href = "/crm/dashboard";
+      }
+      return verified;
+    } finally {
+      setIsChecking(false);
     }
+  }, []);
 
-    const interval = setInterval(async () => {
-      setIsChecking(true);
-      const res = await fetch("http://localhost:4000/api/profile", {
+  const resend = async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:4000/api/resend-verification", {
+        method: "POST",
         credentials: "include",
       });
 
-      if (!res.ok) return;
-
-      const profile = await res.json();
-      const verified = Boolean(profile.email_verified ?? profile.EmailVerified);
-
-      if (verified) {
-        setEmailVerified(true);
-        setShowVerification(false);
-        router.push("/crm/dashboard");
-      } else {
-        setEmailVerified(false);
+      const data = await res.json();
+      if (typeof data.secondsLeft === "number") {
+        setSecondsLeft(data.secondsLeft);
       }
 
-      setIsChecking(false);
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [showVerification]);
-
-  const checkManually = async () => {
-    setIsChecking(true);
-    const res = await fetch("http://localhost:4000/api/profile", {
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      setIsChecking(false);
-      return false;
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to resend email");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-
-    const profile = await res.json();
-    const verified = Boolean(profile.email_verified ?? profile.EmailVerified);
-
-    if (verified) {
-      setEmailVerified(true);
-      setShowVerification(false);
-      router.push("/crm/dashboard");
-    } else {
-      setEmailVerified(false);
-    }
-
-    setIsChecking(false);
-    return verified;
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (typeof prev === 'number' && prev > 0) return prev - 1;
+        return prev;
+      });
+    }, 1000);
+  
+    return () => clearInterval(interval);
+  }, []);  
+
 
   return {
     emailVerified,
-    showVerification,
-    setShowVerification,
-    checkManually,
+    secondsLeft,
+    loading,
+    error,
+    checkStatus,
+    resend,
     isChecking,
+    redirecting,
   };
 }

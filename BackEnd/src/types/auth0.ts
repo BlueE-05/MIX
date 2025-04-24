@@ -2,6 +2,7 @@ import { Request } from "express";
 
 export interface Auth0User {
     email_verified: boolean;
+    user_id: string;
 }
 
 export interface CustomAuthClaims {

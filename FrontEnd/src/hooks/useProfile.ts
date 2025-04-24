@@ -1,39 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { LayOutProfileData } from "@/types/profile";
 
+const fetchProfile = async (): Promise<LayOutProfileData> => {
+  const res = await fetch("http://localhost:4000/api/profile", {
+    credentials: "include",
+  });
+  if (!res.ok) throw new Error("Unauthorized");
+  const data = await res.json();
+  return {
+    name: data.Name,
+    lastName: data.LastName,
+    profilePic: data.ProfilePic || null,
+    emailVerified: Boolean(data.email_verified ?? data.EmailVerified),
+  };
+};
+
 export function useProfile() {
-  const [profile, setProfile] = useState<LayOutProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch("http://localhost:4000/api/profile", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!res.ok) throw new Error("Unauthorized");
-
-        const data = await res.json();
-
-        setProfile({
-          name: data.Name,
-          lastName: data.LastName,
-          profilePic: data.ProfilePic || null,
-          emailVerified: data.EmailVerified
-        });
-      } catch (err) {
-        console.error("Error fetching profile:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProfile();
-  }, []);
-
-  return { profile, loading };
+  const { data: profile, error, isLoading } = useSWR("http://localhost:4000/api/profile", fetchProfile);
+  return { profile, loading: isLoading, error };
 }
