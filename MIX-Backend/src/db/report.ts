@@ -6,23 +6,24 @@ class ReportService{
 
   //Considerar Cierre como ID=5 en Phase en el mes actual
   //LISTO
-  async getAllCierre(id: string) {
+  async getAllCierre(iduser: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.VarChar, id).query(
+        const result = await request.input('iduser', sql.VarChar, iduser).query(
         `SELECT COUNT(*) AS TotalCierre 
         FROM Sale as s
-        WHERE IDUser = @id
+        WHERE IDUser = @iduser
 		    AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())
         AND IDPhase = 5`);
-        return result.recordset.length > 0 ? result.recordset[0].Name : null;
+        return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
-        throw new Error('Error al obtener cierres');
+        throw new Error('Error al obtener cierre');
     }
   }
+  
 
   //Considerar Actives como ID=2,3,4 en Phase
   //LISTO
@@ -66,8 +67,8 @@ class ReportService{
         }
     }
 
-  //Considerar Prospecto como ID=1 en Phase
-  //MODIFICAR: Mes actual***//REVISAR
+  //Considerar cancelled como ID=6 en Phase
+  //LISTO
   async getAllCancelled(id: string) {
     try {
         const pool = await poolPromise;
@@ -125,8 +126,7 @@ class ReportService{
     
   }
 
-  //Lo que falta
-  //Trigger para que se actualice las tablas y graficas cada cambio de mes**
+
 
 }
 export default ReportService;

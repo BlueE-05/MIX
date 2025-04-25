@@ -54,12 +54,12 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const userId = 'ana.gomez@empresa.com';
+        
         
         const [cierreResponse, activeResponse, prospectoResponse] = await Promise.all([
-          axios.get(`http://localhost:3001/report/allCierre/${userId}`),
-          axios.get(`http://localhost:3001/report/allActive/${userId}`),
-          axios.get(`http://localhost:3001/report/allCancelled/${userId}`)
+          axios.get(`http://localhost:3001/report/allCierre`),
+          axios.get(`http://localhost:3001/report/allActive`),
+          axios.get(`http://localhost:3001/report/allCancelled`)
         ]);
 
         // Extraer los datos de las respuestas

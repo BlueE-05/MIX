@@ -20,7 +20,7 @@ class ReportController {
   }
 
   
-
+  //Revisar
   async getTotalComissions(IDUser: string) {
     return this.reportService.getTotalComissions(IDUser);
   }

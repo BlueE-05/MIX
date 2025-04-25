@@ -13,7 +13,7 @@ class ReportHTTPHandler {
 
     getAllCierre = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser='ana.gomez@empresa.com'
+        const iduser=UserEmail;
         const products = await this.reportController.getAllCierre(iduser);
         res.json(products);
       } catch (error) {
@@ -37,7 +37,7 @@ class ReportHTTPHandler {
 
     getAllActive = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const IDUser = String(req.params.IDUser); 
+        const IDUser = UserEmail;
         const products = await this.reportController.getAllActive(IDUser);
         res.json(products);
       } catch (error) {
@@ -48,7 +48,7 @@ class ReportHTTPHandler {
 
       getAllCancelled = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = String(req.params.id); 
+        const id = UserEmail
         const products = await this.reportController.getAllCancelled(id);
         res.json(products);
       } catch (error) {
