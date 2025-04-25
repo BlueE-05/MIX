@@ -186,7 +186,7 @@ class SaleService{
          const pool = await poolPromise;
          const request = pool.request();
          const result = await request.input('iduser', sql.VarChar, iduser).query(
-        `SELECT TOP 15
+        `SELECT TOP 10
         s.ID AS SaleID,
         c.Name + ' ' + c.LastName AS ContactName,
         ph.Name AS Status,
@@ -202,7 +202,7 @@ class SaleService{
         AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())
         GROUP BY s.ID, c.Name, c.LastName, ph.Name, s.StartDate
-        ORDER BY s.StartDate DESC`);
+        ORDER BY s.ID DESC`);
          return result.recordset;
          console.log(result.recordset);
       } catch (error) {

@@ -121,34 +121,39 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
 
   const handleSubmit = async () => {
     try {
-      // Verificar que se haya seleccionado contacto y fase
+      // Verificaciones básicas
       if (!selectedContact || !selectedStatus) {
-        alert('Please select both contact and phase');
+        alert('Por favor selecciona tanto el contacto como la fase');
         return;
       }
   
-      // Extraer IDContact del valor seleccionado (formato "NombreCompleto-ID")
-      const contactId = parseInt(selectedContact.split('-')[1]);
+      // Extraer IDContact
+      const contactParts = selectedContact.split('-');
+      if (contactParts.length < 2) {
+        alert('Formato de contacto inválido');
+        return;
+      }
+      const contactId = parseInt(contactParts[1]);
       
-      // Encontrar la fase seleccionada para obtener su ID
+      // Obtener ID de la fase
       const selectedPhase = phases.find(phase => phase.Name === selectedStatus);
       if (!selectedPhase) {
-        alert('Invalid phase selected');
+        alert('Fase seleccionada inválida');
         return;
       }
       const phaseId = selectedPhase.IDPhase;
   
-      // Preparar los productos
+      // Preparar los productos - AQUÍ ESTÁ EL CAMBIO PRINCIPAL
       const productsToSend = items
-        .filter(item => item.article !== '')
+        .filter(item => item.article.trim() !== '') // Filtrar items vacíos
         .map(item => {
-          // Encontrar el producto seleccionado para obtener su IDProd
+          // Buscar producto insensible a mayúsculas/espacios
           const selectedProduct = products.find(
             prod => prod.NombreArticulo.trim().toLowerCase() === item.article.trim().toLowerCase()
           );
           
           if (!selectedProduct) {
-            throw new Error(`Product not found: ${item.article}`);
+            throw new Error(`Producto no encontrado: ${item.article}`);
           }
   
           return {
@@ -159,7 +164,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   
       // Validar que haya al menos un producto
       if (productsToSend.length === 0) {
-        alert('Please add at least one product');
+        alert('Por favor agrega al menos un producto');
         return;
       }
   
@@ -169,6 +174,8 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
         idphase: phaseId,
         products: productsToSend
       };
+  
+      console.log('Datos a enviar:', saleData); // Para depuración
   
       // Enviar al endpoint
       const response = await fetch('http://localhost:3002/newsale/', {
@@ -180,20 +187,19 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       });
   
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error: ${response.status}`);
       }
   
       const result = await response.json();
-      console.log('Sale created successfully:', result);
-      onSubmit(result); // Puedes pasar los datos al componente padre si es necesario
-      onClose(); // Cerrar el formulario después del envío exitoso
+      console.log('Venta creada exitosamente:', result);
+      onSubmit(result); // Si es necesario
+      onClose(); // Cerrar el formulario
       
     } catch (error) {
-      console.error('Error creating sale:', error);
-      alert('Failed to create sale. Please try again.');
+      console.error('Error al crear venta:', error);
+      alert(`Error al crear venta`);
     }
-
-    
   };
 
   const handleAddItem = () => {
@@ -203,35 +209,27 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   const handleArticleChange = async (index: number, articleName: string) => {
     const newItems = [...items];
     
+    // Resetear el item si se selecciona opción vacía
     if (!articleName) {
-      // Si se selecciona la opción vacía
-      newItems[index] = {
-        ...newItems[index],
-        article: '',
-        price: 0
-      };
+      newItems[index] = { article: '', quantity: 1, price: 0 };
       setItems(newItems);
       return;
     }
   
     try {
-      // Buscar el producto seleccionado (comparación insensible a mayúsculas/espacios)
+      // Buscar el producto
       const selectedProduct = products.find(prod => 
         prod.NombreArticulo.trim().toLowerCase() === articleName.trim().toLowerCase()
       );
   
       if (!selectedProduct) {
         console.error("Producto no encontrado:", articleName);
-        newItems[index] = {
-          ...newItems[index],
-          article: articleName,
-          price: 0
-        };
+        newItems[index] = { ...newItems[index], article: articleName, price: 0 };
         setItems(newItems);
         return;
       }
       
-      // Obtener el precio del producto
+      // Obtener precio
       const response = await fetch(`http://localhost:3002/newsale/ProdPrice/${selectedProduct.IDProd}`);
       
       if (!response.ok) {
@@ -239,32 +237,25 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       }
   
       const priceData = await response.json();
-      console.log("Datos de precio recibidos:", priceData);
-  
-      // Manejar diferentes formatos de respuesta
       let price = 0;
+      
       if (Array.isArray(priceData) && priceData.length > 0) {
         price = priceData[0].Price || 0;
       } else if (typeof priceData === 'object' && priceData !== null) {
-        price = priceData.price || 0;
+        price = priceData.price || priceData.Price || 0;
       }
       
+      // Actualizar solo el item modificado
       newItems[index] = {
-        ...newItems[index],
         article: articleName,
-        
+        quantity: newItems[index].quantity,
         price: price
       };
   
       setItems(newItems);
-      console.log("Estado actualizado:", newItems);
     } catch (error) {
-      console.error('Error al obtener el precio:', error);
-      newItems[index] = {
-        ...newItems[index],
-        article: articleName,
-        price: 0
-      };
+      console.error('Error al obtener precio:', error);
+      newItems[index] = { ...newItems[index], article: articleName, price: 0 };
       setItems(newItems);
     }
   };
