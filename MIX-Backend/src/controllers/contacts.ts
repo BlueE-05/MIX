@@ -1,7 +1,10 @@
 //* 3. Controller Conctacts
 
 import ContactService from '@/db/contacts';
+import Enterprise from '@/types/controller/Enterprise';
+import ContactDB from '@/types/db/ContactDB';
 import Contact from '@/types/db/ContactDB';
+import EnterpriseDB from '@/types/db/EnterpriseDB';
 
 export default class ContactController {
     private service = new ContactService;
@@ -22,8 +25,16 @@ export default class ContactController {
         return this.service.getContactByEnterprise(userID, enterprise);
     }
 
-    async createContact(userID: string, data: Contact): Promise<void> {
+    async getEnterprise(): Promise<Enterprise[]> {
+        return this.service.getEnterprise();
+    }
+
+    async createContact(userID: string, data: ContactDB): Promise<void> {
         return this.service.createContact(userID, data);
+    }
+
+    async createEnterprise(enterpriseData: EnterpriseDB): Promise<void> {
+        return this.service.createEnterprise(enterpriseData);
     }
 
     async updateContact(contactID: number, data: Contact): Promise<void> {

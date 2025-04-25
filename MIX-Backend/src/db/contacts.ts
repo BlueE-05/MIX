@@ -4,6 +4,8 @@ import sql from 'mssql';
 import config from '@/db/config';
 import ContactDB from '@/types/db/ContactDB';
 import Contact from '@/types/controller/Contact';
+import EnterpriseDB from '@/types/db/EnterpriseDB';
+import Enterprise from '@/types/controller/Enterprise';
 
 export default class ContactService {
   private pool: sql.ConnectionPool;
@@ -151,6 +153,17 @@ export default class ContactService {
     return result.recordset;
   }
 
+  async getEnterprise(): Promise<Enterprise[]> {
+    const result = await this.pool.request()
+      .query(
+        `SELECT 
+          ID, 
+          Name
+        FROM [Enterprise];`
+      );
+    return result.recordset;
+  }
+
   async createContact(userID: string, data: ContactDB): Promise<void> {
     await this.pool.request()
       .input('idUser', sql.VarChar, userID)
@@ -169,6 +182,19 @@ export default class ContactService {
             (SELECT ID FROM Enterprise WHERE Name = @nameEnterprise),
             @idUser
         );`
+      );
+  }
+
+  async createEnterprise(enterpriseData: EnterpriseDB): Promise<void> {
+    await this.pool.request()
+      .input('name', sql.VarChar, enterpriseData.name)
+      .input('description', sql.VarChar, enterpriseData.description)
+      .input('industry', sql.VarChar, enterpriseData.industry)
+      .input('website', sql.VarChar, enterpriseData.website)
+      .input('address', sql.VarChar, enterpriseData.address)
+      .query(
+        `INSERT INTO Enterprise (Name, Description, Industry, WebPage, Location)
+        VALUES (@name, @description, @industry, @website, @address);`
       );
   }
 
