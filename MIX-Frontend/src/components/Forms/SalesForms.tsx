@@ -27,16 +27,18 @@ interface Article {
 
 interface Contact {
   FullName: string;
+  IDContact: number;
 }
 
 interface Producto {
   NombreArticulo: string;
   IDProd: string;  
-  price?: number; 
+  Price?: number; 
 }
 
 interface Phase {
   Name: string;
+  IDPhase: number;
 }
 
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {
@@ -52,7 +54,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
   const [loadingPhases, setLoadingPhases] = useState<boolean>(true);
 
-  const iduser = "ana.gomez@empresa.com";
+
 
 
   useEffect(() => {

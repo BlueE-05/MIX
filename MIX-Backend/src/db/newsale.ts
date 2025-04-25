@@ -12,8 +12,9 @@ class NewSaleService{
         const result = await request.input('id', sql.VarChar, id).query(
         `SELECT 
         c.Name + ' ' + c.LastName AS FullName
+        c.ID as IDContact
         FROM Contact c
-        WHERE c.IDUser = 'ana.gomez@empresa.com'
+        WHERE c.IDUser = 'id'
         ORDER BY c.Name, c.LastName`);
         return result.recordset;
     } catch (error) {
@@ -44,7 +45,7 @@ class NewSaleService{
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.query('select Name from Phase;');
+        const result = await request.query('select Name, ID as IDPhase from Phase;');
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
@@ -65,11 +66,6 @@ class NewSaleService{
   }
 
 
-
-    //NOTA: Pendiente
-    //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
-    //Nota:*** Recordar que hay que cambair la fecha de fin con ue:numbern triger o algo al momento de cerrar realmente la venta 
-    //MODIFICAR: Quitar enddate, startdate automatimo la fecha actual
    
     async createSale(iduser: string, data: { idcont: number; idphase: number}) {
           const pool = await poolPromise;
