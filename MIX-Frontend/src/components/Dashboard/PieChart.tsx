@@ -57,9 +57,9 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
         
         
         const [cierreResponse, activeResponse, prospectoResponse] = await Promise.all([
-          axios.get(`http://localhost:3001/report/allCierre`),
-          axios.get(`http://localhost:3001/report/allActive`),
-          axios.get(`http://localhost:3001/report/allCancelled`)
+          axios.get(`http://localhost:3002/report/allCierre`),
+          axios.get(`http://localhost:3002/report/allActive`),
+          axios.get(`http://localhost:3002/report/allCancelled`)
         ]);
 
         // Extraer los datos de las respuestas

@@ -14,7 +14,7 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
   const iduser = 'ana.gomez@empresa.com'; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/report/totalComissions/${iduser}`)
+    axios.get(`http://localhost:3002/report/totalComissions/${iduser}`)
       .then((response) => {
         console.log('Respuesta del backend:', response.data);
         const valor = response.data[0].TotalCommission;

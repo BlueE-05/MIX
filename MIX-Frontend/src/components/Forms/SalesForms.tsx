@@ -13,6 +13,16 @@ interface SaleFormData {
   }[];
 }
 
+//Trasnformar los datos del formulario a lo esperado en el backend
+interface SaleData {
+  idcont: number;
+  idphase: number;
+  products: {
+    idprod: string;
+    quant: number;
+  }[];
+}
+
 // Define las props del componente
 interface FormularioProps {
   onClose: () => void;
@@ -53,14 +63,15 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   const [loadingContacts, setLoadingContacts] = useState<boolean>(true);
   const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
   const [loadingPhases, setLoadingPhases] = useState<boolean>(true);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
 
 
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/newsale/ContactsByUser`);
+        const response = await fetch(`http://localhost:3002/newsale/ContactsByUser`);
         if (!response.ok) {
           throw new Error('Error al obtener los contactos');
         }
@@ -75,7 +86,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
 
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3001/newsale/AllProd');
+        const response = await fetch('http://localhost:3002/newsale/AllProd');
         if (!response.ok) {
           throw new Error('Error al obtener los productos');
         }
@@ -90,7 +101,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
 
     const fetchPhases = async () => {
       try {
-        const response = await fetch('http://localhost:3001/newsale/Phases');
+        const response = await fetch('http://localhost:3002/newsale/Phases');
         if (!response.ok) {
           throw new Error('Error al obtener las fases');
         }
@@ -108,13 +119,81 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     fetchPhases();
   }, []);
 
-  const handleSubmit = () => {
-    const formData: SaleFormData = {
-      contact: selectedContact,
-      status: selectedStatus,
-      items: items.filter(item => item.article !== '') // Filter out empty items
-    };
-    onSubmit(formData);
+  const handleSubmit = async () => {
+    try {
+      // Verificar que se haya seleccionado contacto y fase
+      if (!selectedContact || !selectedStatus) {
+        alert('Please select both contact and phase');
+        return;
+      }
+  
+      // Extraer IDContact del valor seleccionado (formato "NombreCompleto-ID")
+      const contactId = parseInt(selectedContact.split('-')[1]);
+      
+      // Encontrar la fase seleccionada para obtener su ID
+      const selectedPhase = phases.find(phase => phase.Name === selectedStatus);
+      if (!selectedPhase) {
+        alert('Invalid phase selected');
+        return;
+      }
+      const phaseId = selectedPhase.IDPhase;
+  
+      // Preparar los productos
+      const productsToSend = items
+        .filter(item => item.article !== '')
+        .map(item => {
+          // Encontrar el producto seleccionado para obtener su IDProd
+          const selectedProduct = products.find(
+            prod => prod.NombreArticulo.trim().toLowerCase() === item.article.trim().toLowerCase()
+          );
+          
+          if (!selectedProduct) {
+            throw new Error(`Product not found: ${item.article}`);
+          }
+  
+          return {
+            idprod: selectedProduct.IDProd,
+            quant: item.quantity
+          };
+        });
+  
+      // Validar que haya al menos un producto
+      if (productsToSend.length === 0) {
+        alert('Please add at least one product');
+        return;
+      }
+  
+      // Crear el objeto de venta
+      const saleData = {
+        idcont: contactId,
+        idphase: phaseId,
+        products: productsToSend
+      };
+  
+      // Enviar al endpoint
+      const response = await fetch('http://localhost:3002/newsale/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(saleData)
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+  
+      const result = await response.json();
+      console.log('Sale created successfully:', result);
+      onSubmit(result); // Puedes pasar los datos al componente padre si es necesario
+      onClose(); // Cerrar el formulario después del envío exitoso
+      
+    } catch (error) {
+      console.error('Error creating sale:', error);
+      alert('Failed to create sale. Please try again.');
+    }
+
+    
   };
 
   const handleAddItem = () => {
@@ -153,7 +232,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       }
       
       // Obtener el precio del producto
-      const response = await fetch(`http://localhost:3001/newsale/ProdPrice/${selectedProduct.IDProd}`);
+      const response = await fetch(`http://localhost:3002/newsale/ProdPrice/${selectedProduct.IDProd}`);
       
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -165,7 +244,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       // Manejar diferentes formatos de respuesta
       let price = 0;
       if (Array.isArray(priceData) && priceData.length > 0) {
-        price = priceData[0].price || 0;
+        price = priceData[0].Price || 0;
       } else if (typeof priceData === 'object' && priceData !== null) {
         price = priceData.price || 0;
       }
@@ -173,6 +252,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       newItems[index] = {
         ...newItems[index],
         article: articleName,
+        
         price: price
       };
   
@@ -235,7 +315,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
                 Contact *
               </label>
               {loadingContacts ? (
-                <p>Cargando contactos...</p>
+                <p>Loading contacts...</p>
               ) : (
                 <select 
                   id="contact" 
@@ -246,7 +326,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
                 >
                   <option value="">Select contact</option>
                   {contacts.map((contact, index) => (
-                    <option key={index} value={contact.FullName}>
+                    <option key={index} value={`${contact.FullName}-${contact.IDContact}`}>
                       {contact.FullName}
                     </option>
                   ))}
@@ -269,7 +349,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
                   Article {index + 1}
                 </label>
                 {loadingProducts ? (
-                  <p>Cargando productos...</p>
+                  <p>Laoding products...</p>
                 ) : (
                   <select
   id={`article-${index}`}
@@ -344,7 +424,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
               Sale Status *
             </label>
             {loadingPhases ? (
-              <p>Cargando fases...</p>
+              <p>Loading phases...</p>
             ) : (
               <select 
                 id="saleStatus" 

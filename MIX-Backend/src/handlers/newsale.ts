@@ -3,7 +3,7 @@ import NewSaleController from '../controllers/newsale';
 //Importar IDUSer. correo del usuario
 import { UserEmail } from '../getIDUser';
 
-//ana.gomez@empresa.com
+
 class NewSaleHTTPHandler {
   private newsaleController: typeof NewSaleController;
 

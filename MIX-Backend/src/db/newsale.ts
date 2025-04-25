@@ -11,15 +11,15 @@ class NewSaleService{
         const request = pool.request();
         const result = await request.input('id', sql.VarChar, id).query(
         `SELECT 
-        c.Name + ' ' + c.LastName AS FullName
+        c.Name + ' ' + c.LastName AS FullName,
         c.ID as IDContact
-        FROM Contact c
-        WHERE c.IDUser = 'id'
-        ORDER BY c.Name, c.LastName`);
+        FROM Contact as c
+        WHERE c.IDUser = @id
+        ORDER BY c.Name, c.LastName, c.ID`);
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
-        throw new Error('Error al obtener cierres');
+        throw new Error('Error al obtener contactos by user');
     }
   }
 

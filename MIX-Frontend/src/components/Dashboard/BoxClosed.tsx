@@ -15,7 +15,7 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   //const deals = closedDeals ?? 42;
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/report/allCierre`)
+    axios.get(`http://localhost:3002/report/allCierre`)
       .then((response) => {
         const valor = response.data[0].TotalCierre;
         setCierres(Number(valor));
