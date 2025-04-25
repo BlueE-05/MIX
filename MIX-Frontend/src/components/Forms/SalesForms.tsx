@@ -2,26 +2,11 @@
 
 import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
-
-interface SaleFormData {
-  contact: string;
-  status: string;
-  items: {
-    article: string;
-    quantity: number;
-    price: number;
-  }[];
-}
+import { SaleFormData, Article } from '@/types/Sales';
 
 interface FormularioProps {
   onClose: () => void;
   onSubmit: (data: SaleFormData) => void;
-}
-
-interface Article {
-  id: string;
-  name: string;
-  price: number;
 }
 
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {

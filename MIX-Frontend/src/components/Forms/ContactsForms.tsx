@@ -3,21 +3,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import Input from "@/components/Forms/Input";
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
-
-export interface ContactData {
-  name: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  enterprise: string;
-}
-
-export interface EnterpriseData {
-  name: string;
-  description: string;
-  industry: string;
-  webpageUrl: string;
-}
+import { ContactData, EnterpriseData } from "@/types/Contact"
 
 interface FormularioProps {
   onClose: () => void;

@@ -1,18 +1,8 @@
 'use client'
 import { useState } from 'react'
 import LabelOval from '@/components/Buttons/LabelOval'
-import { ContactUpdate, ContactView } from '@/types/Contact'
-
-interface ContactDetailCardProps {
-  contact: ContactView
-  onClose: () => void
-  onSave?: (updatedContact: ContactUpdate & { id: number }) => void
-  onDelete?: (contactId: number) => void
-  editButtonText?: string
-  closeButtonText?: string
-  saveButtonText?: string
-  deleteButtonText?: string
-}
+import { ContactUpdate } from '@/types/Contact'
+import { ContactDetailCardProps } from '@/types/DetailCards'
 
 export default function ContactDetailCard({
   contact,

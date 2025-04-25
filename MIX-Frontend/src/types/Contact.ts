@@ -33,3 +33,18 @@ export interface ContactUpdate {
     PhoneNumber: string | '';
     EnterpriseName: string;
 }
+
+export interface ContactData {
+  name: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  enterprise: string;
+}
+
+export interface EnterpriseData {
+  name: string;
+  description: string;
+  industry: string;
+  webpageUrl: string;
+}

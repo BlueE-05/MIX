@@ -1,45 +1,8 @@
 'use client'
 import { ContactData } from '@/components/Forms/ContactsForms'
 import { ChangeEvent, ReactNode, useState } from 'react'
-
-interface Article {
-  id: string;
-  name: string;
-  price: number;
-}
-
-interface SaleItem {
-  article: string;
-  quantity: number;
-  price: number;
-}
-
-interface SaleDetailCardProps {
-  sale: {
-    id: number;
-    refNumber: string;
-    enterprise: string;
-    amount: string;
-    status: ReactNode | string;
-    creationDate: string;
-    items?: SaleItem[]; // Items es opcional
-  };
-  onClose: () => void;
-  onSave?: (updatedSale: {
-    id: number;
-    refNumber: string;
-    enterprise: string;
-    amount: string;
-    status: string;
-    creationDate: string;
-    items?: SaleItem[];
-  }) => void;
-  onDelete?: (saleId: number) => void
-  editButtonText?: string;
-  closeButtonText?: string;
-  saveButtonText?: string;
-  deleteButtonText?: string;
-}
+import { Article, SaleItem } from '@/types/Sales'
+import { SaleDetailCardProps } from '@/types/DetailCards';
 
 export default function SaleDetailCard({
   sale,

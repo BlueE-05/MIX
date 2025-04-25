@@ -1,15 +1,5 @@
 import React from 'react';
-
-interface NumberInputProps {
-    label: string;
-    name: string;
-    value: number;
-    onChange: (value: number) => void;
-    min?: number;
-    max?: number;
-    step?: number;
-    required?: boolean;
-}
+import { NumberInputProps } from '@/types/NumberInput';
 
 export default function NumberInput({
     label,

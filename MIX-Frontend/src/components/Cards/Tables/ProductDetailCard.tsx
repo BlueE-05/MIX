@@ -1,17 +1,7 @@
 'use client'
-import { ReactNode, useState, useEffect } from 'react'
-import { ProductUpdate, ProductView } from '@/types/Product'
-
-interface ProductDetailCardProps {
-  product: ProductView
-  onClose: () => void
-  onSave?: (updatedProduct: ProductUpdate & { refNum: string }) => void
-  onDelete?: (productId: number) => void
-  editButtonText?: string
-  closeButtonText?: string
-  saveButtonText?: string
-  deleteButtonText?: string
-}
+import { useState, useEffect } from 'react'
+import { ProductUpdate } from '@/types/Product'
+import { ProductDetailCardProps } from '@/types/DetailCards'
 
 export default function ProductDetailCard({
   product: initialProduct,
