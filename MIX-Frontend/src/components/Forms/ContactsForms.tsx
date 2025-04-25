@@ -3,11 +3,12 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import Input from "@/components/Forms/Input";
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
-import { ContactData, EnterpriseData } from "@/types/Contact"
+import { ContactData } from "@/types/ContactTypes"
+import { EnterpriseSend } from "@/types/EnterpriseTypes";
 
 interface FormularioProps {
   onClose: () => void;
-  onSubmit: (data: ContactData | EnterpriseData) => void;
+  onSubmit: (data: ContactData | EnterpriseSend) => void;
   onFormTypeChange: (type: string) => void;
 }
 
@@ -21,11 +22,11 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
     email: "",
   });
 
-  const [enterpriseData, setEnterpriseData] = useState<EnterpriseData>({
-    name: "",
-    description: "",
-    industry: "",
-    webpageUrl: "",
+  const [enterpriseData, setEnterpriseData] = useState<EnterpriseSend>({
+    Name: "",
+    Description: "",
+    Industry: "",
+    WebPage: "",
   });
 
   const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
@@ -77,8 +78,8 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
 
   const isEnterpriseFormValid = () => {
     return (
-      enterpriseData.name !== "" &&
-      enterpriseData.industry !== ""
+      enterpriseData.Name !== "" &&
+      enterpriseData.Industry !== ""
     );
   };
 
@@ -161,10 +162,10 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
           </form>
         ) : (
           <form>
-            <Input label="Name"         name="name"         type="text" value={enterpriseData.name}         onChange={handleChangeEnterprise} required />
-            <Input label="Industry"     name="industry"     type="text" value={enterpriseData.industry}     onChange={handleChangeEnterprise} required />
-            <Input label="Description"  name="description"  type="text" value={enterpriseData.description}  onChange={handleChangeEnterprise} />
-            <Input label="Webpage URL"  name="webpageUrl"   type="url"  value={enterpriseData.webpageUrl}   onChange={handleChangeEnterprise} />
+            <Input label="Name"         name="name"         type="text" value={enterpriseData.Name}         onChange={handleChangeEnterprise} required />
+            <Input label="Industry"     name="industry"     type="text" value={enterpriseData.Industry}     onChange={handleChangeEnterprise} required />
+            <Input label="Description"  name="description"  type="text" value={enterpriseData.Description || ""}  onChange={handleChangeEnterprise} />
+            <Input label="Webpage URL"  name="webpageUrl"   type="url"  value={enterpriseData.WebPage || ""}   onChange={handleChangeEnterprise} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />

@@ -4,7 +4,7 @@ import Input from "@/components/Forms/Input";
 import NumberInput from "@/components/Forms/NumberInput"; // New component for numbers
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
-import { ProductSent } from '@/types/Product';
+import { ProductSent } from '@/types/ProductTypes';
 
 interface FormularioProps {
   onClose: () => void;

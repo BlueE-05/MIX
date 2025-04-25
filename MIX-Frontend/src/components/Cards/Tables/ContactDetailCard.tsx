@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import LabelOval from '@/components/Buttons/LabelOval'
-import { ContactUpdate } from '@/types/Contact'
+import { ContactUpdate } from '@/types/ContactTypes'
 import { ContactDetailCardProps } from '@/types/DetailCards'
 
 export default function ContactDetailCard({

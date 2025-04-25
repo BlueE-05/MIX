@@ -9,7 +9,7 @@ import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import { CirclePlus } from 'lucide-react';
 import ProductDetailCard from '@/components/Cards/Tables/ProductDetailCard';
 
-import { ProductView, ProductSent, ProductFromAPI } from '@/types/Product';
+import { ProductView, ProductSent, ProductFromAPI } from '@/types/ProductTypes';
 
 export default function ProductPage() {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission(%)", "Product Sheet", ""];

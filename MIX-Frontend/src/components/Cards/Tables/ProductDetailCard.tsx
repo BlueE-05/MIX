@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { ProductUpdate } from '@/types/Product'
+import { ProductUpdate } from '@/types/ProductTypes'
 import { ProductDetailCardProps } from '@/types/DetailCards'
 
 export default function ProductDetailCard({
