@@ -10,7 +10,7 @@ router.get('/ContactsByUser', NewSaleHTTPHandler.getAllContactByUser); //FUNCION
 router.get('/AllProd', NewSaleHTTPHandler.getAllProd); //FUNCIONA
 router.get('/ProdPrice/:idprod', NewSaleHTTPHandler.getPrice);
 router.get('/Phases', NewSaleHTTPHandler.getPhases);
-router.post('/', NewSaleHTTPHandler.createSaleONE);
+router.post('/', NewSaleHTTPHandler.createSaleMULT);
 
 
 export default router;

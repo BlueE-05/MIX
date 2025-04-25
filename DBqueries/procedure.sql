@@ -117,3 +117,84 @@ EXEC sp_CreateNewSaleMultProds
     @ContactID = 2,
     @PhaseID = 1,
     @ProductsJSON = '[{"ProductID":"PRD-001","Quantity":2},{"ProductID":"PRD-002","Quantity":1}]';
+
+
+
+----------------Eliminar una venta en particular por su ID
+CREATE PROCEDURE sp_DeleteSaleAndRelatedData
+    @SaleID INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- 1. Eliminar registros de SaleLifespan (historial de fases)
+        DELETE FROM SaleLifespan 
+        WHERE IDSale = @SaleID;
+        
+        -- 2. Eliminar artículos asociados a la venta en SaleArticle
+        DELETE FROM SaleArticle 
+        WHERE IDSale = @SaleID;
+        
+        -- 3. Finalmente eliminar la venta principal
+        DELETE FROM Sale 
+        WHERE ID = @SaleID;
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 'Success' AS Result, 'Sale and all related data deleted successfully' AS Message;
+    END TRY
+    BEGIN CATCH
+        IF @@TRANCOUNT > 0
+            ROLLBACK TRANSACTION;
+            
+        SELECT 'Error' AS Result, 
+               ERROR_MESSAGE() AS Message,
+               ERROR_NUMBER() AS ErrorNumber,
+               ERROR_SEVERITY() AS ErrorSeverity,
+               ERROR_STATE() AS ErrorState;
+    END CATCH;
+END;
+
+----Para su ejecución
+EXEC sp_DeleteSaleAndRelatedData @SaleID = 31;
+
+
+---REvisar las ventas especificas de un usuario que fueron modificadas por ultima vez en el mes actual
+SELECT 
+    sl.IDSale,
+    sl.SalePhase,
+    p.Name AS PhaseName,
+    sl.ChangeDate,
+    s.IDUser AS CreatedBy,
+    u.Name AS CreatorName,
+    u.LastName AS CreatorLastName,
+    c.Name AS ContactName,
+    c.LastName AS ContactLastName,
+    e.Name AS EnterpriseName
+FROM 
+    Sale s
+INNER JOIN 
+    SaleLifespan sl ON s.ID = sl.IDSale
+INNER JOIN 
+    Phase p ON sl.SalePhase = p.ID
+INNER JOIN 
+    [User] u ON s.IDUser = u.IDEmail
+INNER JOIN 
+    Contact c ON s.IDContact = c.ID
+INNER JOIN 
+    Enterprise e ON c.IDEnterprise = e.ID
+WHERE 
+    s.IDUser = 'ana.gomez@empresa.com'
+    AND sl.ChangeDate IN (
+        SELECT MAX(ChangeDate)
+        FROM SaleLifespan
+        WHERE IDSale = sl.IDSale
+        GROUP BY IDSale
+    )
+    AND MONTH(sl.ChangeDate) = MONTH(GETDATE())
+    AND YEAR(sl.ChangeDate) = YEAR(GETDATE())
+ORDER BY 
+    sl.ChangeDate DESC;

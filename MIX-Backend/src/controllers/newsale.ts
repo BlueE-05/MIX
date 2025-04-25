@@ -35,13 +35,18 @@ class NewSaleController {
     data: {
         idcont: number,
         idphase: number,
-        products: {  // Usamos 'products' en lugar de 'quantinfo'
+        products: {
             idprod: string, 
             quant: number 
         }[]
     }
 ) {
-    // Transformamos los datos al formato que espera el service
+    // Input validation
+    if (!iduser || !data.idcont || !data.idphase || !data.products || !Array.isArray(data.products)) {
+        throw new Error('Invalid input data');
+    }
+
+    // Transform data to service format
     const saleData = {
         UserID: iduser,
         ContactID: data.idcont,
@@ -54,12 +59,6 @@ class NewSaleController {
 
     return this.newsaleService.createSaleMULT(saleData);
 }
-    
-
-
-    
-
-
 }
 
 export default new NewSaleController();

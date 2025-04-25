@@ -102,43 +102,47 @@ class NewSaleService{
     //Crear una nueva venta con multiples productos
     //NO FUNCIONA /REVISAR
     async createSaleMULT(
-      data: { 
-          UserID: string,
-          ContactID: number, 
-          PhaseID: number, 
-          Products: { ProductID: string, Quantity: number }[] 
-      }
-  ) {
-      const pool = await poolPromise;
-      
-      // Convertir el array de productos a JSON string
-      const productsJSON = JSON.stringify(data.Products);
-  
-      const result = await pool.request()
-          .input('UserID', sql.VarChar, data.UserID)
-          .input('ContactID', sql.Int, data.ContactID)
-          .input('PhaseID', sql.Int, data.PhaseID)
-          .input('ProductsJSON', sql.NVarChar(sql.MAX), productsJSON)
-          .query(`EXEC sp_CreateNewSaleMultProds
-                  @UserID = @UserID,
-                  @ContactID = @ContactID,
-                  @PhaseID = @PhaseID,
-                  @ProductsJSON = @ProductsJSON`);
-                  
-      if (!result.recordset[0]?.NewSaleID) {
-          throw new Error('No se pudo obtener el ID de la nueva venta');
-      }
-      
-      return result.recordset[0].NewSaleID;
-  }
-              
-      
-
-  
-
-  
-
+        data: { 
+            UserID: string,
+            ContactID: number, 
+            PhaseID: number, 
+            Products: { ProductID: string, Quantity: number }[] 
+        }
+    ) {
+        const pool = await poolPromise;
+        
+        // Validate input
+        if (!data.UserID || !data.ContactID || !data.PhaseID || !data.Products || !Array.isArray(data.Products)) {
+            throw new Error('Invalid service input data');
+        }
+    
+        // Convert products array to JSON string
+        const productsJSON = JSON.stringify(data.Products);
+    
+        try {
+            const result = await pool.request()
+                .input('userID', sql.VarChar, data.UserID)
+                .input('contactID', sql.Int, data.ContactID)
+                .input('phaseID', sql.Int, data.PhaseID)
+                .input('productsJSON', sql.NVarChar(sql.MAX), productsJSON) // Fixed: using productsJSON instead of data.Products
+                .query(`EXEC sp_CreateNewSaleMultProds
+                        @UserID = @userID,
+                        @ContactID = @contactID,
+                        @PhaseID = @phaseID,
+                        @ProductsJSON = @productsJSON`);
+                   console.log(result);
+            // Get the new sale ID from the result
+            if (!result.recordset[0]?.NewSaleID) {
+                throw new Error('Failed to get new sale ID');
+            }
+            return result.recordset[0].NewSaleID;
+        } catch (error) {
+            console.error('Error in createSaleMULT:', error);
+            throw new Error('Failed to create new sale');
+        }
+    } 
 }
+              
 export default NewSaleService;
 
 

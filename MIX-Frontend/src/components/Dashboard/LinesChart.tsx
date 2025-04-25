@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -24,11 +24,37 @@ ChartJS.register(
 interface LinesChartProps {
   salesData: number[];
   reportType: 'team' | 'individual';
+  daysofMonth?: string[];
 }
 
-export default function LinesChart({ salesData, reportType }: LinesChartProps) {
+/**
+ * Formatea una fecha ISO a un string corto (dd/mm)
+ * @param dateString - Fecha en formato ISO string
+ * @returns String en formato dd/mm
+ */
+const formatDateShort = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    return dateString; // Si no es una fecha válida, devolver el string original
+  }
+  
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  
+  return `${day}/${month}`;
+};
+
+export default function LinesChart({ salesData, reportType, daysofMonth }: LinesChartProps) {
+  const [days, setDays] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+
+  // Usar days del estado o el prop daysofMonth si está disponible
+  const labels = daysofMonth || days;
+
   const data = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+    labels,
     datasets: [
       {
         label: 'Sales',
@@ -49,6 +75,14 @@ export default function LinesChart({ salesData, reportType }: LinesChartProps) {
       },
     },
   };
+
+  if (loading && !daysofMonth) {
+    return <div>Cargando días del mes...</div>;
+  }
+
+  if (error) {
+    console.error(error);
+  }
 
   return (
     <div className="w-full h-full">

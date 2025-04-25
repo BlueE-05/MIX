@@ -107,35 +107,16 @@ class SaleHTTPHandler {
     }; 
 
 
-    deleteSale = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
-      try {
-          const idsale = Number(req.params.idsale);
-          const iduser = Number(req.params.iduser);
 
-          if (isNaN(idsale) || isNaN(iduser)) {
-              return res.status(400).json({
-                  success: false,
-                  message: 'IDs deben ser números válidos'
-              });
-          }
-
-          const wasDeleted = await this.saleController.deleteSale(idsale, iduser);
-
-          if (wasDeleted) {
-              return res.status(200).json({
-                  success: true,
-                  message: 'Venta eliminada exitosamente'
-              });
-          } else {
-              return res.status(404).json({
-                  success: false,
-                  message: 'Venta no encontrada o no pertenece al usuario'
-              });
-          }
-      } catch (error) {
-          next(error);
-      }
-  };
+  async deleteSale(req: Request, res: Response, next: NextFunction) {
+    try {
+        const idsale = Number(req.params.idsale);
+        await this.saleController.deleteSale(idsale);
+        res.json({ message: 'Contact deleted successfully' });
+    } catch (error) {
+        next(error);
+    }
+};
 
     
     

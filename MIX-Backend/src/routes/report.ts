@@ -9,6 +9,7 @@ router.get('/allCancelled', ReportHTTPHandler.getAllCancelled);
 router.get('/totalComissions/:IDUser', ReportHTTPHandler.getTotalComissions);
 router.get('/Award', ReportHTTPHandler.getAward);
 router.get('/TeamPos', ReportHTTPHandler.getTeamPos);
+router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
 
 
 export default router;

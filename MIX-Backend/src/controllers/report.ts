@@ -29,6 +29,10 @@ class ReportController {
     return this.reportService.getLastAward(IDEmail);
   }
 
+  async getDaysCurrentMonth() {
+    return this.reportService.getDaysCurrentMonth();
+  }
+
 }
 
 export default new ReportController();

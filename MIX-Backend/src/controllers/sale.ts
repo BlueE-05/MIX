@@ -28,8 +28,8 @@ class SaleController {
     return this.saleService.getFormNum(idsale, iduser);
   }
 
-  async deleteSale(idsale: number, iduser: number): Promise<boolean> {
-    return this.saleService.deleteSale(idsale, iduser);
+  async deleteSale(idsale: number) {
+    return this.saleService.deleteSale(idsale);
   }
 
   async getAllEnt() {

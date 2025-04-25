@@ -167,24 +167,15 @@ class SaleService{
 
 
     //Eliminar una sale del sistema REVISAR
-    async deleteSale(idsale: number, iduser: number): Promise<boolean> {
-      const pool = await poolPromise;
+    async deleteSale(idsale:number) {
       try {
-          const result = await pool.request()
-              .input('idsale', sql.Int, idsale)
-              .input('iduser', sql.Int, iduser)
-              .query(`
-                  DELETE FROM Sale 
-                  OUTPUT DELETED.ID
-                  WHERE ID = @idsale AND IDUser = @iduser
-              `);
-          if (result.recordset.length > 0) {
-              return true; 
-          }
-          return false; 
+          const pool = await poolPromise;
+          const request = pool.request();
+          const result = await request.input('idsale', sql.Int, idsale).query(`EXEC sp_DeleteSaleAndRelatedData @SaleID = @idsale;`);
+          return result.recordset;
       } catch (error) {
-          console.error('❌ Error en deleteSale:', error);
-          return false; 
+          console.error('❌ Error en Prospecto:', error);
+          throw new Error('Error al obtener prospecto');
       }
     }
 

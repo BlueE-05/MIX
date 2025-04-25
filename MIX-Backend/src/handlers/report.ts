@@ -33,8 +33,6 @@ class ReportHTTPHandler {
     }; 
 
     
-
-
     getAllActive = async (req: Request, res: Response, next: NextFunction) => {
       try {
         const IDUser = UserEmail;
@@ -44,8 +42,6 @@ class ReportHTTPHandler {
         next(error);
       }
     };
-
-
       getAllCancelled = async (req: Request, res: Response, next: NextFunction) => {
       try {
         const id = UserEmail
@@ -73,6 +69,15 @@ class ReportHTTPHandler {
       try {
         const IDEmail = UserEmail;
         const awards = await this.reportController.getAward(IDEmail);
+        res.json(awards);
+      } catch (error) {
+        next(error);
+      }
+    }
+
+    getDaysCurrentMonth = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const awards = await this.reportController.getDaysCurrentMonth();
         res.json(awards);
       } catch (error) {
         next(error);

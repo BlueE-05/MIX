@@ -13,6 +13,7 @@ const teamData = {
   distribution: [35, 25, 20, 15, 5]
 };
 
+
 const usersData = [
   {
     id: '1',
@@ -38,6 +39,11 @@ const usersData = [
     comisiones: 2800,
     distribution: [20, 30, 25, 15, 10]
   }
+
+  
+
+
+
 ];
 
 export default function Dashboard() {
@@ -104,7 +110,7 @@ export default function Dashboard() {
               {reportType === 'team' ? 'Team Monthly Trend' : `${currentUserName}'s Performance`}
             </h2>
             <div className="h-96 md:h-[500px]">
-             <LinesChart salesData={currentData.sales} reportType={reportType} />
+             <LinesChart salesData={currentData.sales} reportType={reportType} daysofMonth={currentData.daysofMonth} />
             </div>
           </div>
   

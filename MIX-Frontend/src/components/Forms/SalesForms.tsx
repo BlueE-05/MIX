@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -54,7 +53,8 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   const [loadingPhases, setLoadingPhases] = useState<boolean>(true);
 
   const iduser = "ana.gomez@empresa.com";
-/*http://localhost:3001/newsale/ContactsByUser/ana.gomez@empresa.com*/
+
+
   useEffect(() => {
     const fetchContacts = async () => {
       try {

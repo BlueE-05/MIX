@@ -56,7 +56,7 @@ class NewSaleHTTPHandler {
       try {
         const iduser=UserEmail;
         await this.newsaleController.createSale(iduser, req.body);
-        res.json({ message: 'Contact created successfully' });
+        res.json({ message: 'Contact created successfully 2' });
       } catch (error) {
       next(error);
       }
@@ -66,45 +66,48 @@ class NewSaleHTTPHandler {
       try {
         const iduser=UserEmail;
         await this.newsaleController.createSaleONE(iduser, req.body);
-        res.json({ message: 'Contact created successfully' });
+        res.json({ message: 'Crear sale one successfully' });
       } catch (error) {
       next(error);
       }
     };
     
-    createSaleMULT = async (req: Request, res: Response, next: NextFunction) => {
+    createSaleMULT = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-          const iduser = UserEmail
+          const iduser = UserEmail; // Make sure UserEmail is properly defined
           const { idcont, idphase, products } = req.body;
-  
-          // Validación básica
+      
+          console.log(req.body);
+          // Enhanced validation
           if (!iduser || !idcont || !idphase || !products || !Array.isArray(products)) {
-              return res.status(400).json({ error: 'Datos incompletos o inválidos' });
+              res.status(400).json({ error: 'Incomplete or invalid data' });
+              return; // Added return to prevent further execution
+        
+          }
+  
+          // Validate each product in the array
+          if (products.some(p => !p.idprod || !p.quant)) {
+              res.status(400).json({ error: 'Invalid product data' });
+              return;
           }
   
           const result = await this.newsaleController.createSaleMULT(iduser, {
               idcont,
               idphase,
-              products // Enviamos directamente el array de productos
+              products
           });
   
           res.status(201).json({ 
-              message: 'Venta creada exitosamente',
-              saleId: result // Retornamos el ID de la nueva venta
+              message: 'Sale created successfully',
+              saleId: result
           });
       } catch (error) {
-          next(error);
+          console.error('Error in createSaleMULT route:', error);
+          next(error); // Let the error handling middleware deal with it
       }
   };
-    
-    
-    
-  
-    
-
-
-
 }
+
 
 export default new NewSaleHTTPHandler();
 

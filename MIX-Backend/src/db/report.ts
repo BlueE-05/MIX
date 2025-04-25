@@ -119,14 +119,28 @@ class ReportService{
         FROM UserAward UA
         JOIN Award A ON UA.IDAward = A.ID
         WHERE UA.IDUser = @IDEmail
-        ORDER BY UA.WinDate DESC;`
-        
-      );
+        ORDER BY UA.WinDate DESC;`);
       return result.recordset;
-    
   }
 
+  
 
+
+
+//select * from SaleLifespan
+    async getDaysCurrentMonth() {
+      try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.query(`EXEC getDiasDelMesActual`);
+        return result.recordset;
+      } catch (error) {
+        console.error('❌ Error en getDaysCurrentMonth', error);
+        throw new Error('Error al obtener dias del mes actual');
+      }
+    }
+
+    
 
 }
 export default ReportService;
