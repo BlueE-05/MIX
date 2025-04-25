@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import NewSaleController from '../controllers/newsale';
+//Importar IDUSer
+import { UserEmail } from '../getIDUser';
 
-import { poolPromise, sql } from 'database';
-
+//ana.gomez@empresa.com
 class NewSaleHTTPHandler {
   private newsaleController: typeof NewSaleController;
 
@@ -10,9 +11,10 @@ class NewSaleHTTPHandler {
         this.newsaleController = NewSaleController;
     }
 
+    //LISTO
     getAllContactByUser = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = String(req.params.id); 
+        const id = UserEmail;
         const resultado = await this.newsaleController.getAllContactByUser(id);
         res.json(resultado);
       } catch (error) {
@@ -20,6 +22,7 @@ class NewSaleHTTPHandler {
       }
     };
 
+    //LISTO
     getPrice = async (req: Request, res: Response, next: NextFunction) => {
       try {
         const idprod = String(req.params.idprod); 
@@ -31,19 +34,6 @@ class NewSaleHTTPHandler {
     };
 
   
-    getInfoContacto = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-          const cont = Number(req.params.cont);
-          const resultado = await this.newsaleController.getInfoContacto(cont);
-          res.json(resultado);
-          
-      } catch (error) {
-          console.error('Error en getInfoContacto handler:', error);
-          next(error);
-      }
-    };
-
-
     getPhases= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const resultado = await this.newsaleController.getPhases();
@@ -62,15 +52,19 @@ class NewSaleHTTPHandler {
       }
     };
 
-  
-
-
-
-    //iduser: number, idcont: number, startdate: string, enddate: string, idphase: number
-    
     createSale= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser='ana.gomez@empresa.com';
+        const iduser=UserEmail;
+        await this.newsaleController.createSale(iduser, req.body);
+        res.json({ message: 'Contact created successfully' });
+      } catch (error) {
+      next(error);
+      }
+    };
+
+    createSaleONE= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
         await this.newsaleController.createSale(iduser, req.body);
         res.json({ message: 'Contact created successfully' });
       } catch (error) {

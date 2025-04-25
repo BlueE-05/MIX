@@ -58,7 +58,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/newsale/ContactsByUser/${iduser}`);
+        const response = await fetch(`http://localhost:3001/newsale/ContactsByUser`);
         if (!response.ok) {
           throw new Error('Error al obtener los contactos');
         }

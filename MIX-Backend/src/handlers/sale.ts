@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import SaleController from '../controllers/sale';
+//Importar IDUSer
+import { UserEmail } from '../getIDUser';
+
 
 class SaleHTTPHandler {
   private saleController: typeof SaleController;
@@ -95,7 +98,7 @@ class SaleHTTPHandler {
 
     getTopSales= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser='ana.gomez@empresa.com'
+        const iduser=UserEmail;
         const resultado = await this.saleController.getTopSales(iduser);
         res.json(resultado);
       } catch (error) {

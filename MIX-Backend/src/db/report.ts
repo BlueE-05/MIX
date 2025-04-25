@@ -67,7 +67,7 @@ class ReportService{
     }
 
   //Considerar Prospecto como ID=1 en Phase
-  //MODIFICAR: Mes actual
+  //MODIFICAR: Mes actual***//REVISAR
   async getAllCancelled(id: string) {
     try {
         const pool = await poolPromise;

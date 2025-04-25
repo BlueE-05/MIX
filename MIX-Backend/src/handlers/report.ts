@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import ReportController from '../controllers/report';
+//Importar IDUSer
+import { UserEmail } from '../getIDUser';
 
 
 class ReportHTTPHandler {

@@ -11,9 +11,6 @@ class NewSaleController {
     return this.newsaleService.getPrice(idprod);
   }
 
-  async getInfoContacto(cont: number) {
-    return this.newsaleService.getInfoContacto(cont);
-  }
 
   async getPhases() {
     return this.newsaleService.getPhases();
@@ -27,6 +24,10 @@ class NewSaleController {
   async createSale(iduser: string, data: { idcont: number; idphase: number}) {
     return this.newsaleService.createSale(iduser,data);
   } 
+
+  async createSaleONE(iduser: string, data: {idcont:number, idphase:number, idprod:string, quant:number }) {
+    return this.newsaleService.createSaleOne(iduser,data);
+  } 
   
     
 
@@ -37,35 +38,3 @@ class NewSaleController {
 }
 
 export default new NewSaleController();
-
-
-
-
-
-/*import NewSaleService from "../db/newsale";
-
-class NewSaleController {
-  private NewSaleService: typeof NewSaleService;
-
-  constructor() {
-    this.NewSaleService = NewSaleService;
-  }
-
-    async getContactoByID(id: number) {
-        return await this.NewSaleService.getContactoByID(id);
-    }
-
-    async createNewSale(iduser: number, idcontact: number, startdate: Date, enddate: Date, idphase: number) {
-        return await this.NewSaleService.createNewSale(iduser, idcontact, startdate, enddate, idphase);
-    }
-
-    async getAllContacts() {
-        return await this.NewSaleService.getAllContacts();
-    }
-
- 
-
-}
-
-export default new NewSaleController;
-*/

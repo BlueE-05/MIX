@@ -3,7 +3,6 @@ import sql from 'mssql';
 
 class NewSaleService{
 
-
   //Desplegar todos los contactos que haya registrado un User en especifico
   //LISTO
   async getAllContactByUser(id: string) {
@@ -23,29 +22,9 @@ class NewSaleService{
     }
   }
 
-  //Mostrar la informacion de un contacto que se haya seleccionado por el usuario
-  //LSISTO
-  async getInfoContacto(cont: number) {
-    try {
-        const pool = await poolPromise;
-        const result = await pool.request() 
-            .input('cont', sql.Int, cont)  
-            .query(`SELECT 
-              c.Email AS Email,
-              c.PhoneNumber AS NumTel,
-              e.Name AS Ent
-              FROM Contact c
-              JOIN Enterprise e ON c.IDEnterprise = e.ID
-              WHERE c.ID = @cont`);
-        
-        return result.recordset;
-    } catch (error) {
-        console.error('❌ Error en getInfoContacto:', error);
-        throw new Error('Error al obtener información del contacto');
-    }
-  }
 
   //Obtener el precio de los productos
+  //LISTO
   async getPrice(idprod: string) {
     try {
         const pool = await poolPromise;
@@ -85,18 +64,11 @@ class NewSaleService{
     }
   }
 
-  /*
-  SELECT 
-    Name AS NombreArticulo
-FROM 
-    Product
-ORDER BY 
-    Name;
-  */
+
 
     //NOTA: Pendiente
     //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
-    //Nota:*** Recordar que hay que cambair la fecha de fin con un triger o algo al momento de cerrar realmente la venta 
+    //Nota:*** Recordar que hay que cambair la fecha de fin con ue:numbern triger o algo al momento de cerrar realmente la venta 
     //MODIFICAR: Quitar enddate, startdate automatimo la fecha actual
    
     async createSale(iduser: string, data: { idcont: number; idphase: number}) {
@@ -106,6 +78,24 @@ ORDER BY
               .input('idcont', sql.Int, data.idcont)  
               .input('idphase', sql.Int, data.idphase)
               .query('INSERT INTO Sale (IDUser, IDContact, IDPhase)VALUES (@iduser, @idcont, @idphase)');
+    }
+
+    //Prueba de nueva venta con un solo producto
+    //Revisar
+    async createSaleOne(iduser: string, data: { idcont:number, idphase:number, idprod:string, quant:number }) {
+      const pool = await poolPromise;
+      const result = await pool.request()
+          .input('iduser', sql.VarChar, iduser)  
+          .input('idcont', sql.Int, data.idcont)  
+          .input('idphase', sql.Int, data.idphase)
+          .input('idprod', sql.VarChar, data.idprod)
+          .input('quant', sql.Int, data.quant)
+          .query(`EXEC sp_CreateNewSale 
+                  @UserID = @iduser,
+                  @ContactID = @idcont,
+                  @PhaseID = @idphase,
+                  @ProductID = @idprod,
+                  @Quantity = @quant`);
     }
               
       

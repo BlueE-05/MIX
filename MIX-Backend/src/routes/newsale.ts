@@ -5,12 +5,11 @@ import NewSaleHTTPHandler from '../handlers/newsale';
 
 const router = Router();
 
-router.get('/ContactsByUser/:id', NewSaleHTTPHandler.getAllContactByUser);
-router.get('/AllProd', NewSaleHTTPHandler.getAllProd);
+router.get('/ContactsByUser', NewSaleHTTPHandler.getAllContactByUser); //FUNCIONA
+router.get('/AllProd', NewSaleHTTPHandler.getAllProd); //FUNCIONA
 router.get('/ProdPrice/:idprod', NewSaleHTTPHandler.getPrice);
-router.get('/ContactInfo/:cont', NewSaleHTTPHandler.getInfoContacto);
 router.get('/Phases', NewSaleHTTPHandler.getPhases);
-router.post('/', NewSaleHTTPHandler.createSale );
+router.post('/', NewSaleHTTPHandler.createSaleONE);
 
 
 export default router;
