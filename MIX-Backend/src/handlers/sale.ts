@@ -13,7 +13,7 @@ class SaleHTTPHandler {
 
     getAllSales = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = String(req.params.id); 
+        const id = UserEmail;
         const resultado = await this.saleController.getAllSales(id);
         res.json(resultado);
       } catch (error) {

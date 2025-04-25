@@ -26,7 +26,7 @@ class NewSaleController {
   } 
 
   async createSaleONE(iduser: string, data: {idcont:number, idphase:number, idprod:string, quant:number }) {
-    return this.newsaleService.createSaleOne(iduser,data);
+    return this.newsaleService.createSaleONE(iduser,data);
   } 
   
     

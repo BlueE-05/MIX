@@ -65,12 +65,23 @@ class NewSaleHTTPHandler {
     createSaleONE= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const iduser=UserEmail;
-        await this.newsaleController.createSale(iduser, req.body);
+        await this.newsaleController.createSaleONE(iduser, req.body);
         res.json({ message: 'Contact created successfully' });
       } catch (error) {
       next(error);
       }
     };
+    /*
+    createSaleMULT= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        await this.newsaleController.createSaleONE(iduser, req.body);
+        res.json({ message: 'Contact created successfully' });
+      } catch (error) {
+      next(error);
+      }
+    };
+    */
     
     
     

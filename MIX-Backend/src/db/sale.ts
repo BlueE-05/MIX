@@ -195,7 +195,7 @@ class SaleService{
          const pool = await poolPromise;
          const request = pool.request();
          const result = await request.input('iduser', sql.VarChar, iduser).query(
-        `SELECT 
+        `SELECT TOP 5
         s.ID AS SaleID,
         c.Name + ' ' + c.LastName AS ContactName,
         ph.Name AS Status,
