@@ -15,14 +15,6 @@ const Sidebar = () => {
     height: typeof window !== 'undefined' ? window.innerHeight : 0,
   });
 
-  const teamMembers = [
-    { name: "Dana Torres", role: "Backend", social: "@dana", socialLink:"https://www.linkedin.com/in/dana-elizabeth-torres-estrada-b20b2b329" },
-    { name: "Maximo Ramírez", role: "Frontend", social: "@maximo", socialLink:"https://www.linkedin.com/in/maximo-ramirez" },
-    { name: "Fatima Castillo", role: "Backend", social: "@fatima", socialLink:"https://www.linkedin.com/in/fatimacastilloaguirre" },
-    { name: "Daniel Sanchez", role: "Videogame", social: "@daniel", socialLink:"" },
-    { name: "Sandino Ortiz", role: "Backend", social: "@sandino", socialLink:"https://www.linkedin.com/in/ernesto-sandino-ortiz-de-le%C3%B3n-91255227a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" }
-  ];
-
   useEffect(() => {
     const handleResize = () => {
       setWindowSize({
@@ -51,6 +43,14 @@ const Sidebar = () => {
   }, [showTheSidebar]);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  const teamMembers = [
+    { name: "Dana Torres", role: "Backend", social: "@dana", socialLink:"https://www.linkedin.com/in/dana-elizabeth-torres-estrada-b20b2b329" },
+    { name: "Maximo Ramírez", role: "Frontend", social: "@maximo", socialLink:"https://www.linkedin.com/in/maximo-ramirez" },
+    { name: "Fatima Castillo", role: "Backend", social: "@fatima", socialLink:"https://www.linkedin.com/in/fatimacastilloaguirre" },
+    { name: "Daniel Sanchez", role: "Videogame", social: "@daniel", socialLink:"" },
+    { name: "Sandino Ortiz", role: "Backend", social: "@sandino", socialLink:"https://www.linkedin.com/in/ernesto-sandino-ortiz-de-le%C3%B3n-91255227a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" }
+  ];
 
   const getTextColor = (path: string) => {
     return pathname === path ? 'text-green-400' : 'text-gray-300';
@@ -94,7 +94,7 @@ const Sidebar = () => {
               This is us if you want us to work with you again ;3
               </p>
               
-              <div className="space-y-3 max-h-60 overflow-y-auto pr-2">
+              <div className="grid grid-cols-2 gap-3">
                 {teamMembers.map((member, index) => (
                   <div key={index} className="bg-gray-700/50 rounded p-3">
                     <p className="font-medium text-gray-100">{member.name}</p>
@@ -114,17 +114,16 @@ const Sidebar = () => {
               </div>
 
               <p className="text-xs text-gray-500 mt-4 text-center">
-                Presiona Espacio o haz clic fuera para cerrar
+                Press Space or click outside to close
               </p>
             </div>
           </div>
         </>
       )}
 
-      {/* Sidebar original (sin cambios) */}
       <div className={`flex flex-col h-screen bg-gray-800 text-white transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-58'}`}>
         {/* Logo */}
-        <div className="flex items-center justify-center h-16 bg-gray-900 p-2 relative">
+        <div className="flex items-center justify-center h-16 bg-gray-800 p-2 relative">
           {!isCollapsed ? (
             <Image 
               src="/mixlogo.svg" 

@@ -13,14 +13,14 @@ interface CRMLayoutProps {
 
 export default function CRMLayout({ children }: CRMLayoutProps) {
   return (
-    <div className="min-h-screen flex">
+    <div className="min-h-screen flex relative">
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
-      <aside className="flex-shrink-0 sticky top-0 h-screen">
+      <aside className="flex-shrink-0 sticky top-0 h-screen z-20">
         <Sidebar />
       </aside>
-      <main className="flex-grow overflow-visible">
+      <main className="flex-grow overflow-visible relative z-10">
         <div className="sticky top-0 z-10 flex items-center justify-end p-4 pr-5 bg-gray-800 text-white shadow-md">
           <Image 
             src="/MarySue.png" 
