@@ -7,22 +7,3 @@ export const LoadingSpinner = () => {
     </div>
   );
 };
-
-/*              Codigo para usarlo
-
-import React, { useState, useEffect } from 'react';
-import { LoadingSpinner } from '../components/LoadingSpinner';
-
-export default function Home() {
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simula un proceso de carga inicial
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
- */

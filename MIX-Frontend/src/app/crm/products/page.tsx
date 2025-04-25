@@ -7,17 +7,29 @@ import Formulario from '@/components/Forms/ProductsForms';
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import { CirclePlus } from 'lucide-react';
+import { useFullProfile } from '@/hooks/useFullProfile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 import ProductDetailCard from '@/components/Cards/Tables/ProductDetailCard';
 
 import { ProductView, ProductSent, ProductFromAPI } from '@/types/Product';
 
 export default function ProductPage() {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission(%)", "Product Sheet", ""];
-
+  const { profile, loading } = useFullProfile();
   const [productData, setProductData] = useState<ProductView[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
-  const [selectedProduct, setSelectedProduct] = useState<ProductView | null>(null); void setIsAdmin // Quitar este setIsAdmin, solo se agrego para el build...
+  const [isAdmin, setIsAdmin] = useState(false); // NOT SIMULATING
+  const [selectedProduct, setSelectedProduct] = useState<ProductView | null>(null);
+
+  useEffect(() => {
+    if (!loading && profile) {
+      console.log(`isAdmin: ${profile.isAdmin}`);
+      setIsAdmin(profile.isAdmin);
+    }
+  }, [loading, profile]);
+
+
+  if (loading || !profile) return <LoadingSpinner />;
 
   const transformAndSetData = (data: ProductFromAPI[]) => {
     const transformed: ProductView[] = data.map((product, index) => {

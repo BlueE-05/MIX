@@ -1,17 +1,15 @@
 export interface SignupFormProps {
-    onSubmit: (event: React.FormEvent, formData: SignupFormData) => void;
-  }
-  
-export interface SignupFormData {
-    name: string;
-    lastName: string;
-    email: string;
-    password: string;
-    phoneNumber: string;
-    birthDate: string;
-    education: string;
-    profilePic: File | null;
-    idTeam: string;
-    jobPosition: string;
+  onSubmit: (event: React.FormEvent, formData: SignupFormData) => void;
 }
-  
+
+export interface SignupFormData {
+  Name: string;
+  LastName: string;
+  Email: string;
+  Password: string;
+  PhoneNumber: string;
+  BirthDate: string;
+  Education: string;
+  ProfilePic: string | null;
+  IDJobPosition: string;
+}
