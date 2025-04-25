@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { SaleItem } from "./Sales";
-import { ProductUpdate, ProductView } from "./Product";
-import { ContactUpdate, ContactView } from "./Contact";
+import { ProductUpdate, ProductView } from "./ProductTypes";
+import { ContactUpdate, ContactView } from "./ContactTypes";
 
 export interface SaleDetailCardProps {
   sale: {

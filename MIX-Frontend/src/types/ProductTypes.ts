@@ -1,4 +1,3 @@
-//src/types/ProductTypes.ts
 import { ReactNode } from 'react';
 
 export interface ProductAPI {

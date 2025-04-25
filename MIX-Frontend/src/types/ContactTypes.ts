@@ -1,4 +1,3 @@
-//src/types/ContactTypes.ts
 import { ReactNode } from "react";
 
 export interface ContactAPI {
@@ -29,7 +28,6 @@ export interface ContactUpdate {
     Name: string;
     LastName: string;
     Email: string | '';
-    Status: boolean;
     PhoneNumber: string | '';
     EnterpriseName: string;
 }
@@ -40,11 +38,4 @@ export interface ContactData {
   email: string;
   phone: string;
   enterprise: string;
-}
-
-export interface EnterpriseData {
-  name: string;
-  description: string;
-  industry: string;
-  webpageUrl: string;
 }
