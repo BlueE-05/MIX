@@ -24,7 +24,7 @@ class ReportHTTPHandler {
 
     getTeamPos= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser='ana.gomez@empresa.com'
+        const iduser=UserEmail;
         const resultado = await this.reportController.getTemPos(iduser);
         res.json(resultado);
       } catch (error) {
@@ -59,7 +59,7 @@ class ReportHTTPHandler {
 
     getTotalComissions = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const IDUser= String(req.params.IDUser); 
+        const IDUser= UserEmail;
         const products = await this.reportController.getTotalComissions(IDUser);
         res.json(products);
       } catch (error) {
