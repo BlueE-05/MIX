@@ -1,22 +1,10 @@
 import sql from 'mssql';
-import dotenv from 'dotenv';
+import { dbConfig } from '@/config/db';
 
-// Cargar variables desde el archivo .env
-dotenv.config();
-
-// Cargar variables desde el archivo .env.local
-dotenv.config({ path: '.env' });
-
-const user = process.env.DB_USER;
-const password = process.env.DB_PASSWORD;
-const server = process.env.DB_SERVER;
-const database = process.env.DB_DATABASE;
-
-// Verificar si todas las variables de entorno están definidas
-console.log('DB_USER:', process.env.DB_USER);
-console.log('DB_PASSWORD:', process.env.DB_PASSWORD);
-console.log('DB_SERVER:', process.env.DB_SERVER);
-console.log('DB_DATABASE:', process.env.DB_DATABASE);
+const user = dbConfig.user;
+const password = dbConfig.password;
+const server = dbConfig.server;
+const database = dbConfig.database;
 
 if (!user || !password || !server || !database) {
   throw new Error('Missing required database environment variables.');
@@ -33,4 +21,12 @@ const config: sql.config = {
   }
 };
 
+let poolPromise: Promise<sql.ConnectionPool> | null = null;
+
+if (!poolPromise) {
+  poolPromise = sql.connect(config);
+}
+
 export default config;
+export const pool = poolPromise;
+export { sql };
