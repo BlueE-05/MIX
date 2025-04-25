@@ -121,7 +121,6 @@ const Sidebar = () => {
         </>
       )}
 
-      {/* Sidebar original (sin cambios) */}
       <div className={`flex flex-col h-screen bg-gray-800 text-white transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-58'}`}>
         {/* Logo */}
         <div className="flex items-center justify-center h-16 bg-gray-900 p-2 relative">

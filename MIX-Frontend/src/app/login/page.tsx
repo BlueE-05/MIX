@@ -6,14 +6,18 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAccess";
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
+import { Eye, EyeOff } from "lucide-react";
+import ForgotPassword from "@/components/Forms/ForgotPassword";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showVerification, setShowVerification] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const router = useRouter();
 
@@ -109,10 +113,12 @@ export default function Login() {
                   <h1 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome back</h1>
                   <p className="text-gray-600">Sign in to your account</p>
                 </div>
-
+  
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email address</label>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                      Email address
+                    </label>
                     <input
                       id="email"
                       type="email"
@@ -128,12 +134,14 @@ export default function Login() {
                     />
                     {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
                   </div>
-
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+  
+                  <div className="relative">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                      Password
+                    </label>
                     <input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       placeholder="••••••••"
                       className={`w-full px-4 py-3 rounded-lg border ${
@@ -144,9 +152,26 @@ export default function Login() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-10 text-gray-500 hover:text-gray-700"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
                     {passwordError && <p className="mt-2 text-sm text-red-600">{passwordError}</p>}
                   </div>
-
+  
+                  <div className="flex items-center justify-end">
+                    <button
+                      type="button"
+                      className="text-sm text-blue-600 hover:text-blue-500 hover:underline"
+                      onClick={() => setShowForgotPassword(true)}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+  
                   <div>
                     <button
                       type="submit"
@@ -159,7 +184,7 @@ export default function Login() {
                     </button>
                   </div>
                 </form>
-
+  
                 <div className="mt-6 text-center text-sm">
                   <p className="text-gray-600">
                     Don&apos;t have an account?{" "}
@@ -171,8 +196,10 @@ export default function Login() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </>
-  );
+
+        {showForgotPassword && <ForgotPassword onClose={() => setShowForgotPassword(false)} />}
+      </div>
+    )}
+  </>
+);
 }

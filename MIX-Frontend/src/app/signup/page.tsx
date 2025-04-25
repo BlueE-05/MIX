@@ -6,6 +6,7 @@ import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAc
 import { SignupFormProps, SignupFormData } from "@/types/signup";
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import Navbar from "@/components/NavBar";
+import { Eye, EyeOff } from 'lucide-react';
 import { educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
@@ -41,6 +42,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [selectedTeamId, setSelectedTeamId] = useState("");
   const [showVerification, setShowVerification] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const {
     emailVerified,
     secondsLeft,
@@ -84,8 +86,6 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
     return stepFields.every((field) => formData[field] && !validateField(field, formData[field] as string));
   };
-
-
 
   const handleFormSubmit = async (e: React.FormEvent, data: SignupFormData) => {
     e.preventDefault();
@@ -239,32 +239,59 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                     )}
 
                                     {currentStep === 2 && (
-                                        <div className="space-y-6">
-                                            {["Email", "Password"].map((field) => (
-                                                <div key={field}>
-                                                    <label htmlFor={field} className="block text-sm font-medium text-gray-700 mb-1">
-                                                      {fieldLabels[field] ?? field} <span className="text-red-500">*</span>
-                                                    </label>
-                                                    <input
-                                                        id={field}
-                                                        type={field}
-                                                        name={field}
-                                                        placeholder={fieldLabels[field] ?? field}
-                                                        value={formData[field as keyof typeof formData] || ""}
-                                                        className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
-                                                        onChange={handleChange}
-                                                    />
-                                                    {errors[field] && (
-                                                        <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
-                                                    )}
-                                                    {field === "password" && (
-                                                        <p className="mt-2 text-xs text-gray-500">
-                                                            Password must be at least 8 characters, include an uppercase letter, a number, and a special character
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            ))}
+                                    <div className="space-y-6">
+                                        <div>
+                                        <label htmlFor="Email" className="block text-sm font-medium text-gray-700 mb-1">
+                                            {fieldLabels["Email"] ?? "Email"} <span className="text-red-500">*</span>
+                                        </label>
+                                        <input
+                                            id="Email"
+                                            type="email"
+                                            name="Email"
+                                            placeholder={fieldLabels["Email"] ?? "Email"}
+                                            value={formData.Email || ""}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors["Email"] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                                            onChange={handleChange}
+                                        />
+                                        {errors["Email"] && (
+                                            <p className="mt-2 text-sm text-red-600">{errors["Email"]}</p>
+                                        )}
                                         </div>
+
+                                        <div className="relative">
+                                        <label htmlFor="Password" className="block text-sm font-medium text-gray-700 mb-1">
+                                            {fieldLabels["Password"] ?? "Password"} <span className="text-red-500">*</span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                            id="Password"
+                                            type={showPassword ? "text" : "password"}
+                                            name="Password"
+                                            placeholder={fieldLabels["Password"] ?? "Password"}
+                                            value={formData.Password || ""}
+                                            className={`w-full px-4 py-3 rounded-lg border ${errors["Password"] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition pr-10`}
+                                            onChange={handleChange}
+                                            />
+                                            <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            >
+                                            {showPassword ? (
+                                                <EyeOff className="h-5 w-5" />
+                                            ) : (
+                                                <Eye className="h-5 w-5" />
+                                            )}
+                                            </button>
+                                        </div>
+                                        {errors["Password"] && (
+                                            <p className="mt-2 text-sm text-red-600">{errors["Password"]}</p>
+                                        )}
+                                        <p className="mt-2 text-xs text-gray-500">
+                                            Password must be at least 8 characters, include an uppercase letter, a number, and a special character
+                                        </p>
+                                        </div>
+                                    </div>
                                     )}
 
                                     {currentStep === 3 && (
