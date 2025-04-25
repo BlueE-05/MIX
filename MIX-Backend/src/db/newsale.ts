@@ -5,11 +5,17 @@ class NewSaleService{
 
 
   //Desplegar todos los contactos que haya registrado un User en especifico
-  async getAllContactByUser(id: number) {
+  //LISTO
+  async getAllContactByUser(id: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('id', sql.Int, id).query('SELECT CONCAT(c.Name , \' \' , c.LastName) AS FullName FROM Contact AS c WHERE c.IDUser = @id');
+        const result = await request.input('id', sql.VarChar, id).query(
+        `SELECT 
+        c.Name + ' ' + c.LastName AS FullName
+        FROM Contact c
+        WHERE c.IDUser = 'ana.gomez@empresa.com'
+        ORDER BY c.Name, c.LastName`);
         return result.recordset;
     } catch (error) {
         console.error('❌ Error en getAllCierre:', error);
@@ -18,13 +24,19 @@ class NewSaleService{
   }
 
   //Mostrar la informacion de un contacto que se haya seleccionado por el usuario
-  async getInfoContacto(id: number, cont: number) {
+  //LSISTO
+  async getInfoContacto(cont: number) {
     try {
         const pool = await poolPromise;
-        const result = await pool.request()
-            .input('id', sql.Int, id)  
+        const result = await pool.request() 
             .input('cont', sql.Int, cont)  
-            .query('SELECT c.Email,e.Name AS EnterpriseName, c.PhoneNumber FROM Contact AS c INNER JOIN Enterprise AS e ON c.IDEnterprise = e.ID WHERE c.ID = @cont AND c.IDUser = @id');
+            .query(`SELECT 
+              c.Email AS Email,
+              c.PhoneNumber AS NumTel,
+              e.Name AS Ent
+              FROM Contact c
+              JOIN Enterprise e ON c.IDEnterprise = e.ID
+              WHERE c.ID = @cont`);
         
         return result.recordset;
     } catch (error) {
@@ -33,7 +45,22 @@ class NewSaleService{
     }
   }
 
+  //Obtener el precio de los productos
+  async getPrice(idprod: string) {
+    try {
+        const pool = await poolPromise;
+        const result = await pool.request() 
+            .input('idprod', sql.VarChar, idprod)  
+            .query(`SELECT UnitaryPrice AS Price FROM Product WHERE RefNum = @idprod`);
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getPrice:', error);
+        throw new Error('Error al obtener price');
+    }
+  }
+
   //Desplegar todas las fases de la venta para seleccionar
+  //LISTO
   async getPhases() {
     try {
         const pool = await poolPromise;
@@ -46,20 +73,41 @@ class NewSaleService{
     }
   }
 
+  async getAllProd() {
+    try {
+        const pool = await poolPromise;
+        const request = pool.request();
+        const result = await request.query(`SELECT Name AS NombreArticulo, RefNum as IDProd FROM Product ORDER BY Name`);
+        return result.recordset;
+    } catch (error) {
+        console.error('❌ Error en getAllProd', error);
+        throw new Error('Error al obtener productos');
+    }
+  }
+
+  /*
+  SELECT 
+    Name AS NombreArticulo
+FROM 
+    Product
+ORDER BY 
+    Name;
+  */
+
     //NOTA: Pendiente
     //Nota: Hacer modificaciones para que al momento de seleccionar la informacion en la pantalla esta sea la info que se guarda para la nueva sale
     //Nota:*** Recordar que hay que cambair la fecha de fin con un triger o algo al momento de cerrar realmente la venta 
     //MODIFICAR: Quitar enddate, startdate automatimo la fecha actual
-   /*
-    async createSale(data: {iduser: number; idcont: number; idphase: number}) {
+   
+    async createSale(iduser: string, data: { idcont: number; idphase: number}) {
           const pool = await poolPromise;
           const result = await pool.request()
-              .input('iduser', sql.Int, data.iduser)  
+              .input('iduser', sql.VarChar, iduser)  
               .input('idcont', sql.Int, data.idcont)  
               .input('idphase', sql.Int, data.idphase)
-              .query('INSERT INTO Sale (IDUser, IDContact, StartDate, EndDate, IDPhase)VALUES (@iduser, @idcont, GETDATE(), GETDATE(), @idphase)');
+              .query('INSERT INTO Sale (IDUser, IDContact, IDPhase)VALUES (@iduser, @idcont, @idphase)');
     }
-              */
+              
       
 
   

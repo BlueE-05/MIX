@@ -19,7 +19,6 @@ interface SaleFormData {
   contact: string;
   status: string;
   startDate: Date | null;
-  endDate: Date | null;
 }
 
 interface SaleRow {
@@ -59,11 +58,13 @@ export default function SalesPage() {
     }
   };
 
+  const  iduser= 'ana.gomez@empresa.com'; //Cambiar para el usuario que se va a consultar
+
   useEffect(() => {
     const fetchSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:3001/sale/AllSales/ana.gomez@empresa.com');
+        const response = await fetch(`http://localhost:3001/sale/AllSales/${iduser}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -186,8 +187,7 @@ export default function SalesPage() {
           onSubmit={(data) => {
             const adaptedData = {
               ...data,
-              startDate: null, 
-              endDate: null    
+              startDate: null,   
             };
             handleNewSale(adaptedData);
           }}

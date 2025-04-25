@@ -3,8 +3,12 @@ import ReportService from "../db/report";
 class ReportController {
   private reportService = new ReportService;
 
-  async getAllCierre(IDUser: string) {
-    return this.reportService.getAllCierre(IDUser);
+  async getAllCierre(iduser: string) {
+    return this.reportService.getAllCierre(iduser);
+  }
+
+  async getTemPos(IDUser: string) {
+    return this.reportService.getTemPos(IDUser);
   }
 
   async getAllActive(IDUser: string) {
@@ -15,11 +19,13 @@ class ReportController {
     return this.reportService.getAllCancelled(IDUser);
   }
 
+  
+
   async getTotalComissions(IDUser: string) {
     return this.reportService.getTotalComissions(IDUser);
   }
 
-  async getAward(IDEmail: string): Promise<string | null> {
+  async getAward(IDEmail: string) {
     return this.reportService.getLastAward(IDEmail);
   }
 

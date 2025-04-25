@@ -3,12 +3,12 @@ import ReportHTTPHandler from '../handlers/report';
 
 const router = Router();
 
-router.get('/allCierre/:id', ReportHTTPHandler.getAllCierre);
-router.get('/allActive/:id', ReportHTTPHandler.getAllActive);
+router.get('/allCierre', ReportHTTPHandler.getAllCierre);
+router.get('/allActive/:IDUser', ReportHTTPHandler.getAllActive);
 router.get('/allCancelled/:id', ReportHTTPHandler.getAllCancelled);
-router.get('/totalComissions/:id', ReportHTTPHandler.getTotalComissions);
-
-router.get('/award', ReportHTTPHandler.getAward);
+router.get('/totalComissions/:IDUser', ReportHTTPHandler.getTotalComissions);
+router.get('/award/:IDEmail', ReportHTTPHandler.getAward);
+router.get('/TeamPos', ReportHTTPHandler.getTeamPos);
 
 
 export default router;

@@ -6,9 +6,11 @@ import NewSaleHTTPHandler from '../handlers/newsale';
 const router = Router();
 
 router.get('/ContactsByUser/:id', NewSaleHTTPHandler.getAllContactByUser);
-router.get('/ContactInfo/:id/:cont', NewSaleHTTPHandler.getInfoContacto);
+router.get('/AllProd', NewSaleHTTPHandler.getAllProd);
+router.get('/ProdPrice/:idprod', NewSaleHTTPHandler.getPrice);
+router.get('/ContactInfo/:cont', NewSaleHTTPHandler.getInfoContacto);
 router.get('/Phases', NewSaleHTTPHandler.getPhases);
-//router.post('/', NewSaleHTTPHandler.createSale );
+router.post('/', NewSaleHTTPHandler.createSale );
 
 
 export default router;

@@ -95,7 +95,7 @@ class SaleHTTPHandler {
 
     getTopSales= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser = String(req.params.iduser);  
+        const iduser='ana.gomez@empresa.com'
         const resultado = await this.saleController.getTopSales(iduser);
         res.json(resultado);
       } catch (error) {

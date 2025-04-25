@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 // Define la interfaz para los datos del formulario
@@ -26,32 +26,85 @@ interface Article {
   price: number;
 }
 
+interface Contact {
+  FullName: string;
+}
+
+interface Producto {
+  NombreArticulo: string;
+  IDProd: string;  
+  price?: number; 
+}
+
+interface Phase {
+  Name: string;
+}
+
 export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   const [selectedContact, setSelectedContact] = useState<string>('');
   const [selectedStatus, setSelectedStatus] = useState<string>('');
   const [items, setItems] = useState<{article: string, quantity: number, price: number}[]>([
     { article: '', quantity: 1, price: 0 }
   ]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [products, setProducts] = useState<Producto[]>([]);
+  const [phases, setPhases] = useState<Phase[]>([]);
+  const [loadingContacts, setLoadingContacts] = useState<boolean>(true);
+  const [loadingProducts, setLoadingProducts] = useState<boolean>(true);
+  const [loadingPhases, setLoadingPhases] = useState<boolean>(true);
 
-  const contactOptions = [
-    { id: '1', name: 'Cecilia' },
-    { id: '2', name: 'Bento' },
-    { id: '3', name: 'Marta' },
-  ];
+  const iduser = "ana.gomez@empresa.com";
+/*http://localhost:3001/newsale/ContactsByUser/ana.gomez@empresa.com*/
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await fetch(`http://localhost:3001/newsale/ContactsByUser/${iduser}`);
+        if (!response.ok) {
+          throw new Error('Error al obtener los contactos');
+        }
+        const data = await response.json();
+        setContacts(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoadingContacts(false);
+      }
+    };
 
-  const statusOptions = [
-    { id: '1', name: 'Active' },
-    { id: '2', name: 'Acepted' },
-    { id: '3', name: 'Cancelled' },
-  ];
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/newsale/AllProd');
+        if (!response.ok) {
+          throw new Error('Error al obtener los productos');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    };
 
-  const articleOptions: Article[] = [
-    { id: '1', name: 'Laptop', price: 999.99 },
-    { id: '2', name: 'Smartphone', price: 699.99 },
-    { id: '3', name: 'Monitor', price: 249.99 },
-    { id: '4', name: 'Keyboard', price: 49.99 },
-    { id: '5', name: 'Mouse', price: 29.99 },
-  ];
+    const fetchPhases = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/newsale/Phases');
+        if (!response.ok) {
+          throw new Error('Error al obtener las fases');
+        }
+        const data = await response.json();
+        setPhases(data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoadingPhases(false);
+      }
+    };
+
+    fetchContacts();
+    fetchProducts();
+    fetchPhases();
+  }, []);
 
   const handleSubmit = () => {
     const formData: SaleFormData = {
@@ -66,27 +119,81 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     setItems([...items, { article: '', quantity: 1, price: 0 }]);
   };
 
-  const handleArticleChange = (index: number, articleId: string) => {
+  const handleArticleChange = async (index: number, articleName: string) => {
     const newItems = [...items];
-    const selectedArticle = articleOptions.find(a => a.id === articleId);
     
-    newItems[index] = {
-      ...newItems[index],
-      article: articleId,
-      price: selectedArticle ? selectedArticle.price * newItems[index].quantity : 0
-    };
-    
-    setItems(newItems);
+    if (!articleName) {
+      // Si se selecciona la opción vacía
+      newItems[index] = {
+        ...newItems[index],
+        article: '',
+        price: 0
+      };
+      setItems(newItems);
+      return;
+    }
+  
+    try {
+      // Buscar el producto seleccionado (comparación insensible a mayúsculas/espacios)
+      const selectedProduct = products.find(prod => 
+        prod.NombreArticulo.trim().toLowerCase() === articleName.trim().toLowerCase()
+      );
+  
+      if (!selectedProduct) {
+        console.error("Producto no encontrado:", articleName);
+        newItems[index] = {
+          ...newItems[index],
+          article: articleName,
+          price: 0
+        };
+        setItems(newItems);
+        return;
+      }
+      
+      // Obtener el precio del producto
+      const response = await fetch(`http://localhost:3001/newsale/ProdPrice/${selectedProduct.IDProd}`);
+      
+      if (!response.ok) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+  
+      const priceData = await response.json();
+      console.log("Datos de precio recibidos:", priceData);
+  
+      // Manejar diferentes formatos de respuesta
+      let price = 0;
+      if (Array.isArray(priceData) && priceData.length > 0) {
+        price = priceData[0].price || 0;
+      } else if (typeof priceData === 'object' && priceData !== null) {
+        price = priceData.price || 0;
+      }
+      
+      newItems[index] = {
+        ...newItems[index],
+        article: articleName,
+        price: price
+      };
+  
+      setItems(newItems);
+      console.log("Estado actualizado:", newItems);
+    } catch (error) {
+      console.error('Error al obtener el precio:', error);
+      newItems[index] = {
+        ...newItems[index],
+        article: articleName,
+        price: 0
+      };
+      setItems(newItems);
+    }
   };
 
   const handleQuantityChange = (index: number, quantity: number) => {
     const newItems = [...items];
-    const article = articleOptions.find(a => a.id === newItems[index].article);
+    const newQuantity = quantity > 0 ? quantity : 1;
     
     newItems[index] = {
       ...newItems[index],
-      quantity: quantity > 0 ? quantity : 1,
-      price: article ? article.price * (quantity > 0 ? quantity : 1) : 0
+      quantity: newQuantity,
     };
     
     setItems(newItems);
@@ -99,6 +206,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
   };
 
   return (
+    
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="max-w-4xl w-full mx-auto p-6 bg-white rounded-xl shadow-md">
         {/* Header with close button */}
@@ -124,36 +232,27 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
               <label htmlFor="contact" className="block text-sm font-medium text-gray-700 mb-1">
                 Contact *
               </label>
-              <select 
-                id="contact" 
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                value={selectedContact}
-                onChange={(e) => setSelectedContact(e.target.value)}
-                required
-              >
-                <option value="">Select contact</option>
-                {contactOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
+              {loadingContacts ? (
+                <p>Cargando contactos...</p>
+              ) : (
+                <select 
+                  id="contact" 
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                  value={selectedContact}
+                  onChange={(e) => setSelectedContact(e.target.value)}
+                  required
+                >
+                  <option value="">Select contact</option>
+                  {contacts.map((contact, index) => (
+                    <option key={index} value={contact.FullName}>
+                      {contact.FullName}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
 
-            <div className="space-y-2">
-              <p className="text-gray-700">
-                <span className="font-medium">E-Mail:</span>{' '}
-                <a href="mailto:Contact@Company.Com" className="text-blue-600 hover:underline">
-                  Contact@Company.Com
-                </a>
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Phone Number:</span> 555-454-987
-              </p>
-              <p className="text-gray-700">
-                <span className="font-medium">Enterprise:</span> Company Co.
-              </p>
-            </div>
+
           </div>
         </div>
 
@@ -167,19 +266,23 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
                 <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
                   Article {index + 1}
                 </label>
-                <select
-                  id={`article-${index}`}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                  value={item.article}
-                  onChange={(e) => handleArticleChange(index, e.target.value)}
-                >
-                  <option value="">Select article</option>
-                  {articleOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
+                {loadingProducts ? (
+                  <p>Cargando productos...</p>
+                ) : (
+                  <select
+  id={`article-${index}`}
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+  value={item.article}
+  onChange={(e) => handleArticleChange(index, e.target.value)}
+>
+  <option value="">Select article</option>
+  {products.map((product, productIndex) => (
+    <option key={productIndex} value={product.NombreArticulo}>
+      {product.NombreArticulo}
+    </option>
+  ))}
+</select>
+                )}
               </div>
 
               <div>
@@ -238,20 +341,24 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
             <label htmlFor="saleStatus" className="block text-sm font-medium text-gray-700 mb-1">
               Sale Status *
             </label>
-            <select 
-              id="saleStatus" 
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-              value={selectedStatus}
-              onChange={(e) => setSelectedStatus(e.target.value)}
-              required
-            >
-              <option value="">Select status</option>
-              {statusOptions.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name}
-                </option>
-              ))}
-            </select>
+            {loadingPhases ? (
+              <p>Cargando fases...</p>
+            ) : (
+              <select 
+                id="saleStatus" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+                required
+              >
+                <option value="">Select status</option>
+                {phases.map((phase, index) => (
+                  <option key={index} value={phase.Name}>
+                    {phase.Name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
 

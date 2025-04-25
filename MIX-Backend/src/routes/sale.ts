@@ -11,7 +11,7 @@ router.get('/FormInfo/:idsale/:iduser', SaleHTTPHandler.getFormInfo);
 router.get('/FormNum/:idsale/:iduser', SaleHTTPHandler.getFormNum);
 router.get('/AllEnt', SaleHTTPHandler.getAllEnt);
 router.get('/AllProd', SaleHTTPHandler.getAllProd);
-router.get('/TopSales/:iduser', SaleHTTPHandler.getTopSales);
+router.get('/TopSales', SaleHTTPHandler.getTopSales);
 //router.delete('/del/:idsale/:iduser', SaleHTTPHandler.deleteSale);
 
 

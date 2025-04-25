@@ -15,28 +15,36 @@ interface TopSale {
   TotalProducts: number;
 }
 
-const currentUser = {
-  team: "Marketing",
-  position: "Especialista de Contenido",
-};
+
+
+interface User {
+  team: string;
+  position: string;
+}
+
+interface TeamJobPos{
+  TeamName:string;
+  JobPos: string;
+}
 
 const DashboardPage = () => {
   const headers = ["REF", "Contact Name", "Status", "Start Day", "Total Sale", "Product Num"];
   const [tableData, setTableData] = useState<React.ReactNode[][]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
   const [error, setError] = useState<string | null>(null);
-  const iduser = 'ana.gomez@empresa.com';
+
 
   useEffect(() => {
     const fetchTopSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/sale/TopSales/${iduser}`);
+        const response = await fetch(`http://localhost:3001/sale/TopSales`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
         const data: TopSale[] = await response.json();
         const transformedData = transformData(data);
         setTableData(transformedData);
@@ -51,6 +59,30 @@ const DashboardPage = () => {
     };
 
     fetchTopSales();
+  }, []);
+
+  useEffect(() => {
+    const fetchTeamPos = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/report/TeamPos`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: TeamJobPos[] = await response.json();
+        setCurrentUser({ team: data[0].TeamName, position: data[0].JobPos});
+        setError(null); // Limpiar error si la solicitud es exitosa
+      } catch (err) {
+        console.error("Error fetching team y pos:", err);
+        setError("Error loading data...");
+        setTableData([]); // Limpiar datos si hay error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTeamPos();
   }, []);
 
   const transformData = (data: TopSale[]): React.ReactNode[][] => {
@@ -89,7 +121,7 @@ const DashboardPage = () => {
         {/* User Info Cards */}
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           {/* Team Card */}
-          <div className="bg-white p-4 rounded-lg w-full sm:w-60">
+          <div className="bg-white p-4 rounded-lg w-full sm:w-100">
             <label htmlFor="team-display" className="block text-sm font-medium text-green-700 mb-1">
               Team
             </label>
@@ -97,7 +129,7 @@ const DashboardPage = () => {
               type="text"
               id="team-display"
               className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-              value={currentUser.team}
+              value={currentUser?.team}
               readOnly
             />
           </div>
@@ -111,7 +143,7 @@ const DashboardPage = () => {
               type="text"
               id="position-display"
               className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-              value={currentUser.position}
+              value={currentUser?.position}
               readOnly
             />
           </div>

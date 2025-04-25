@@ -12,8 +12,18 @@ class NewSaleHTTPHandler {
 
     getAllContactByUser = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const id = parseInt(req.params.id); 
+        const id = String(req.params.id); 
         const resultado = await this.newsaleController.getAllContactByUser(id);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+    getPrice = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const idprod = String(req.params.idprod); 
+        const resultado = await this.newsaleController.getPrice(idprod);
         res.json(resultado);
       } catch (error) {
         next(error);
@@ -23,9 +33,8 @@ class NewSaleHTTPHandler {
   
     getInfoContacto = async (req: Request, res: Response, next: NextFunction) => {
       try {
-          const id = Number(req.params.id);
           const cont = Number(req.params.cont);
-          const resultado = await this.newsaleController.getInfoContacto(id, cont);
+          const resultado = await this.newsaleController.getInfoContacto(cont);
           res.json(resultado);
           
       } catch (error) {
@@ -44,22 +53,31 @@ class NewSaleHTTPHandler {
       }
     };
 
+    getAllProd= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const resultado = await this.newsaleController.getAllProd();
+        res.json(resultado);
+      } catch (error) {
+      next(error);
+      }
+    };
+
   
 
 
 
     //iduser: number, idcont: number, startdate: string, enddate: string, idphase: number
-    /*
+    
     createSale= async (req: Request, res: Response, next: NextFunction) => {
       try {
-        
-        await this.newsaleController.createSale(req.body);
+        const iduser='ana.gomez@empresa.com';
+        await this.newsaleController.createSale(iduser, req.body);
         res.json({ message: 'Contact created successfully' });
       } catch (error) {
       next(error);
       }
     };
-    */
+    
     
     
   
