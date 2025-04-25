@@ -71,7 +71,7 @@ class ReportHTTPHandler {
 
     getAward = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const IDEmail = String(req.params.IDEmail); //harcoded para pruebas
+        const IDEmail = UserEmail;
         const awards = await this.reportController.getAward(IDEmail);
         res.json(awards);
       } catch (error) {

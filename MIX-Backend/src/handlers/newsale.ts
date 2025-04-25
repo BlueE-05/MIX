@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import NewSaleController from '../controllers/newsale';
-//Importar IDUSer
+//Importar IDUSer. correo del usuario
 import { UserEmail } from '../getIDUser';
 
 //ana.gomez@empresa.com
@@ -71,17 +71,31 @@ class NewSaleHTTPHandler {
       next(error);
       }
     };
-    /*
-    createSaleMULT= async (req: Request, res: Response, next: NextFunction) => {
+    
+    createSaleMULT = async (req: Request, res: Response, next: NextFunction) => {
       try {
-        const iduser=UserEmail;
-        await this.newsaleController.createSaleONE(iduser, req.body);
-        res.json({ message: 'Contact created successfully' });
+          const iduser = UserEmail
+          const { idcont, idphase, products } = req.body;
+  
+          // Validación básica
+          if (!iduser || !idcont || !idphase || !products || !Array.isArray(products)) {
+              return res.status(400).json({ error: 'Datos incompletos o inválidos' });
+          }
+  
+          const result = await this.newsaleController.createSaleMULT(iduser, {
+              idcont,
+              idphase,
+              products // Enviamos directamente el array de productos
+          });
+  
+          res.status(201).json({ 
+              message: 'Venta creada exitosamente',
+              saleId: result // Retornamos el ID de la nueva venta
+          });
       } catch (error) {
-      next(error);
+          next(error);
       }
-    };
-    */
+  };
     
     
     
@@ -94,50 +108,3 @@ class NewSaleHTTPHandler {
 
 export default new NewSaleHTTPHandler();
 
-
-
-/*import { Request, Response, NextFunction } from 'express';
-import NewSaleController from '../controllers/newsale';
-
-
-export class NewSaleHttpHandler {
-  private newsaleController: typeof NewSaleController;
-
-    constructor() {
-        this.newsaleController = NewSaleController;
-    }
- 
-  async getcontactByID(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await this.newsaleController.getContactoByID(Number(req.params.id));
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-
-  async createNewSale(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const { iduser, idcontact, startdate, enddate, idphase } = req.body;
-      const total = await this.newsaleController.createNewSale(iduser, idcontact, new Date(startdate), new Date(enddate), idphase);
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async getAllComissions(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const total = await this.newsaleController.getAllContacts();
-      res.json(total);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-}
-
-
-export const newsaleHttpHandler = new NewSaleHttpHandler();
-*/

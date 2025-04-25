@@ -28,7 +28,32 @@ class NewSaleController {
   async createSaleONE(iduser: string, data: {idcont:number, idphase:number, idprod:string, quant:number }) {
     return this.newsaleService.createSaleONE(iduser,data);
   } 
+
   
+  async createSaleMULT(
+    iduser: string, 
+    data: {
+        idcont: number,
+        idphase: number,
+        products: {  // Usamos 'products' en lugar de 'quantinfo'
+            idprod: string, 
+            quant: number 
+        }[]
+    }
+) {
+    // Transformamos los datos al formato que espera el service
+    const saleData = {
+        UserID: iduser,
+        ContactID: data.idcont,
+        PhaseID: data.idphase,
+        Products: data.products.map(item => ({
+            ProductID: item.idprod,
+            Quantity: item.quant
+        }))
+    };
+
+    return this.newsaleService.createSaleMULT(saleData);
+}
     
 
 

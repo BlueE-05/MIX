@@ -15,8 +15,6 @@ interface TopSale {
   TotalProducts: number;
 }
 
-
-
 interface User {
   team: string;
   position: string;
@@ -27,12 +25,22 @@ interface TeamJobPos{
   JobPos: string;
 }
 
+interface AwardFormat{
+  nameaward:string;
+}
+
+interface Award{
+  Name:string;
+}
+
+
+
 const DashboardPage = () => {
   const headers = ["REF", "Contact Name", "Status", "Start Day", "Total Sale", "Product Num"];
   const [tableData, setTableData] = useState<React.ReactNode[][]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-
+  const [currentAward, setCurrentAward] = useState<AwardFormat | null>(null);
   const [error, setError] = useState<string | null>(null);
 
 
@@ -84,6 +92,32 @@ const DashboardPage = () => {
 
     fetchTeamPos();
   }, []);
+
+  useEffect(() => {
+    const fetchAward = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`http://localhost:3001/report/Award`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data: Award[] = await response.json();
+        setCurrentAward({ nameaward: data[0].Name});
+        setError(null); // Limpiar error si la solicitud es exitosa
+      } catch (err) {
+        console.error("Error fetching current award:", err);
+        setError("Error loading data...");
+        setTableData([]); // Limpiar datos si hay error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAward();
+  }, []);
+
+
 
   const transformData = (data: TopSale[]): React.ReactNode[][] => {
     return data.map((sale) => {
@@ -179,7 +213,7 @@ const DashboardPage = () => {
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
           <div>
-            <AwardsBox award={"UwU"}/>
+            <AwardsBox award={currentAward?.nameaward}/>
           </div>
   
           <div className="p-6 bg-white rounded-xl shadow-md flex flex-col items-center justify-center">

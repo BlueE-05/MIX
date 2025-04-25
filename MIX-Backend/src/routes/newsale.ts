@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { RequestHandler } from 'express';
 import NewSaleHTTPHandler from '../handlers/newsale';
 
+
 const router = Router();
 
 router.get('/ContactsByUser', NewSaleHTTPHandler.getAllContactByUser); //FUNCIONA

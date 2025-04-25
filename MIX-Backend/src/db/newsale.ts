@@ -97,6 +97,40 @@ class NewSaleService{
                   @ProductID = @idprod,
                   @Quantity = @quant`);
     }
+
+
+    //Crear una nueva venta con multiples productos
+    //NO FUNCIONA /REVISAR
+    async createSaleMULT(
+      data: { 
+          UserID: string,
+          ContactID: number, 
+          PhaseID: number, 
+          Products: { ProductID: string, Quantity: number }[] 
+      }
+  ) {
+      const pool = await poolPromise;
+      
+      // Convertir el array de productos a JSON string
+      const productsJSON = JSON.stringify(data.Products);
+  
+      const result = await pool.request()
+          .input('UserID', sql.VarChar, data.UserID)
+          .input('ContactID', sql.Int, data.ContactID)
+          .input('PhaseID', sql.Int, data.PhaseID)
+          .input('ProductsJSON', sql.NVarChar(sql.MAX), productsJSON)
+          .query(`EXEC sp_CreateNewSaleMultProds
+                  @UserID = @UserID,
+                  @ContactID = @ContactID,
+                  @PhaseID = @PhaseID,
+                  @ProductsJSON = @ProductsJSON`);
+                  
+      if (!result.recordset[0]?.NewSaleID) {
+          throw new Error('No se pudo obtener el ID de la nueva venta');
+      }
+      
+      return result.recordset[0].NewSaleID;
+  }
               
       
 

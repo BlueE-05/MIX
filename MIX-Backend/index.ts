@@ -4,20 +4,17 @@
 const bodyParser = require('body-parser');
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import sql from 'mssql';
+
 const app = express();
 import reportRoutes from './src/routes/report';
 import newsaleRoutes from './src/routes/newsale';
 import saleRoutes from './src/routes/sale';
-import { poolPromise } from './src/database'; 
-import NewSaleService from './src/db/newsale';
-import NewSaleController from './src/controllers/newsale';
-import NewSaleHTTPHandlerr from './src/handlers/newsale';
+
 
 
 app.use(cors());
 app.use(express.json());
-//const app = express();
+
 app.use(bodyParser.json());
 
 const PORT = 3001;

@@ -195,7 +195,7 @@ class SaleService{
          const pool = await poolPromise;
          const request = pool.request();
          const result = await request.input('iduser', sql.VarChar, iduser).query(
-        `SELECT TOP 5
+        `SELECT TOP 10
         s.ID AS SaleID,
         c.Name + ' ' + c.LastName AS ContactName,
         ph.Name AS Status,
@@ -211,7 +211,7 @@ class SaleService{
         AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())
         GROUP BY s.ID, c.Name, c.LastName, ph.Name, s.StartDate
-        ORDER BY s.StartDate DESC;`);
+        ORDER BY s.StartDate DESC`);
          return result.recordset;
          console.log(result.recordset);
       } catch (error) {
@@ -220,45 +220,9 @@ class SaleService{
       }
   }
 
-    /*Top 5 productos más vendidos por cierto usuario en el mes actual
-    SELECT TOP 5
-    p.RefNum AS ProductID,
-    p.Name AS ProductName,
-    SUM(sa.Quantity) AS TotalQuantitySold
-FROM 
-    Sale s
-JOIN 
-    SaleArticle sa ON s.ID = sa.IDSale
-JOIN 
-    Product p ON sa.IDProduct = p.RefNum
-WHERE 
-    s.IDUser = 1
-    AND YEAR(s.StartDate) = YEAR(GETDATE())
-    AND MONTH(s.StartDate) = MONTH(GETDATE())
-GROUP BY 
-    p.RefNum, p.Name
-ORDER BY 
-    TotalQuantitySold DESC;
-
-    //Versión sin mes actual
-    SELECT TOP 5
-p.RefNum AS ProductID,
-p.Name AS ProductName,
-SUM(sa.Quantity) AS TotalQuantitySold
-FROM Sale s
-JOIN SaleArticle sa ON s.ID = sa.IDSale
-JOIN Product p ON sa.IDProduct = p.RefNum
-WHERE s.IDUser = 1
-GROUP BY p.RefNum, p.Name
-ORDER BY TotalQuantitySold DESC;
-    */
+  
 
 
-
-
-
-    //Cambiar el estado de la fase de acuerdo a la columna en la que se muEva en el kanban
-    //Cambiar el estado de la fase cuando se actualiza
       //query para eliminar una sale
     //query para modificar una sale
 
