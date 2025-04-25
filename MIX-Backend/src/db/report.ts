@@ -96,11 +96,11 @@ class ReportService{
         const result = await request.input('IDUser', sql.VarChar, IDUser).query(
         `SELECT 
         SUM(sa.Quantity * p.Commission) AS TotalCommission
-        FROM Users u
+        FROM dbo.[User] as u
         JOIN Sale s ON u.IDEmail = s.IDUser
         JOIN SaleArticle sa ON s.ID = sa.IDSale
         JOIN Product p ON sa.IDProduct = p.RefNum
-        WHERE u.IDEmail = @id
+        WHERE u.IDEmail = @IDUser
 		    AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())` );
         return result.recordset;
