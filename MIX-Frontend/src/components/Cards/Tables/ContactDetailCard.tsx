@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import LabelOval from '@/components/Buttons/LabelOval'
 import { ContactData, ContactRecieve } from '@/types/ContactTypes'
 import { updateContact } from '@/hooks/contacts/updateContact'
 import { deleteContact } from '@/hooks/contacts/deleteContact'

@@ -33,10 +33,10 @@ export default function ContactPage() {
       contact.Name,
       contact.LastName,
       contact.EnterpriseName,
-      <LabelOval data={contact.Status ? "Active" : "Inactive"} color={contact.Status ? "green" : "red"} />,
+      <LabelOval key={`status-${contact.ID}`} data={contact.Status ? "Active" : "Inactive"} color={contact.Status ? "green" : "red"} />,
       contact.PhoneNumber,
       contact.Email,
-      <ArrowRightButton onClick={() => setSelectedContact(contact)} aria-label={`View details of ${contact.Name} ${contact.LastName}`} />
+      <ArrowRightButton key={`arrow-${contact.ID}`} onClick={() => setSelectedContact(contact)} aria-label={`View details of ${contact.Name} ${contact.LastName}`} />
     ]);
   }, []);
 
@@ -47,8 +47,8 @@ export default function ContactPage() {
     try {
       const contacts = await fetchContacts(searchTerm);
       setTableData(transformToTableData(contacts));
-    } catch (err) {
-      setError("Failed to load contacts. Please try again later.");
+    } catch (error) {
+      setError(`Failed to load contacts. Please try again later. Error: ${error}`);
     } finally {
       setIsLoading(false);
     }
@@ -82,7 +82,7 @@ export default function ContactPage() {
         color="green"
         includeSearch={true}
         onSearch={handleSearch}
-      />
+      />  
 
       {/* Form to add new contact or enterprise */}
       {showForm && (

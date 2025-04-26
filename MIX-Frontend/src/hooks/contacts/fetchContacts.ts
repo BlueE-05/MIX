@@ -1,4 +1,4 @@
-import { ContactRecieve, ContactView } from "@/types/ContactTypes";
+import { ContactRecieve } from "@/types/ContactTypes";
 import { url } from "@/utils/constants";
 
 export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve[]> => {

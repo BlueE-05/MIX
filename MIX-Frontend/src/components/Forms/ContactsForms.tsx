@@ -1,6 +1,4 @@
-//deep
-'use client'
-import React, { useState, ChangeEvent, FormEvent, useCallback, use, useEffect } from "react";
+import React, { useState, ChangeEvent, FormEvent, useCallback, useEffect } from "react";
 import Input from "@/components/Forms/Input";
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
@@ -18,8 +16,6 @@ interface FormularioProps {
 }
 
 export default function Formulario({ onClose, onSubmit, onFormTypeChange, formType: initialFormType }: FormularioProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [formType, setFormType] = useState<string>(initialFormType === 'contact' ? "New Contact" : "New Enterprise");
   const [enterprises, setEnterprises] = useState<EnterpriseGet[]>([]);
   const [contactData, setContactData] = useState<ContactData>({
@@ -38,21 +34,16 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
   });
 
   const loadEnterprises = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
     try {
       const data = await fetchEnterprises();
       setEnterprises(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load enterprises');
-    } finally {
-      setIsLoading(false);
+    } catch (error) {
+      throw Error(`Error loading enterprises: ${error}`);
     }
   }, []);
 
   const handleCreateSubmitForm = useCallback(async (data: ContactData | EnterpriseSend) => {
     try {
-      setIsLoading(true);
       if (formType === "New Contact") {
         await createContact(data as ContactData);
       } else {
@@ -60,10 +51,7 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
       }
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : formType === "New Contact" ? "Failed to create contact" : "Failed to create enterprise");
       console.error("Error creating:", err);
-    } finally {
-      setIsLoading(false);
     }
   }, [formType, onClose]);
 
@@ -164,7 +152,7 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
                 <span className="font-bold text-md text-red-600">*</span>
               </div>
               <select
-                name="enterpriseName"  // Make sure this matches your state property
+                name="enterpriseName"
                 value={contactData.enterpriseName}
                 onChange={handleChangeContact}
                 required
