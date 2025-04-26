@@ -29,7 +29,7 @@ class SaleService{
            return result.recordset;
            console.log(result.recordset);
         } catch (error) {
-           console.error('❌ Error en getAllCierre:', error);
+           console.error('Error en getAllCierre:', error);
            throw new Error('Error al obtener cierres');
         }
     }
@@ -61,7 +61,7 @@ class SaleService{
               ORDER BY s.StartDate DESC`);
             return result.recordset;
         } catch (error) {
-            console.error('❌ Error en getAllCierre:', error);
+            console.error('Error en getAllCierre:', error);
             throw new Error('Error al obtener cierres');
         }
     }
@@ -74,7 +74,7 @@ class SaleService{
           const result = await request.query('SELECT ID as IDSale, Name as EntName FROM Enterprise');
           return result.recordset;
       } catch (error) {
-          console.error('❌ Error en getEnt:', error);
+          console.error('Error en getEnt:', error);
           throw new Error('Error al obtener empresas');
       }
     }
@@ -87,7 +87,7 @@ class SaleService{
           const result = await request.query('SELECT RefNum as refnum, Name as NameProd, UnitaryPrice as UnPrice FROM Product');
           return result.recordset;
       } catch (error) {
-          console.error('❌ Error en getAllProd:', error);
+          console.error('Error en getAllProd:', error);
           throw new Error('Error al obtener productos');
       }
     }
@@ -102,12 +102,14 @@ class SaleService{
           const result = await request.input('idsale', sql.Int, idsale).query(`EXEC sp_DeleteSaleAndRelatedData @SaleID = @idsale;`);
           return result.recordset;
       } catch (error) {
-          console.error('❌ Error en DeleteSale:', error);
+          console.error('Error en DeleteSale:', error);
           throw new Error('Error al eliminar venta');
       }
     }
 
-    //Obtener las ultimas 5 ventas registradas en el mes
+    
+
+    //Obtener las ultimas 10 ventas registradas en el mes
     //LISTO
     async getTopSales(iduser: string) {
       try {

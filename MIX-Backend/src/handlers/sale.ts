@@ -64,17 +64,18 @@ class SaleHTTPHandler {
 
 
 
- // En tu clase handler, cambia la declaración a arrow function:
-deleteSale = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  // En tu clase handler, cambia la declaración a arrow function:
+  deleteSale = async (req: Request, res: Response, next: NextFunction) => {
+    try {
       const idsale = Number(req.params.idsale);
       await this.saleController.deleteSale(idsale);
       res.json({ message: 'Sale deleted successfully' });
-  } catch (error) {
+    } catch (error) {
       next(error);
-  }
-};
+    }
+  };
 
+   
     
     
 
