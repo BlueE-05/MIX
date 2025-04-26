@@ -7,25 +7,8 @@ class SaleController {
     return this.saleService.getAllSales(id);
   }
 
- 
   async getSaleByEnt(ent: string, iduser: string) {
     return this.saleService.getSaleByEnt(ent, iduser);
-  }
-
-  async getKNnum(idsale: number, iduser: number) {
-    return this.saleService.getKNnum(idsale, iduser);
-  }
-
-  async getKNinfo(idsale: number, iduser: number) {
-    return this.saleService.getKNinfo(idsale, iduser);
-  }
-
-  async getFormInfo(idsale: number, iduser: number) {
-    return this.saleService.getFormInfo(idsale, iduser);
-  }
-
-  async getFormNum(idsale: number, iduser: number) {
-    return this.saleService.getFormNum(idsale, iduser);
   }
 
   async deleteSale(idsale: number) {

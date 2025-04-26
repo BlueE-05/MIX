@@ -3,17 +3,13 @@ import SaleHTTPHandler from '../handlers/sale';
 
 const router = Router();
 
-router.get('/AllSales', SaleHTTPHandler.getAllSales); //crm/sales
+router.get('/AllSales', SaleHTTPHandler.getAllSales);
 router.get('/salebyent/:ent/:iduser', SaleHTTPHandler.getSaleByEnt);
-router.get('/KNnum/:idsale/:iduser', SaleHTTPHandler.getKNnum);
-router.get('/KNinfo/:idsale/:iduser', SaleHTTPHandler.getKNinfo);
-router.get('/FormInfo/:idsale/:iduser', SaleHTTPHandler.getFormInfo);
-router.get('/FormNum/:idsale/:iduser', SaleHTTPHandler.getFormNum);
 router.get('/AllEnt', SaleHTTPHandler.getAllEnt);
 router.get('/AllProd', SaleHTTPHandler.getAllProd);
 router.get('/TopSales', SaleHTTPHandler.getTopSales);
-router.delete('/:idsale', SaleHTTPHandler.deleteSale);
-//router.delete('/del/:idsale/:iduser', SaleHTTPHandler.deleteSale);
+router.delete('/:idsale', SaleHTTPHandler.deleteSale.bind(SaleHTTPHandler));
+
 
 
 

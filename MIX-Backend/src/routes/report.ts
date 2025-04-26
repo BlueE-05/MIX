@@ -10,6 +10,6 @@ router.get('/totalComissions/:IDUser', ReportHTTPHandler.getTotalComissions);
 router.get('/Award', ReportHTTPHandler.getAward);
 router.get('/TeamPos', ReportHTTPHandler.getTeamPos);
 router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
-
+router.get('/ProdInfo/:idprod', ReportHTTPHandler.getProdInfo);
 
 export default router;

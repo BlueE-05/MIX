@@ -66,79 +66,6 @@ class SaleService{
         }
     }
 
-    //PARA USAR EN EL KANBAN
-    //Mostrar comision total y precio total
-    async getKNnum (idsale: number, iduser: number) {
-      const pool = await poolPromise;
-      try {
-        const result = await pool.request().input('idsale', sql.Int, idsale).input('iduser', sql.Int, iduser)
-        .query('SELECT SUM(p.Commission * sa.Quantity) AS TotalCommission, SUM(p.UnitaryPrice * sa.Quantity) AS TotalSale FROM Sale s JOIN SaleArticle sa ON s.ID = sa.IDSale JOIN Product p ON sa.IDProduct = p.RefNum WHERE s.ID = @idsale AND s.IDUser = @iduser');
-        return result.recordset; 
-      } catch (error) {
-        console.error('❌ Error en la prueba:');
-        throw error; 
-      }
-    };
-
-    //Mostrar la info de la sale
-    async getKNinfo (idsale: number, iduser: number) {
-      const pool = await poolPromise;
-      try {
-        const result = await pool.request().input('idsale', sql.Int, idsale).input('iduser', sql.Int, iduser)
-        .query('SELECT e.Name AS EnterpriseName, CONCAT(c.Name , \' \' , c.LastName) AS FullName, SUM(sa.Quantity) AS TotalProducts FROM Sale s JOIN Contact c ON s.IDContact = c.ID JOIN Enterprise e ON c.IDEnterprise = e.ID JOIN SaleArticle sa ON s.ID = sa.IDSale WHERE s.ID = @idsale AND s.IDUser =@iduser GROUP BY c.Name, c.LastName, e.Name');
-        return result.recordset; 
-      } catch (error) {
-        console.error('❌ Error en la prueba:');
-        throw error; 
-      }
-    };
-
-    //REVISION: PLANEAR EL LAST INTERACTION
-    async getFormInfo(idsale: number, iduser: number) {
-      const pool = await poolPromise;
-      try {
-        const result = await pool.request().input('idsale', sql.Int, idsale).input('iduser', sql.Int, iduser)
-        .query(`SELECT  e.Name AS EntName,
-                SUM(p.UnitaryPrice * sa.Quantity) AS TotalSale,
-                ph.Name AS SaleStatus,
-	              c.LastInteraction as LastInt,
-                s.StartDate AS CreationDate
-                FROM Sale s
-                JOIN Contact as c ON s.IDContact = c.ID
-                JOIN Enterprise as e ON c.IDEnterprise = e.ID
-                JOIN SaleArticle as sa ON s.ID = sa.IDSale
-                JOIN Product as p ON sa.IDProduct = p.RefNum
-                JOIN Phase as ph ON s.IDPhase = ph.ID
-                JOIN Users as u on u.ID=s.IDUser
-                WHERE s.ID = @idsale and u.ID=@iduser
-                GROUP BY e.Name, ph.Name, c.LastInteraction, s.StartDate`);
-        return result.recordset; 
-      } catch (error) {
-        console.error('❌ Error en la prueba:');
-        throw error; 
-      }
-    };
-
-    //Obtener de una sale productos, cantidad de productos, y el precio unitario
-    async getFormNum(idsale: number, iduser: number) {
-      const pool = await poolPromise;
-      try {
-        const result = await pool.request().input('idsale', sql.Int, idsale).input('iduser', sql.Int, iduser)
-        .query(`SELECT 
-                p.Name AS ProductName,
-                sa.Quantity AS Quantity,
-                p.UnitaryPrice AS UnPrice
-                FROM Sale s
-                JOIN SaleArticle sa ON s.ID = sa.IDSale
-                JOIN Product p ON sa.IDProduct = p.RefNum
-                WHERE s.ID = @idsale AND s.IDUser =@iduser`);
-        return result.recordset; 
-      } catch (error) {
-        console.error('❌ Error en la prueba:');
-        throw error; 
-      }
-    };
-
     //Obtener todas las empresas
     async getAllEnt() {
       try {
@@ -166,7 +93,8 @@ class SaleService{
     }
 
 
-    //Eliminar una sale del sistema REVISAR
+    //Eliminar una sale del sistema
+    //LISTO
     async deleteSale(idsale:number) {
       try {
           const pool = await poolPromise;
@@ -174,8 +102,8 @@ class SaleService{
           const result = await request.input('idsale', sql.Int, idsale).query(`EXEC sp_DeleteSaleAndRelatedData @SaleID = @idsale;`);
           return result.recordset;
       } catch (error) {
-          console.error('❌ Error en Prospecto:', error);
-          throw new Error('Error al obtener prospecto');
+          console.error('❌ Error en DeleteSale:', error);
+          throw new Error('Error al eliminar venta');
       }
     }
 
@@ -212,15 +140,6 @@ class SaleService{
   }
 
   
-
-
-      //query para eliminar una sale
-    //query para modificar una sale
-
-
-
- 
-
  
 }
 export default SaleService;

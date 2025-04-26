@@ -75,6 +75,17 @@ class ReportHTTPHandler {
       }
     }
 
+
+    getProdInfo = async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const idprod = Number(req.params.idprod); 
+        const awards = await this.reportController.getProdInfo(idprod);
+        res.json(awards);
+      } catch (error) {
+        next(error);
+      }
+    }
+
     getDaysCurrentMonth = async (req: Request, res: Response, next: NextFunction) => {
       try {
         const awards = await this.reportController.getDaysCurrentMonth();

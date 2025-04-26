@@ -110,6 +110,8 @@ class ReportService{
     }
   }
 
+  //Obtener el ultimo premio ganado por un usuario
+  //LISTO
   async getLastAward(IDEmail: string){
     const pool = await poolPromise;
     const result = await pool.request()
@@ -123,11 +125,25 @@ class ReportService{
       return result.recordset;
   }
 
-  
+  async getProdInfo(idprod: number){
+    const pool = await poolPromise;
+    const result = await pool.request()
+      .input('idprod', sql.Int, idprod)
+      .query(
+        `SELECT 
+        p.RefNum AS ProductID,
+        p.Name AS ProductName,
+        p.UnitaryPrice,
+        sa.Quantity
+        FROM SaleArticle sa
+        JOIN Product p ON sa.IDProduct = p.RefNum
+        WHERE sa.IDSale = @idprod`);
+      return result.recordset;
+  }
 
 
 
-//select * from SaleLifespan
+  //REVISAR
     async getDaysCurrentMonth() {
       try {
         const pool = await poolPromise;

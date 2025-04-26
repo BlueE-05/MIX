@@ -33,50 +33,6 @@ class SaleHTTPHandler {
       }
     }; 
 
-    getKNnum= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idsale = Number(req.params.idsale);
-        const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getKNnum(idsale, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-
-    getKNinfo= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idsale = Number(req.params.idsale);
-        const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getKNinfo(idsale, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-    getFormInfo= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idsale = Number(req.params.idsale);
-        const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getFormInfo(idsale, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-    getFormNum= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idsale = Number(req.params.idsale);
-        const iduser = Number(req.params.iduser);  
-        const resultado = await this.saleController.getFormNum(idsale, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
 
     getAllEnt= async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -108,14 +64,15 @@ class SaleHTTPHandler {
 
 
 
-  async deleteSale(req: Request, res: Response, next: NextFunction) {
-    try {
-        const idsale = Number(req.params.idsale);
-        await this.saleController.deleteSale(idsale);
-        res.json({ message: 'Contact deleted successfully' });
-    } catch (error) {
-        next(error);
-    }
+ // En tu clase handler, cambia la declaración a arrow function:
+deleteSale = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+      const idsale = Number(req.params.idsale);
+      await this.saleController.deleteSale(idsale);
+      res.json({ message: 'Sale deleted successfully' });
+  } catch (error) {
+      next(error);
+  }
 };
 
     

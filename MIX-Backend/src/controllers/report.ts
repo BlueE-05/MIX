@@ -19,8 +19,6 @@ class ReportController {
     return this.reportService.getAllCancelled(IDUser);
   }
 
-  
-  //Revisar
   async getTotalComissions(IDUser: string) {
     return this.reportService.getTotalComissions(IDUser);
   }
@@ -28,6 +26,11 @@ class ReportController {
   async getAward(IDEmail: string) {
     return this.reportService.getLastAward(IDEmail);
   }
+
+  async getProdInfo(idprod: number) {
+    return this.reportService.getProdInfo(idprod);
+  }
+  
 
   async getDaysCurrentMonth() {
     return this.reportService.getDaysCurrentMonth();
