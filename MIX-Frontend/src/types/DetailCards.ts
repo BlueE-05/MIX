@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { SaleItem } from "./Sales";
 import { ProductUpdate, ProductView } from "./ProductTypes";
-import { ContactUpdate, ContactView } from "./ContactTypes";
+import { ContactData, ContactView } from "./ContactTypes";
 
 export interface SaleDetailCardProps {
   sale: {
@@ -45,7 +45,7 @@ export interface ProductDetailCardProps {
   export interface ContactDetailCardProps {
     contact: ContactView
     onClose: () => void
-    onSave?: (updatedContact: ContactUpdate & { id: number }) => void
+    onSave?: (updatedContact: ContactData & { id: number }) => void
     onDelete?: (contactId: number) => void
     editButtonText?: string
     closeButtonText?: string

@@ -1,41 +1,33 @@
 import { ReactNode } from "react";
 
-export interface ContactAPI {
-    ID: number;
-    Name: string;
-    LastName: string;
-    EnterpriseName: string;
-    Status: boolean;
-    PhoneNumber: string;
-    Email: string;
-    CreationDate: Date;
+export interface ContactRecieve {
+    id: number;
+    name: string;
+    lastName: string;
+    enterpriseName: string;
+    status: boolean;
+    phoneNumber: string;
+    email: string;
+    creationDate: Date;
 }
 
 export interface ContactView {
-    Index: number;
-    ID: number;
-    Name: string;
-    LastName: string;
-    EnterpriseName: string;
-    Status: boolean;
-    PhoneNumber: string;
-    Email: string;
-    CreationDate: Date;
-    Actions: ReactNode;
-}
-
-export interface ContactUpdate {
-    Name: string;
-    LastName: string;
-    Email: string | '';
-    PhoneNumber: string | '';
-    EnterpriseName: string;
+    index: number;
+    id: number;
+    name: string;
+    lastName: string;
+    enterpriseName: string;
+    status: ReactNode;
+    phoneNumber: string;
+    email: string;
+    creationDate: Date;
+    actions: ReactNode;
 }
 
 export interface ContactData {
-  name: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  enterprise: string;
+    name: string;
+    lastName: string;
+    email: string | '';
+    phoneNumber: string | '';
+    enterpriseName: string;
 }
