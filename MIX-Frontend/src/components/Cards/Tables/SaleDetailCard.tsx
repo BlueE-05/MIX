@@ -16,6 +16,8 @@ export default function SaleDetailCard({
 }: SaleDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const articleOptions: Article[] = [
     { id: '1', name: 'Laptop', price: 999.99 },
@@ -25,7 +27,6 @@ export default function SaleDetailCard({
     { id: '5', name: 'Mouse', price: 29.99 },
   ];
 
-  // Inicializar items con un array vacío si sale.items es undefined
   const [items, setItems] = useState<SaleItem[]>(sale.items || []);
 
   const normalizeStatus = (status: ReactNode | string): string => {
@@ -33,7 +34,6 @@ export default function SaleDetailCard({
     return 'In Progress';
   };
 
-  // Asegurar que editedSale.items nunca sea undefined
   const [editedSale, setEditedSale] = useState({
     ...sale,
     status: normalizeStatus(sale.status),
@@ -56,6 +56,7 @@ export default function SaleDetailCard({
 
   const handleEdit = () => {
     setIsEditing(true)
+    setErrorMessage(null);
   }
 
   const handleSave = () => {
@@ -70,35 +71,37 @@ export default function SaleDetailCard({
     setEditedSale({
       ...sale,
       status: normalizeStatus(sale.status),
-      items: sale.items || [] // Asegurar que no sea undefined
+      items: sale.items || []
     });
-    setItems(sale.items ? [...sale.items] : []); // Manejar el caso undefined
+    setItems(sale.items ? [...sale.items] : []);
     setIsEditing(false);
+    setShowDeleteConfirm(false);
+    setErrorMessage(null);
   };
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this sale?')) {
-      setIsDeleting(true);
-      try {
-        const response = await fetch(`http://localhost:3002/sale/${sale.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+    setIsDeleting(true);
+    setErrorMessage(null);
+    
+    try {
+      const response = await fetch(`http://localhost:3002/sale/${sale.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error('Failed to delete sale');
-        }
-
-        onDelete(sale.id);
-        onClose();
-      } catch (error) {
-        console.error('Error deleting sale:', error);
-        alert('Error deleting sale. Please try again.');
-      } finally {
-        setIsDeleting(false);
+      if (!response.ok) {
+        throw new Error('Failed to delete sale');
       }
+
+      onDelete(sale.id);
+      onClose();
+    } catch (error) {
+      console.error('Error deleting sale:', error);
+      setErrorMessage('Failed to delete sale. Please try again.');
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -148,7 +151,7 @@ export default function SaleDetailCard({
   const [contactData, setContactData] = useState<ContactData>({
     name: "",
     lastName: "",
-    enterprise: sale.enterprise || "", // Inicializar con el valor de la venta
+    enterprise: sale.enterprise || "",
     phone: "",
     email: "",
   });
@@ -176,6 +179,37 @@ export default function SaleDetailCard({
             &times;
           </button>
         </div>
+        
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+            {errorMessage}
+          </div>
+        )}
+        
+        {/* Delete confirmation dialog */}
+        {showDeleteConfirm && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="font-medium text-yellow-800 mb-3">Are you sure you want to delete this sale?</p>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className={`px-3 py-1 text-white rounded ${
+                  isDeleting ? 'bg-red-400' : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {isDeleting ? 'Deleting...' : 'Confirm Delete'}
+              </button>
+            </div>
+          </div>
+        )}
         
         <div className="space-y-4">
           <div className="mb-4 border-b pb-2">
@@ -325,13 +359,13 @@ export default function SaleDetailCard({
               </button>
               <div className="flex gap-2">
                 <button 
-                  onClick={handleDelete}
+                  onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting}
                   className={`px-4 py-2 text-white rounded-md transition-colors ${
                     isDeleting ? 'bg-red-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
                   }`}
                 >
-                  {isDeleting ? 'Deleting...' : deleteButtonText}
+                  {deleteButtonText}
                 </button>
                 <button 
                   onClick={handleSave}
