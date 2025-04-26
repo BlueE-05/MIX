@@ -202,7 +202,7 @@ class SaleService{
         AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())
         GROUP BY s.ID, c.Name, c.LastName, ph.Name, s.StartDate
-        ORDER BY s.ID DESC`);
+        ORDER BY s.StartDate DESC`);
          return result.recordset;
          console.log(result.recordset);
       } catch (error) {
