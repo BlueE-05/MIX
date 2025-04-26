@@ -143,9 +143,6 @@ class ReportService{
       return result.recordset;
   }
 
-
-
-  //REVISAR
     async getDaysCurrentMonth() {
       try {
         const pool = await poolPromise;
@@ -156,6 +153,14 @@ class ReportService{
         console.error('❌ Error en getDaysCurrentMonth', error);
         throw new Error('Error al obtener dias del mes actual');
       }
+    }
+
+    async getEveryDayClosedByUser(IDEmail: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('IDEmail', sql.VarChar, IDEmail)
+        .query(`EXEC sp_GetDailyClosedSalesByUser @UserEmail = @IDEmail;`);
+        return result.recordset;
     }
 
     async getTotalSalesByTeam(IDEmail: string){
@@ -211,24 +216,7 @@ class ReportService{
     }
 
 
-    //
-    /*
-   'SELECT 
-    t.ID AS TeamID,
-    t.TeamName,
-    SUM(sa.Quantity * p.UnitaryPrice * p.Commission) AS ComisionTotal
-FROM Sale s
-JOIN SaleArticle sa ON s.ID = sa.IDSale
-JOIN Product p ON sa.IDProduct = p.RefNum
-JOIN [User] u ON s.IDUser = u.IDEmail
-JOIN Team t ON u.TeamID = t.ID
-WHERE s.IDPhase = 5
-AND t.ID = (SELECT TeamID FROM dbo.[User] WHERE IDEmail = 'ana.gomez@empresa.com')
-AND MONTH(s.StartDate) = MONTH(GETDATE())
-AND YEAR(s.StartDate) = YEAR(GETDATE())
-GROUP BY t.ID, t.TeamName;
-    */
-
+    
     
 
 

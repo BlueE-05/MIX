@@ -285,3 +285,64 @@ BEGIN
 END
 ----ejecutar
 EXEC TeamSalesReport @UserEmail =  'ana.gomez@empresa.com';
+
+
+-----Obtener los dias del mes actual
+CREATE PROCEDURE getDiasDelMesActual 
+ AS 
+ BEGIN     
+ DECLARE @FechaActual DATE = GETDATE();     
+ DECLARE @PrimerDiaMes DATE = DATEFROMPARTS(YEAR(@FechaActual), MONTH(@FechaActual), 1);     
+ DECLARE @UltimoDiaMes DATE = EOMONTH(@FechaActual);      -- Consulta para generar todos los días del mes actual     
+ WITH Secuencia AS (         SELECT 0 AS n         UNION ALL         SELECT n + 1         FROM Secuencia         
+ WHERE n < DATEDIFF(day, @PrimerDiaMes, @UltimoDiaMes)     )     
+ SELECT          
+ DATEADD(day, n, @PrimerDiaMes) AS Fecha     
+ FROM          Secuencia     
+ OPTION (MAXRECURSION 31); -- Aseguramos suficiente recursión para un mes completo 
+ END;
+
+
+
+-----Obtener de cada dia del mes las ventas con modificacion a fase 5 de un usuario en específico
+CREATE PROCEDURE sp_GetDailyClosedSalesByUser
+    @UserEmail VARCHAR(255)
+AS
+BEGIN
+    CREATE TABLE #DiasMes (Fecha DATE);
+    
+    INSERT INTO #DiasMes
+    EXEC getDiasDelMesActual;
+    
+    SELECT 
+        dm.Fecha,
+        COUNT(sl.IDSale) AS VentasCerradas,
+        DAY(dm.Fecha) AS DiaDelMes,
+        DATENAME(WEEKDAY, dm.Fecha) AS DiaSemana
+    FROM 
+        #DiasMes dm
+    LEFT JOIN (
+        SELECT 
+            sl.IDSale,
+            CAST(sl.ChangeDate AS DATE) AS FechaCambio,
+            sl.SalePhase
+        FROM (
+            SELECT 
+                sl.IDSale,
+                sl.SalePhase,
+                sl.ChangeDate,
+                ROW_NUMBER() OVER (PARTITION BY sl.IDSale ORDER BY sl.ChangeDate DESC) AS rn
+            FROM SaleLifespan sl
+            JOIN Sale s ON sl.IDSale = s.ID
+            WHERE s.IDUser = @UserEmail -- Filtro por usuario
+        ) sl
+        WHERE sl.rn = 1
+        AND sl.SalePhase = 5
+    ) sl ON dm.Fecha = sl.FechaCambio
+    GROUP BY 
+        dm.Fecha
+    ORDER BY 
+        dm.Fecha;
+    
+    DROP TABLE #DiasMes;
+END;

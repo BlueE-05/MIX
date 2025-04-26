@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import LinesChartReport from '@/components/Dashboard/LinesChartReport';
 import LinesChart from '@/components/Dashboard/LinesChart';
 import PieChart from '@/components/Dashboard/PieChart';
 import BoxComisionesReport from '@/components/Dashboard/BoxComisionesReport';
@@ -153,11 +154,13 @@ export default function Dashboard() {
               <LinesChart 
                 salesData={currentData?.sales || []} 
                 reportType={reportType} 
-                daysofMonth={currentData?.daysofMonth} 
+                
               />
             )}
           </div>
         </div>
+
+        
 
         {/* Right Side - Stacked Content */}
         <div className="lg:col-span-1 h-full flex flex-col gap-4">

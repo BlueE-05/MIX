@@ -130,6 +130,18 @@ class ReportHTTPHandler {
       }
     }
 
+    getEveryDayClosedByUser= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getEveryDayClosedByUser(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+    
+
 }
 
 export default new ReportHTTPHandler();

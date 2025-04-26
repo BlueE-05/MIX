@@ -43,7 +43,7 @@ export default function SaleDetailCard({
     { id: '5', name: 'Mouse', price: 29.99 },
   ];
 
-  const [items, setItems] = useState<SaleItem[]>(sale.items || []);
+  const [items, setItems] = useState<SaleItem[]>([]);
 
   const normalizeStatus = (status: ReactNode | string): string => {
     if (typeof status === 'string') return status;
@@ -56,20 +56,17 @@ export default function SaleDetailCard({
     items: sale.items || []
   });
 
-  // Fetch phases and products from API
   useEffect(() => {
     const fetchData = async () => {
       setLoadingPhases(true);
       setLoadingProducts(true);
       
       try {
-        // Fetch phases
         const phasesResponse = await fetch('http://localhost:3003/newsale/Phases');
         if (!phasesResponse.ok) throw new Error('Failed to fetch phases');
         const phasesData = await phasesResponse.json();
         setPhases(phasesData);
 
-        // Fetch products
         const productsResponse = await fetch(`http://localhost:3003/report/ProdInfo/${sale.id}`);
         if (!productsResponse.ok) throw new Error('Failed to fetch products');
         const productsData = await productsResponse.json();
@@ -87,23 +84,14 @@ export default function SaleDetailCard({
     fetchData();
   }, [sale.id]);
 
-  const renderStatus = () => {
-    const statusString = normalizeStatus(sale.status)
-    const color = statusString === 'Closed' ? 'green' : 
-                 statusString === 'In Progress' ? 'blue' : 'yellow'
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium 
-        ${color === 'green' ? 'bg-green-100 text-green-800' :
-          color === 'blue' ? 'bg-blue-100 text-blue-800' :
-            'bg-yellow-100 text-yellow-800'}`}>
-        {statusString}
-      </span>
-    )
-  }
-
   const handleEdit = () => {
     setIsEditing(true);
     setErrorMessage(null);
+    setItems(products.map(product => ({
+      article: product.ProductID,
+      quantity: product.Quantity,
+      price: product.UnitaryPrice * product.Quantity
+    })));
   }
 
   const handleSave = () => {
@@ -120,7 +108,7 @@ export default function SaleDetailCard({
       status: normalizeStatus(sale.status),
       items: sale.items || []
     });
-    setItems(sale.items ? [...sale.items] : []);
+    setItems([]);
     setIsEditing(false);
     setShowDeleteConfirm(false);
     setErrorMessage(null);
@@ -265,94 +253,114 @@ export default function SaleDetailCard({
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-3">Articles</h3>
             
-            {/* Mostrar productos reales de la venta (siempre visibles) */}
-            {loadingProducts ? (
-              <p>Loading products...</p>
+            {isEditing ? (
+              items.length > 0 ? (
+                items.map((item, index) => {
+                  const currentArticle = articleOptions.find(a => a.id === item.article);
+                  return (
+                    <div key={`edit-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end border-t pt-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Article {index + 1}
+                        </label>
+                        <select
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                          value={item.article}
+                          onChange={(e) => handleArticleChange(index, e.target.value)}
+                        >
+                          {!item.article && <option value="">Select article</option>}
+                          {articleOptions.map((option) => (
+                            <option key={option.id} value={option.id}>
+                              {option.name} (${option.price.toFixed(2)})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Quantity
+                        </label>
+                        <input
+                          type="number"
+                          min="1"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                          value={item.quantity}
+                          onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Unit Price
+                        </label>
+                        <p className="text-gray-700">
+                          ${currentArticle?.price.toFixed(2) || '0.00'}
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Total
+                        </label>
+                        <p className="text-gray-700">${item.price.toFixed(2)}</p>
+                        {items.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeItem(index)}
+                            className="mt-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-gray-500">No articles added</p>
+              )
             ) : (
-              products.map((product, index) => (
-                <div key={`prod-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Product {index + 1}
-                    </label>
-                    <p className="text-gray-700">{product.ProductName}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity
-                    </label>
-                    <p className="text-gray-700">{product.Quantity}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Unit Price
-                    </label>
-                    <p className="text-gray-700">${product.UnitaryPrice.toFixed(2)}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Total
-                    </label>
-                    <p className="text-gray-700">${(product.UnitaryPrice * product.Quantity).toFixed(2)}</p>
-                  </div>
-                </div>
-              ))
+              loadingProducts ? (
+                <p>Loading products...</p>
+              ) : (
+                products.length > 0 ? (
+                  products.map((product, index) => {
+                    const productArticle = articleOptions.find(a => a.id === product.ProductID);
+                    return (
+                      <div key={`prod-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Product {index + 1}
+                          </label>
+                          <p className="text-gray-700">{productArticle?.name || product.ProductName}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Quantity
+                          </label>
+                          <p className="text-gray-700">{product.Quantity}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Unit Price
+                          </label>
+                          <p className="text-gray-700">${productArticle?.price.toFixed(2) || product.UnitaryPrice.toFixed(2)}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Total
+                          </label>
+                          <p className="text-gray-700">${(product.UnitaryPrice * product.Quantity).toFixed(2)}</p>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="text-gray-500">No products in this sale</p>
+                )
+              )
             )}
-
-            {/* Mostrar formulario de edición de artículos (solo en modo edición) */}
-            {isEditing && items.map((item, index) => (
-              <div key={`edit-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end border-t pt-4">
-                <div>
-                  <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    New Article {index + 1}
-                  </label>
-                  <select
-                    id={`article-${index}`}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    value={item.article}
-                    onChange={(e) => handleArticleChange(index, e.target.value)}
-                  >
-                    <option value="">Select article</option>
-                    {articleOptions.map((option) => (
-                      <option key={option.id} value={option.id}>
-                        {option.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    id={`quantity-${index}`}
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    value={item.quantity}
-                    onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Price
-                  </label>
-                  <p className="text-gray-700">${item.price.toFixed(2)}</p>
-                </div>
-
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => removeItem(index)}
-                    className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
 
             {isEditing && (
               <button
@@ -390,7 +398,15 @@ export default function SaleDetailCard({
                 </select>
               )
             ) : (
-              <div className="mt-1">{renderStatus()}</div>
+              <div className="mt-1">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  editedSale.status === 'Closed' ? 'bg-green-100 text-green-800' :
+                  editedSale.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                  'bg-yellow-100 text-yellow-800'
+                }`}>
+                  {typeof editedSale.status === 'string' ? editedSale.status : 'In Progress'}
+                </span>
+              </div>
             )}
           </div>
           

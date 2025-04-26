@@ -42,11 +42,14 @@ class ReportController {
   async getTotalSalesByMember(IDUser: string) {
     return this.reportService.getTotalSalesByMember(IDUser);
   }
- 
   
-
+ 
   async getDaysCurrentMonth() {
     return this.reportService.getDaysCurrentMonth();
+  }
+
+  async getEveryDayClosedByUser(IDUser: string) {
+    return this.reportService.getEveryDayClosedByUser(IDUser);
   }
 
 }

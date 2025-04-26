@@ -10,6 +10,7 @@ router.get('/comisTotal', ReportHTTPHandler.getTotalComissions);
 router.get('/Award', ReportHTTPHandler.getAward);
 router.get('/TeamPos', ReportHTTPHandler.getTeamPos);
 router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
+router.get('/ClosedDayUser', ReportHTTPHandler.getEveryDayClosedByUser);
 router.get('/ProdInfo/:idprod', ReportHTTPHandler.getProdInfo);
 router.get('/SalesTeam', ReportHTTPHandler.getTotalSalesByTeam);
 router.get('/ComissionTeam', ReportHTTPHandler.getTotalComissionByTeam);

@@ -1,5 +1,5 @@
 //Obtener token idk
-export const UserEmail = 'jorge.lopez@empresa.com';
+export const UserEmail = 'ana.gomez@empresa.com';
 
 
 
