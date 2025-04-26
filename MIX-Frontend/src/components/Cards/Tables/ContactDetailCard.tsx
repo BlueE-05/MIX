@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { ContactData, ContactRecieve } from '@/types/ContactTypes'
 import { updateContact } from '@/hooks/contacts/updateContact'
 import { deleteContact } from '@/hooks/contacts/deleteContact'
+import { fetchEnterprises } from '@/hooks/enterprises/fetchEnterprises'
+import { EnterpriseGet } from '@/types/EnterpriseTypes'
 
 interface ContactDetailCardProps {
   contact: ContactRecieve;
@@ -25,6 +27,7 @@ export default function ContactDetailCard({
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [enterprises, setEnterprises] = useState<EnterpriseGet[]>([])
   const [editedContact, setEditedContact] = useState<ContactData>({
     name: contact.Name,
     lastName: contact.LastName,
@@ -33,15 +36,25 @@ export default function ContactDetailCard({
     enterpriseName: contact.EnterpriseName
   })
 
-  // Initialize editedContact with transformed data when component mounts or contact changes
+  // Load enterprises and initialize editedContact
   useEffect(() => {
-    setEditedContact({
-      name: contact.Name,
-      lastName: contact.LastName,
-      email: contact.Email,
-      phoneNumber: contact.PhoneNumber,
-      enterpriseName: contact.EnterpriseName
-    })
+    const loadData = async () => {
+      try {
+        const enterprisesData = await fetchEnterprises()
+        setEnterprises(enterprisesData)
+        setEditedContact({
+          name: contact.Name,
+          lastName: contact.LastName,
+          email: contact.Email,
+          phoneNumber: contact.PhoneNumber,
+          enterpriseName: contact.EnterpriseName
+        })
+      } catch (err) {
+        setError('Failed to load enterprises data')
+        console.error("Error loading enterprises:", err)
+      }
+    }
+    loadData()
   }, [contact])
 
   const handleEdit = () => {
@@ -90,8 +103,6 @@ export default function ContactDetailCard({
     }))
   }
 
-  console.log("editedContact:", editedContact) //<-
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
@@ -138,13 +149,21 @@ export default function ContactDetailCard({
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Enterprise</h3>
             {isEditing ? (
-              <input
-                type="text"
-                value={editedContact.enterpriseName}
-                onChange={(e) => handleChange('enterpriseName', e.target.value)}
-                className="w-full p-2 border rounded"
-                disabled={isLoading}
-              />
+              <div className="mt-1">
+                <select
+                  value={editedContact.enterpriseName}
+                  onChange={(e) => handleChange('enterpriseName', e.target.value)}
+                  className="w-full p-2 border rounded"
+                  disabled={isLoading}
+                >
+                  <option value="">Select Enterprise</option>
+                  {enterprises.map((enterprise) => (
+                    <option key={enterprise.ID} value={enterprise.Name}>
+                      {enterprise.Name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             ) : (
               <p className="text-gray-700">{contact.EnterpriseName}</p>
             )}
