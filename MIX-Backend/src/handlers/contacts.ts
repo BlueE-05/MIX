@@ -69,7 +69,7 @@ export default class ContactHTTPHandler {
         try {
             const contactID = Number(req.params.id);
             const contactData: Contact = req.body;
-            const updated = await this.contactController.updateContact(contactID, contactData);
+            await this.contactController.updateContact(contactID, contactData);
             res.json({ message: 'Contact updated successfully' });
         } catch (error) {
             next(error);
