@@ -8,7 +8,8 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 } from 'chart.js';
 
 ChartJS.register(
@@ -18,44 +19,41 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
-interface LinesChartProps {
-  salesData?: number[];
-  reportType: 'team' | 'individual';
-  daysofMonth?: string[];
+interface SaleData {
+  Fecha: string;
+  VentasCerradas: number;
+  DiaDelMes: number;
+  DiaSemana: string;
 }
 
-export default function LinesChart({ salesData, reportType, daysofMonth }: LinesChartProps) {
-  const [days, setDays] = useState<string[]>([]);
+export default function LinesChart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<number[]>([]);
+  const [days, setDays] = useState<string[]>([]);
+  const [closedSales, setClosedSales] = useState<number[]>([]);
 
   useEffect(() => {
-    const fetchDaysOfMonth = async () => {
+    const fetchData = async () => {
       try {
-        if (!daysofMonth) {
-          const response = await fetch('http://localhost:3003/report/DaysMonth');
-          if (!response.ok) {
-            throw new Error('Error al obtener los días del mes');
-          }
-          const data = await response.json();
-          const formattedDays = data.map((item: { Fecha: string }) => {
-            const date = new Date(item.Fecha);
-            // Asegurarse de usar la fecha local
-            return date.getUTCDate().toString(); // o getDate() si el servidor usa zona horaria local
-          });
-          setDays(formattedDays);
+        setLoading(true);
+        const response = await fetch('http://localhost:3003/report/ClosedDayUser');
+        
+        if (!response.ok) {
+          throw new Error('Error al obtener los datos de ventas');
         }
         
-        // Generar datos aleatorios para el eje Y (simulando ventas)
-        const randomData = Array(daysofMonth?.length)
-          .fill(0)
-          .map(() => Math.floor(Math.random() * 1000) + 100);
-        setChartData(randomData);
+        const data: SaleData[] = await response.json();
         
+        // Procesar los datos como en el ejemplo
+        const daysArray = data.map(item => item.DiaDelMes.toString());
+        const salesArray = data.map(item => item.VentasCerradas);
+        
+        setDays(daysArray);
+        setClosedSales(salesArray);
         setLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -63,22 +61,21 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
       }
     };
 
-    fetchDaysOfMonth();
-  }, [daysofMonth]);
+    fetchData();
+  }, []);
 
-  // Usar days del estado o el prop daysofMonth si está disponible
-  const labels = daysofMonth || days;
-
-  const data = {
-    labels,
+  // Configuración del gráfico idéntica al ejemplo
+  const chartData = {
+    labels: days,
     datasets: [
       {
-        label: reportType === 'team' ? 'Team sale' : 'individual sale',
-        data: salesData || chartData,
-        borderColor: reportType === 'team' ? 'rgb(75, 192, 192)' : 'rgb(153, 102, 255)',
-        backgroundColor: reportType === 'team' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(153, 102, 255, 0.2)',
+        label: 'Closed Sales',
+        data: closedSales,
         tension: 0.1,
-        fill: true
+        fill: true,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderWidth: 2
       }
     ]
   };
@@ -90,42 +87,24 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
       legend: {
         position: 'top' as const,
       },
-      tooltip: {
-        callbacks: {
-          label: function(context: any) {
-            return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
-          }
-        }
-      }
     },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: 'Days of month'
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: 'Number of sales in each state'
-        },
-        beginAtZero: true
-      }
-    }
   };
 
-  if (loading && !daysofMonth) {
-    return <div>Loading data...</div>;
+  if (loading) {
+    return <div className="text-white text-center py-8">Cargando datos de ventas...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    return <div className="text-red-500 text-center py-8">Error: {error}</div>;
+  }
+
+  if (days.length === 0 || closedSales.length === 0) {
+    return <div className="text-gray-400 text-center py-8">No hay datos de ventas disponibles</div>;
   }
 
   return (
     <div className="w-full h-full">
-      <Line data={data} options={options} />
+      <Line data={chartData} options={options} />
     </div>
   );
 }

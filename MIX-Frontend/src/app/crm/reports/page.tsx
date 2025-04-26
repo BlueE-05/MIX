@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [teamComissionsData, setTeamComissionsData] = useState<{TeamID: number, TeamName: string, ComisionTotal: number}[]>([]);
   const [teamMembersData, setTeamMembersData] = useState<{IDEmail: string, TeamMember: string, TotalSalesCompleted: number, ComisionTotal: number}[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const isAdmin = true;
+  const isAdmin = false;
 
   // Obtener datos del equipo y miembros
   useEffect(() => {
@@ -150,18 +150,18 @@ export default function Dashboard() {
               <div className="flex items-center justify-center h-full">
                 <p>Please select a user from the dropdown</p>
               </div>
-            ) : (
-              <LinesChart 
+            ) : isAdmin ? (
+              
+              <LinesChartReport
                 salesData={currentData?.sales || []} 
                 reportType={reportType} 
                 
               />
-            )}
+              ) : (<LinesChart/> )}
           </div>
         </div>
 
-        
-
+     
         {/* Right Side - Stacked Content */}
         <div className="lg:col-span-1 h-full flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4">
