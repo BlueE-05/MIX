@@ -43,16 +43,16 @@ const initialColumns: { [key: string]: Task[] } = {
 const KanbanBoard: React.FC = () => {
   const [columns, setColumns] = useState<{ [key: string]: Task[] }>(initialColumns);
   const [currentPage, setCurrentPage] = useState(0);
-  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3); // Define el número inicial de columnas visibles
+  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3); // Define initial number of visible columns
   const boardRef = useRef<HTMLDivElement>(null);
 
-  // Calcular columnas visibles basado en el ancho del tablero
+  // Calculate visible columns based on board width
   useEffect(() => {
     const calculateVisibleColumns = () => {
       if (boardRef.current) {
         const boardWidth = boardRef.current.offsetWidth;
-        // Asumimos un ancho aproximado de columna de 300px + gap
-        const columnWidth = 300 + 24; // 24 es el gap (gap-6 = 1.5rem = 24px)
+        // Assuming approximate column width of 300px + gap
+        const columnWidth = 300 + 24; // 24 is the gap (gap-6 = 1.5rem = 24px)
         const count = Math.max(1, Math.floor(boardWidth / columnWidth));
         setVisibleColumnsCount(count);
       }
@@ -63,13 +63,23 @@ const KanbanBoard: React.FC = () => {
     return () => window.removeEventListener('resize', calculateVisibleColumns);
   }, []);
 
-  // Dividir las columnas en grupos según las columnas visibles
   const columnGroups = React.useMemo(() => {
     const columnNames = Object.keys(columns);
     const groups = [];
-    for (let i = 0; i < columnNames.length; i += visibleColumnsCount) {
-      groups.push(columnNames.slice(i, i + visibleColumnsCount));
+    
+    const orderedColumns = [
+      'Prospecting',
+      'Initial Contact', 
+      'Proposal',
+      'Negotiation',
+      'Closing',
+      'Cancelled'
+    ].filter(col => columnNames.includes(col));
+
+    for (let i = 0; i < orderedColumns.length; i += visibleColumnsCount) {
+      groups.push(orderedColumns.slice(i, i + visibleColumnsCount));
     }
+    
     return groups;
   }, [columns, visibleColumnsCount]);
 
@@ -90,39 +100,37 @@ const KanbanBoard: React.FC = () => {
   const handleDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => {
     event.dataTransfer.setData('taskId', taskId.toString());
     event.dataTransfer.setData('fromColumn', fromColumn);
-    event.currentTarget.classList.add('dragging'); // Añadir clase al elemento arrastrado (Card)
+    event.currentTarget.classList.add('dragging'); // Add class to dragged element (Card)
   }, []);
 
   const handleDragEnd = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.currentTarget.classList.remove('dragging'); // Limpiar clase
+    event.currentTarget.classList.remove('dragging'); // Remove class
   }, []);
 
-
   const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>, toColumn: string) => {
-    event.preventDefault(); // Necesario para permitir el drop
+    event.preventDefault(); // Necessary to allow drop
     const taskId = parseInt(event.dataTransfer.getData('taskId'), 10);
     const fromColumn = event.dataTransfer.getData('fromColumn');
 
     if (!taskId || !fromColumn || !toColumn || fromColumn === toColumn || !columns[fromColumn] || !columns[toColumn]) {
-      // Validar que toda la información necesaria está presente
-      console.warn("Drop inválido - Faltan datos o columnas inválidas");
+      // Validate all required information is present
+      console.warn("Invalid drop - Missing data or invalid columns");
       return;
     }
 
-
     setColumns(prevColumns => {
       const taskToMove = prevColumns[fromColumn].find(task => task.id === taskId);
-      if (!taskToMove) return prevColumns; // La tarea no se encontró (raro, pero seguro)
+      if (!taskToMove) return prevColumns; // Task not found (rare but safe)
 
       const newColumns = { ...prevColumns };
       newColumns[fromColumn] = newColumns[fromColumn].filter(task => task.id !== taskId);
       newColumns[toColumn] = [...newColumns[toColumn], taskToMove];
       return newColumns;
     });
-  }, [columns]); // Depende de columns para encontrar la tarea
+  }, [columns]); // Depends on columns to find the task
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Necesario para permitir el drop
+    event.preventDefault(); // Necessary to allow drop
   }, []);
 
   return (
@@ -135,7 +143,7 @@ const KanbanBoard: React.FC = () => {
           </div>
         </div>
 
-        {/* Board Container con controles de paginación */}
+        {/* Board Container with pagination controls */}
         <div className="relative">
           {columnGroups.length > 1 && (
             <div className="flex items-center justify-between mb-4">
@@ -159,8 +167,8 @@ const KanbanBoard: React.FC = () => {
             </div>
           )}
 
-          <div className="overflow-x-hidden"> {/* Oculta el scroll horizontal general */}
-            <div className="flex gap-6 transition-transform duration-300" style={{ transform: `translateX(-${currentPage * (300 + 24) * visibleColumnsCount / visibleColumns.length}px)` }}>
+          <div className="overflow-x-auto">
+            <div className="flex gap-6 min-w-max">
               {visibleColumns.map(columnName => (
                 <Column
                   key={columnName}

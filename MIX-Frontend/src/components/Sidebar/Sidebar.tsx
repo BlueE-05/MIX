@@ -48,7 +48,7 @@ const Sidebar = () => {
     { name: "Dana Torres", role: "Backend", social: "@dana", socialLink:"https://www.linkedin.com/in/dana-elizabeth-torres-estrada-b20b2b329" },
     { name: "Maximo Ramírez", role: "Frontend", social: "@maximo", socialLink:"https://www.linkedin.com/in/maximo-ramirez" },
     { name: "Fatima Castillo", role: "Backend", social: "@fatima", socialLink:"https://www.linkedin.com/in/fatimacastilloaguirre" },
-    { name: "Daniel Sanchez", role: "Videogame", social: "@daniel", socialLink:"" },
+    { name: "Daniel Sanchez", role: "Videogame", social: "@daniel", socialLink:"https://www.linkedin.com/in/daniel-sanchez-a8688b305/" },
     { name: "Sandino Ortiz", role: "Backend", social: "@sandino", socialLink:"https://www.linkedin.com/in/ernesto-sandino-ortiz-de-le%C3%B3n-91255227a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" }
   ];
 

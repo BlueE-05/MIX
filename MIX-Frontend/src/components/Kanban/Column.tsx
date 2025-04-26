@@ -1,9 +1,7 @@
-// Column.tsx
-'use client'; // Mantener si usas Next.js App Router
+'use client'; 
 import React from 'react';
-import Card from './Card'; // Importar el componente Card
-import { Task } from './types'; // Importar desde el archivo de tipos
-// Quitar import './Column.css'; si se maneja todo con Tailwind y KanbanBoard.css
+import Card from './Card'; 
+import { Task } from './types';
 
 interface ColumnProps {
   title: string;
@@ -26,9 +24,6 @@ const Column: React.FC<ColumnProps> = ({
   onDragOver,
 }) => {
   return (
-    // Aplicar estilos de columna con Tailwind (o mantener clase .column si prefieres CSS)
-    // Añadir un ancho fijo o flexible según necesites. Width de KanbanBoardCSS era 325px
-    // Height era 50vh, overflow-y auto
     <div
       className= {`flex flex-col w-80 h-[70vh] p-4 rounded-lg flex-shrink-0 shadow-xl border ${colorClass}`} // Estilos Tailwind para la columna
       onDrop={(e) => onDrop(e, title)}
