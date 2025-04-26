@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export interface ProductAPI {
+export interface ProductReceive {
     RefNum: string;
     Name: string;
     Description: string;

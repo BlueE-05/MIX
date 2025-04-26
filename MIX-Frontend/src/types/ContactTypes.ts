@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 
-export interface ContactRecieve {
+export interface ContactReceive {
     ID: number;
     Name: string;
     LastName: string;
