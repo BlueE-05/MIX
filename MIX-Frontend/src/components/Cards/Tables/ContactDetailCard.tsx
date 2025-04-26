@@ -8,7 +8,7 @@ import { deleteContact } from '@/hooks/contacts/deleteContact'
 interface ContactDetailCardProps {
   contact: ContactRecieve;
   onClose: () => void;
-  onEdit?: (id: number, data: ContactData) => void;
+  onSave?: (id: number, data: ContactData) => void;
   editButtonText?: string;
   closeButtonText?: string;
   saveButtonText?: string;
@@ -18,7 +18,6 @@ interface ContactDetailCardProps {
 export default function ContactDetailCard({
   contact,
   onClose,
-  onEdit,
   editButtonText = 'Edit',
   closeButtonText = 'Close',
   saveButtonText = 'Save',
@@ -54,14 +53,11 @@ export default function ContactDetailCard({
     setIsLoading(true)
     setError(null)
     try {
-      if (onEdit) {
-        await updateContact(contact.ID, editedContact)
-        onEdit(contact.ID, editedContact)
-      }
+      await updateContact(contact.ID, editedContact)
       setIsEditing(false)
+      onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to update contact")
-      console.error("Error updating contact:", err)
     } finally {
       setIsLoading(false)
     }
@@ -94,6 +90,8 @@ export default function ContactDetailCard({
       [field]: value
     }))
   }
+
+  console.log("editedContact:", editedContact) //<-
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">

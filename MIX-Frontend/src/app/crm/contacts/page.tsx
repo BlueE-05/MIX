@@ -2,14 +2,14 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ReactNode } from 'react';
 
-import { ContactRecieve, ContactView, ContactData } from '@/types/ContactTypes';
+import { ContactRecieve } from '@/types/ContactTypes';
 import { fetchContacts } from '@/hooks/contacts/fetchContacts';
 
 import CustomTable from '@/components/Tables/CustomTable';
 import LabelOval from '@/components/Buttons/LabelOval';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import RoundedButton from '@/components/Buttons/RoundedButton';
-import { CirclePlus } from 'lucide-react';
+import { CirclePlus, LoaderCircle } from 'lucide-react';
 
 import Formulario from '@/components/Forms/ContactsForms';
 import ContactDetailCard from '@/components/Cards/Tables/ContactDetailCard'
@@ -49,7 +49,6 @@ export default function ContactPage() {
       setTableData(transformToTableData(contacts));
     } catch (err) {
       setError("Failed to load contacts. Please try again later.");
-      console.error("Error loading contacts:", err);
     } finally {
       setIsLoading(false);
     }
@@ -68,25 +67,28 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen p-6">
       {/* Title of the page */}
-      <h1 className="font-bold text-3xl mb-5">Contacts List</h1>
+      <div className="flex justify-between items-center mb-5 mr-5">
+        <h1 className="font-bold text-3xl">Contacts List</h1>
+        {isLoading && <LoaderCircle className="animate-spin text-stone-900" />}
+      </div>
 
-      {isLoading && <div className="text-center py-4">Loading contacts...</div>}
+
       {error && <div className="text-red-500 text-center py-4">{error}</div>}
 
       {/* Table of contacts */}
-      <CustomTable 
-        headers={contactHeaders} 
-        data={tableData} 
-        color="green" 
-        includeSearch={true} 
+      <CustomTable
+        headers={contactHeaders}
+        data={tableData}
+        color="green"
+        includeSearch={true}
         onSearch={handleSearch}
       />
 
       {/* Form to add new contact or enterprise */}
       {showForm && (
-        <Formulario 
+        <Formulario
           onClose={() => { setShowForm(false); loadContacts(); }}
-          onFormTypeChange={(type) => setFormType(type as 'contact' | 'enterprise')} 
+          onFormTypeChange={(type) => setFormType(type as 'contact' | 'enterprise')}
           formType={formType}
         />
       )}
