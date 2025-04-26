@@ -1,25 +1,19 @@
-import { ContactAPI } from "@/types/ContactTypes";
+import { ContactData } from "@/types/ContactTypes";
+import { url } from "@/utils/constants";
 
-const createContact = async (contactData: ContactAPI): Promise<void> => {
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  if (!url) {
-    console.error("API URL not defined in environment variables");
-  }
+export const createContact = async (contactData: ContactData): Promise<void> => {
+  const enterpriseData = contactData.enterpriseName;
+  console.log("enterprise:", enterpriseData);
+  const response = await fetch(`${url}/api/contacts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(contactData),
+  });
 
-  try {
-    const response = await fetch(`${url}/contacts`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(contactData),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Error creating contact: ${response.status} - ${errorText}`);
-    }
-  } catch (error) {
-    console.error("Error creating contact:", error);
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error creating contact: ${response.status} - ${errorText}`);
   }
 };

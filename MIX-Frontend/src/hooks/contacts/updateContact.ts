@@ -1,26 +1,17 @@
-import { ContactData } from "@/components/Forms/ContactsForms";
+import { ContactData } from "@/types/ContactTypes";
+import { url } from "@/utils/constants";
 
-const updateContact = async (contactId: number, updatedData: ContactData): Promise<void> => {
-    const url = process.env.NEXT_PUBLIC_API_URL;
-    if (!url) {
-        console.error("API URL not defined in environment variables");
-        return;
-    }
-
-    try {
-        const response = await fetch(`${url}/contacts/${contactId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedData),
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Error updating contact: ${response.status} - ${errorText}`);
-        }
-    } catch (error) {
-        console.error("Error updating contact:", error);
+export const updateContact = async (contactId: number, updatedData: ContactData): Promise<void> => {
+    const response = await fetch(`${url}/api/contacts/${contactId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+    });
+    
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Data: ${JSON.stringify(updatedData.enterpriseName)} Error updating contact: ${response.status} - ${errorText}`);
     }
 };
