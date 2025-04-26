@@ -198,3 +198,90 @@ WHERE
     AND YEAR(sl.ChangeDate) = YEAR(GETDATE())
 ORDER BY 
     sl.ChangeDate DESC;
+
+
+----------------Obtener el total de ventas de un equipo
+CREATE PROCEDURE GetTeamSalesReport
+    @UserEmail NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @UserTeamID INT = (SELECT TeamID FROM [User] WHERE IDEmail = @UserEmail);
+    
+    -- Validate if user exists
+    IF @UserTeamID IS NULL
+    BEGIN
+        RAISERROR('User not found', 16, 1);
+        RETURN;
+    END
+    
+    SELECT 
+        u.IDEmail,
+        u.Name + ' ' + u.LastName AS TeamMember,
+        COUNT(DISTINCT s.ID) AS TotalSalesCompleted,
+        SUM(sa.Quantity * p.UnitaryPrice) AS TotalSalesAmount,
+        AVG(sa.Quantity * p.UnitaryPrice) AS AverageSaleAmount,
+        MAX(s.StartDate) AS LastSaleDate
+    FROM 
+        [User] u
+    LEFT JOIN 
+        Sale s ON u.IDEmail = s.IDUser AND s.IDPhase = 5
+    LEFT JOIN 
+        SaleArticle sa ON s.ID = sa.IDSale
+    LEFT JOIN 
+        Product p ON sa.IDProduct = p.RefNum
+    WHERE 
+        u.TeamID = @UserTeamID
+        AND u.IDEmail IN (SELECT IDUser FROM Sale WHERE IDPhase = 5)
+        AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+    GROUP BY 
+        u.IDEmail, u.Name, u.LastName
+    ORDER BY 
+        TotalSalesAmount DESC;
+END
+--- Ejemplo de ejecución
+
+
+-----------Obtener la información de ventas (ventas cerradas, comsiones) de cada miembro de un equipo 
+CREATE PROCEDURE TeamSalesReport
+    @UserEmail NVARCHAR(255)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    DECLARE @UserTeamID INT = (SELECT TeamID FROM [User] WHERE IDEmail = @UserEmail);
+    
+    -- Validate if user exists
+    IF @UserTeamID IS NULL
+    BEGIN
+        RAISERROR('User not found', 16, 1);
+        RETURN;
+    END
+    
+    SELECT 
+        u.IDEmail,
+        u.Name + ' ' + u.LastName AS TeamMember,
+        COUNT(DISTINCT s.ID) AS TotalSalesCompleted,
+        SUM(sa.Quantity * p.UnitaryPrice * p.Commission) AS ComisionTotal
+    FROM 
+        [User] u
+    LEFT JOIN 
+        Sale s ON u.IDEmail = s.IDUser AND s.IDPhase = 5
+    LEFT JOIN 
+        SaleArticle sa ON s.ID = sa.IDSale
+    LEFT JOIN 
+        Product p ON sa.IDProduct = p.RefNum
+    WHERE 
+        u.TeamID = @UserTeamID
+        AND s.IDPhase = 5
+        AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+    GROUP BY 
+        u.IDEmail, u.Name, u.LastName
+    ORDER BY 
+        ComisionTotal DESC;
+END
+----ejecutar
+EXEC TeamSalesReport @UserEmail =  'ana.gomez@empresa.com';

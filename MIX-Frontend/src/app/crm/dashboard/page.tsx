@@ -48,7 +48,7 @@ const DashboardPage = () => {
     const fetchTopSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3002/sale/TopSales`);
+        const response = await fetch(`http://localhost:3003/sale/TopSales`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -73,7 +73,7 @@ const DashboardPage = () => {
     const fetchTeamPos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3002/report/TeamPos`);
+        const response = await fetch(`http://localhost:3003/report/TeamPos`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -90,6 +90,8 @@ const DashboardPage = () => {
       }
     };
 
+   
+
     fetchTeamPos();
   }, []);
 
@@ -97,7 +99,7 @@ const DashboardPage = () => {
     const fetchAward = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3002/report/Award`);
+        const response = await fetch(`http://localhost:3003/report/Award`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -241,3 +243,5 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
+

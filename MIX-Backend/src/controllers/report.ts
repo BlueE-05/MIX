@@ -30,6 +30,19 @@ class ReportController {
   async getProdInfo(idprod: number) {
     return this.reportService.getProdInfo(idprod);
   }
+
+  async getTotalSalesByTeam(IDUser: string) {
+    return this.reportService.getTotalSalesByTeam(IDUser);
+  }
+
+  async getTotalComissionByTeam(IDUser: string) {
+    return this.reportService.getTotalComissionByTeam(IDUser);
+  }
+
+  async getTotalSalesByMember(IDUser: string) {
+    return this.reportService.getTotalSalesByMember(IDUser);
+  }
+ 
   
 
   async getDaysCurrentMonth() {

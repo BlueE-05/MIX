@@ -9,6 +9,13 @@ interface Phase {
   IDPhase: number;
 }
 
+interface Product {
+  ProductID: string;
+  ProductName: string;
+  UnitaryPrice: number;
+  Quantity: number;
+}
+
 export default function SaleDetailCard({
   sale,
   onClose,
@@ -25,6 +32,8 @@ export default function SaleDetailCard({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [phases, setPhases] = useState<Phase[]>([]);
   const [loadingPhases, setLoadingPhases] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(false);
   
   const articleOptions: Article[] = [
     { id: '1', name: 'Laptop', price: 999.99 },
@@ -47,27 +56,36 @@ export default function SaleDetailCard({
     items: sale.items || []
   });
 
-  // Fetch phases from API
+  // Fetch phases and products from API
   useEffect(() => {
-    const fetchPhases = async () => {
+    const fetchData = async () => {
       setLoadingPhases(true);
+      setLoadingProducts(true);
+      
       try {
-        const response = await fetch('http://localhost:3002/newsale/Phases');
-        if (!response.ok) {
-          throw new Error('Failed to fetch phases');
-        }
-        const data = await response.json();
-        setPhases(data);
+        // Fetch phases
+        const phasesResponse = await fetch('http://localhost:3003/newsale/Phases');
+        if (!phasesResponse.ok) throw new Error('Failed to fetch phases');
+        const phasesData = await phasesResponse.json();
+        setPhases(phasesData);
+
+        // Fetch products
+        const productsResponse = await fetch(`http://localhost:3003/report/ProdInfo/${sale.id}`);
+        if (!productsResponse.ok) throw new Error('Failed to fetch products');
+        const productsData = await productsResponse.json();
+        setProducts(productsData);
+        
       } catch (error) {
-        console.error('Error fetching phases:', error);
-        setErrorMessage('Failed to load phases. Please try again later.');
+        console.error('Error fetching data:', error);
+        setErrorMessage('Failed to load data. Please try again later.');
       } finally {
         setLoadingPhases(false);
+        setLoadingProducts(false);
       }
     };
 
-    fetchPhases();
-  }, []);
+    fetchData();
+  }, [sale.id]);
 
   const renderStatus = () => {
     const statusString = normalizeStatus(sale.status)
@@ -84,7 +102,7 @@ export default function SaleDetailCard({
   }
 
   const handleEdit = () => {
-    setIsEditing(true)
+    setIsEditing(true);
     setErrorMessage(null);
   }
 
@@ -113,7 +131,7 @@ export default function SaleDetailCard({
     setErrorMessage(null);
     
     try {
-      const response = await fetch(`http://localhost:3002/sale/${sale.id}`, {
+      const response = await fetch(`http://localhost:3003/sale/${sale.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -247,49 +265,74 @@ export default function SaleDetailCard({
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-3">Articles</h3>
             
-            {items.map((item, index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+            {/* Mostrar productos reales de la venta (siempre visibles) */}
+            {loadingProducts ? (
+              <p>Loading products...</p>
+            ) : (
+              products.map((product, index) => (
+                <div key={`prod-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Product {index + 1}
+                    </label>
+                    <p className="text-gray-700">{product.ProductName}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Quantity
+                    </label>
+                    <p className="text-gray-700">{product.Quantity}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Unit Price
+                    </label>
+                    <p className="text-gray-700">${product.UnitaryPrice.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Total
+                    </label>
+                    <p className="text-gray-700">${(product.UnitaryPrice * product.Quantity).toFixed(2)}</p>
+                  </div>
+                </div>
+              ))
+            )}
+
+            {/* Mostrar formulario de edición de artículos (solo en modo edición) */}
+            {isEditing && items.map((item, index) => (
+              <div key={`edit-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end border-t pt-4">
                 <div>
                   <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Article {index + 1}
+                    New Article {index + 1}
                   </label>
-                  {isEditing ? (
-                    <select
-                      id={`article-${index}`}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      value={item.article}
-                      onChange={(e) => handleArticleChange(index, e.target.value)}
-                    >
-                      <option value="">Select article</option>
-                      {articleOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p className="text-gray-700">
-                      {articleOptions.find(a => a.id === item.article)?.name || 'Not selected'}
-                    </p>
-                  )}
+                  <select
+                    id={`article-${index}`}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={item.article}
+                    onChange={(e) => handleArticleChange(index, e.target.value)}
+                  >
+                    <option value="">Select article</option>
+                    {articleOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
                     Quantity
                   </label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      id={`quantity-${index}`}
-                      min="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                    />
-                  ) : (
-                    <p className="text-gray-700">{item.quantity}</p>
-                  )}
+                  <input
+                    type="number"
+                    id={`quantity-${index}`}
+                    min="1"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={item.quantity}
+                    onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
+                  />
                 </div>
 
                 <div>
@@ -299,17 +342,15 @@ export default function SaleDetailCard({
                   <p className="text-gray-700">${item.price.toFixed(2)}</p>
                 </div>
 
-                {isEditing && items.length > 1 && (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(index)}
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
             ))}
 

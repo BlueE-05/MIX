@@ -46,7 +46,7 @@ const initialData = {
   ],
 };
 
-export default function PieChart({ distribution, compact = false }: PieChartProps = {}) {
+export default function PieChartReport({ distribution, compact = false }: PieChartProps = {}) {
   const [chartData, setChartData] = useState(initialData);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

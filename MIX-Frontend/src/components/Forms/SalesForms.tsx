@@ -92,17 +92,17 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     const fetchData = async () => {
       try {
         // Cargar contactos
-        const contactsRes = await fetch('http://localhost:3002/newsale/ContactsByUser');
+        const contactsRes = await fetch('http://localhost:3003/newsale/ContactsByUser');
         if (!contactsRes.ok) throw new Error('Error loading contacts');
         setContacts(await contactsRes.json());
 
         // Cargar productos
-        const productsRes = await fetch('http://localhost:3002/newsale/AllProd');
+        const productsRes = await fetch('http://localhost:3003/newsale/AllProd');
         if (!productsRes.ok) throw new Error('Error loading products');
         setProducts(await productsRes.json());
 
         // Cargar fases
-        const phasesRes = await fetch('http://localhost:3002/newsale/Phases');
+        const phasesRes = await fetch('http://localhost:3003/newsale/Phases');
         if (!phasesRes.ok) throw new Error('Error loading phases');
         setPhases(await phasesRes.json());
 
@@ -178,7 +178,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
       };
 
       // Enviar al backend
-      const response = await fetch('http://localhost:3002/newsale/', {
+      const response = await fetch('http://localhost:3003/newsale/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export default function Formulario({ onClose, onSubmit }: FormularioProps) {
     }
     
     // Obtener precio
-    const response = await fetch(`http://localhost:3002/newsale/ProdPrice/${selectedProduct.IDProd}`);
+    const response = await fetch(`http://localhost:3003/newsale/ProdPrice/${selectedProduct.IDProd}`);
     
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);

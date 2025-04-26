@@ -15,9 +15,6 @@ class SaleController {
     return this.saleService.deleteSale(idsale);
   }
 
-
-
-
   async getAllEnt() {
     return this.saleService.getAllEnt();
   }

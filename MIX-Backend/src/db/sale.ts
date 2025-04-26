@@ -23,7 +23,7 @@ class SaleService{
             JOIN Phase ph ON s.IDPhase = ph.ID
             JOIN SaleArticle sa ON s.ID = sa.IDSale
             JOIN Product p ON sa.IDProduct = p.RefNum
-            WHERE s.IDUser = 'ana.gomez@empresa.com'
+            WHERE s.IDUser = @id
             GROUP BY s.ID, e.Name, ph.Name, s.StartDate
             ORDER BY s.StartDate DESC`);
            return result.recordset;

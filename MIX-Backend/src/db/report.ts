@@ -86,21 +86,23 @@ class ReportService{
     }
   }
 
+
   
   //Calcular comisiones de un solo usuario en el mes actual
   //LISTO
-  async getTotalComissions(IDUser: string) {
+  async getTotalComissions(iduser: string) {
     try {
         const pool = await poolPromise;
         const request = pool.request();
-        const result = await request.input('IDUser', sql.VarChar, IDUser).query(
+        const result = await request.input('iduser', sql.VarChar, iduser).query(
         `SELECT 
-        SUM(sa.Quantity * p.Commission) AS TotalCommission
+        SUM(sa.Quantity * p.Commission * p.UnitaryPrice) AS TotalCommission
         FROM dbo.[User] as u
         JOIN Sale s ON u.IDEmail = s.IDUser
         JOIN SaleArticle sa ON s.ID = sa.IDSale
         JOIN Product p ON sa.IDProduct = p.RefNum
-        WHERE u.IDEmail = @IDUser
+        WHERE u.IDEmail = @iduser
+        AND s.IDPhase = 5
 		    AND MONTH(s.StartDate) = MONTH(GETDATE())
         AND YEAR(s.StartDate) = YEAR(GETDATE())` );
         return result.recordset;
@@ -156,7 +158,79 @@ class ReportService{
       }
     }
 
+    async getTotalSalesByTeam(IDEmail: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('IDEmail', sql.VarChar, IDEmail)
+        .query(
+        `SELECT 
+        t.ID AS TeamID,
+        t.TeamName,
+        COUNT(DISTINCT s.ID) AS TotalCompletedSales
+        FROM Sale s
+        JOIN SaleArticle sa ON s.ID = sa.IDSale
+        JOIN Product p ON sa.IDProduct = p.RefNum
+        JOIN [User] u ON s.IDUser = u.IDEmail
+        JOIN Team t ON u.TeamID = t.ID
+        WHERE s.IDPhase = 5
+        AND t.ID = (SELECT TeamID FROM [User] WHERE IDEmail = @IDEmail)
+        AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+        GROUP BY t.ID, t.TeamName`);
+        return result.recordset;
+    }
+
+    async getTotalComissionByTeam(iduser: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('iduser', sql.VarChar, iduser)
+        .query(
+        `SELECT 
+        t.ID AS TeamID,
+        t.TeamName,
+        SUM(sa.Quantity * p.UnitaryPrice * p.Commission) AS ComisionTotal
+        FROM Sale s
+        JOIN SaleArticle sa ON s.ID = sa.IDSale
+        JOIN Product p ON sa.IDProduct = p.RefNum
+        JOIN [User] u ON s.IDUser = u.IDEmail
+        JOIN Team t ON u.TeamID = t.ID
+        WHERE s.IDPhase = 5
+        AND t.ID = (SELECT TeamID FROM dbo.[User] WHERE IDEmail = @iduser)
+        AND MONTH(s.StartDate) = MONTH(GETDATE())
+        AND YEAR(s.StartDate) = YEAR(GETDATE())
+        GROUP BY t.ID, t.TeamName`);
+        return result.recordset;
+    }
+
+    async getTotalSalesByMember(IDEmail: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('IDEmail', sql.VarChar, IDEmail)
+        .query(` EXEC TeamSalesReport @UserEmail = @IDEmail`);
+        return result.recordset;
+    }
+
+
+    //
+    /*
+   'SELECT 
+    t.ID AS TeamID,
+    t.TeamName,
+    SUM(sa.Quantity * p.UnitaryPrice * p.Commission) AS ComisionTotal
+FROM Sale s
+JOIN SaleArticle sa ON s.ID = sa.IDSale
+JOIN Product p ON sa.IDProduct = p.RefNum
+JOIN [User] u ON s.IDUser = u.IDEmail
+JOIN Team t ON u.TeamID = t.ID
+WHERE s.IDPhase = 5
+AND t.ID = (SELECT TeamID FROM dbo.[User] WHERE IDEmail = 'ana.gomez@empresa.com')
+AND MONTH(s.StartDate) = MONTH(GETDATE())
+AND YEAR(s.StartDate) = YEAR(GETDATE())
+GROUP BY t.ID, t.TeamName;
+    */
+
     
+
 
 }
 export default ReportService;

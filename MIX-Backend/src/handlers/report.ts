@@ -52,6 +52,8 @@ class ReportHTTPHandler {
       }
     };
 
+      
+
 
     getTotalComissions = async (req: Request, res: Response, next: NextFunction) => {
       try {
@@ -85,6 +87,39 @@ class ReportHTTPHandler {
         next(error);
       }
     }
+
+
+    getTotalSalesByTeam= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getTotalSalesByTeam(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+
+    getTotalComissionByTeam= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getTotalComissionByTeam(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+    getTotalSalesByMember= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getTotalSalesByMember(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
 
     getDaysCurrentMonth = async (req: Request, res: Response, next: NextFunction) => {
       try {
