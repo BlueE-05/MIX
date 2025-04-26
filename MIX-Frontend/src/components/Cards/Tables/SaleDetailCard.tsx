@@ -1,8 +1,13 @@
 'use client'
 import { ContactData } from '@/components/Forms/ContactsForms'
-import { ChangeEvent, ReactNode, useState } from 'react'
+import { ChangeEvent, ReactNode, useState, useEffect } from 'react'
 import { Article, SaleItem } from '@/types/Sales'
 import { SaleDetailCardProps } from '@/types/DetailCards';
+
+interface Phase {
+  Name: string;
+  IDPhase: number;
+}
 
 export default function SaleDetailCard({
   sale,
@@ -18,6 +23,8 @@ export default function SaleDetailCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [phases, setPhases] = useState<Phase[]>([]);
+  const [loadingPhases, setLoadingPhases] = useState(false);
   
   const articleOptions: Article[] = [
     { id: '1', name: 'Laptop', price: 999.99 },
@@ -39,6 +46,28 @@ export default function SaleDetailCard({
     status: normalizeStatus(sale.status),
     items: sale.items || []
   });
+
+  // Fetch phases from API
+  useEffect(() => {
+    const fetchPhases = async () => {
+      setLoadingPhases(true);
+      try {
+        const response = await fetch('http://localhost:3002/newsale/Phases');
+        if (!response.ok) {
+          throw new Error('Failed to fetch phases');
+        }
+        const data = await response.json();
+        setPhases(data);
+      } catch (error) {
+        console.error('Error fetching phases:', error);
+        setErrorMessage('Failed to load phases. Please try again later.');
+      } finally {
+        setLoadingPhases(false);
+      }
+    };
+
+    fetchPhases();
+  }, []);
 
   const renderStatus = () => {
     const statusString = normalizeStatus(sale.status)
@@ -111,6 +140,10 @@ export default function SaleDetailCard({
       [field]: value
     }))
   }
+
+  const handlePhaseChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    handleChange('status', e.target.value);
+  };
 
   const handleAddItem = () => {
     setItems([...items, { article: '', quantity: 1, price: 0 }]);
@@ -299,15 +332,22 @@ export default function SaleDetailCard({
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Status</h3>
             {isEditing ? (
-              <select
-                value={typeof editedSale.status === 'string' ? editedSale.status : ''}
-                onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="In Progress">In Progress</option>
-                <option value="Closed">Closed</option>
-                <option value="Pending">Pending</option>
-              </select>
+              loadingPhases ? (
+                <p>Loading phases...</p>
+              ) : (
+                <select
+                  value={typeof editedSale.status === 'string' ? editedSale.status : ''}
+                  onChange={handlePhaseChange}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select a phase</option>
+                  {phases.map((phase) => (
+                    <option key={phase.IDPhase} value={phase.Name}>
+                      {phase.Name}
+                    </option>
+                  ))}
+                </select>
+              )
             ) : (
               <div className="mt-1">{renderStatus()}</div>
             )}
