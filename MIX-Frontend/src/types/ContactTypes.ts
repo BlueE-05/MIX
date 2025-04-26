@@ -1,14 +1,14 @@
 import { ReactNode } from "react";
 
 export interface ContactRecieve {
-    id: number;
-    name: string;
-    lastName: string;
-    enterpriseName: string;
-    status: boolean;
-    phoneNumber: string;
-    email: string;
-    creationDate: Date;
+    ID: number;
+    Name: string;
+    LastName: string;
+    EnterpriseName: string;
+    Status: boolean;
+    PhoneNumber: string;
+    Email: string;
+    CreationDate: Date;
 }
 
 export interface ContactView {

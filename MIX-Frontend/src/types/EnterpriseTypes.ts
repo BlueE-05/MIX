@@ -1,9 +1,9 @@
 export interface EnterpriseSend {
-    Name: string;
-    Description?: string | '';
-    Industry: string;
-    WebPage?: string | '';
-    Location?: string | '';
+    name: string;
+    description?: string | '';
+    industry: string;
+    website?: string | '';
+    address?: string | '';
 }
 
 export interface EnterpriseGet {
