@@ -1,35 +1,71 @@
+//deep
 'use client'
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useCallback, use, useEffect } from "react";
 import Input from "@/components/Forms/Input";
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import { Check } from "lucide-react";
-import { ContactData } from "@/types/ContactTypes"
-import { EnterpriseSend } from "@/types/EnterpriseTypes";
+import { ContactData } from "@/types/ContactTypes";
+import { EnterpriseGet, EnterpriseSend } from "@/types/EnterpriseTypes";
+import { createContact } from "@/hooks/contacts/createContact";
+import { createEnterprise } from "@/hooks/enterprises/createEnterprise";
+import { fetchEnterprises } from "@/hooks/enterprises/fetchEnterprises";
 
 interface FormularioProps {
   onClose: () => void;
-  onSubmit: (data: ContactData | EnterpriseSend) => void;
+  onSubmit?: (data: ContactData | EnterpriseSend) => void;
   onFormTypeChange: (type: string) => void;
+  formType: 'contact' | 'enterprise';
 }
 
-export default function Formulario({ onClose, onSubmit, onFormTypeChange }: FormularioProps) {
-  const [formType, setFormType] = useState<string>("New Contact");
+export default function Formulario({ onClose, onSubmit, onFormTypeChange, formType: initialFormType }: FormularioProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formType, setFormType] = useState<string>(initialFormType === 'contact' ? "New Contact" : "New Enterprise");
+  const [enterprises, setEnterprises] = useState<EnterpriseGet[]>([]);
   const [contactData, setContactData] = useState<ContactData>({
     name: "",
     lastName: "",
-    enterprise: "",
-    phone: "",
+    enterpriseName: "",
+    phoneNumber: "",
     email: "",
   });
 
   const [enterpriseData, setEnterpriseData] = useState<EnterpriseSend>({
-    Name: "",
-    Description: "",
-    Industry: "",
-    WebPage: "",
+    name: "",
+    description: "",
+    industry: "",
+    website: "",
   });
 
-  const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
+  const loadEnterprises = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchEnterprises();
+      setEnterprises(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load enterprises');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleCreateSubmitForm = useCallback(async (data: ContactData | EnterpriseSend) => {
+    try {
+      setIsLoading(true);
+      if (formType === "New Contact") {
+        await createContact(data as ContactData);
+      } else {
+        await createEnterprise(data as EnterpriseSend);
+      }
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : formType === "New Contact" ? "Failed to create contact" : "Failed to create enterprise");
+      console.error("Error creating:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [formType, onClose]);
 
   const handleChangeContact = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -43,23 +79,20 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
     setEnterpriseData({ ...enterpriseData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmitContact = (e: FormEvent): void => {
+  const handleSubmitContact = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-  
-    const dataToSend = {
-      name: contactData.name,
-      lastName: contactData.lastName,
-      email: contactData.email,
-      phone: contactData.phone,
-      enterprise: contactData.enterprise,  // Nombre de la empresa seleccionado en el dropdown
-    };
-  
-    onSubmit(dataToSend);
+    if (isContactFormValid()) {
+      await handleCreateSubmitForm(contactData);
+      if (onSubmit) onSubmit(contactData);
+    }
   };
 
-  const handleSubmitEnterprise = (e: FormEvent): void => {
+  const handleSubmitEnterprise = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
-    onSubmit(enterpriseData);
+    if (isEnterpriseFormValid()) {
+      await handleCreateSubmitForm(enterpriseData);
+      if (onSubmit) onSubmit(enterpriseData);
+    }
   };
 
   const handleFormTypeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -68,27 +101,31 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
     onFormTypeChange(type === "New Contact" ? "contact" : "enterprise");
   };
 
-  const isContactFormValid = () => {
+  const isContactFormValid = (): boolean => {
     return (
-      contactData.name !== "" &&
-      contactData.lastName !== "" &&
-      contactData.enterprise !== ""
+      contactData.name.trim() !== "" &&
+      contactData.lastName.trim() !== "" &&
+      contactData.enterpriseName.trim() !== ""
     );
   };
 
-  const isEnterpriseFormValid = () => {
+  const isEnterpriseFormValid = (): boolean => {
     return (
-      enterpriseData.Name !== "" &&
-      enterpriseData.Industry !== ""
+      enterpriseData.name.trim() !== "" &&
+      enterpriseData.industry.trim() !== ""
     );
   };
+
+  useEffect(() => {
+    loadEnterprises();
+  }, [loadEnterprises]);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6 border-b pb-4">
           <h1 className="font-bold text-3xl">{formType} Form</h1>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
             aria-label="Close form"
@@ -99,8 +136,8 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
           </button>
         </div>
 
-        <select 
-          onChange={handleFormTypeChange} 
+        <select
+          onChange={handleFormTypeChange}
           value={formType}
           className="w-auto px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900 mb-10 text-green-800 font-bold"
         >
@@ -121,40 +158,42 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
 
             <div className="mb-4">
               <div className="flex">
-                <label htmlFor="enterprise" className="block text-sm font-bold text-gray-700 mb-2">Enterprise</label>
+                <label htmlFor="enterpriseName" className="block text-sm font-bold text-gray-700 mb-2">
+                  Enterprise
+                </label>
                 <span className="font-bold text-md text-red-600">*</span>
               </div>
-              <select 
-                name="enterprise" 
-                value={contactData.enterprise} 
-                onChange={handleChangeContact} 
-                required 
+              <select
+                name="enterpriseName"  // Make sure this matches your state property
+                value={contactData.enterpriseName}
+                onChange={handleChangeContact}
+                required
                 className="w-auto px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
               >
                 <option value="">Select Enterprise</option>
-                {enterprises.map((enterprise, index) => (
-                  <option key={index} value={enterprise}>
-                    {enterprise}
+                {enterprises.map((enterprise) => (
+                  <option key={enterprise.ID} value={enterprise.Name}>
+                    {enterprise.Name}
                   </option>
                 ))}
               </select>
             </div>
 
-            <Input label="Phone" name="phone" type="tel" value={contactData.phone} onChange={handleChangeContact} />
+            <Input label="Phone" name="phone" type="tel" value={contactData.phoneNumber} onChange={handleChangeContact} />
             <Input label="Email" name="email" type="email" value={contactData.email} onChange={handleChangeContact} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />
-              <div 
+              <div
                 onClick={(e) => {
                   const event = e as unknown as FormEvent;
                   handleSubmitContact(event);
                 }}
                 className="cursor-pointer"
               >
-                <RoundedButton 
-                  color={isContactFormValid() ? "green" : "red"} 
-                  text="Submit" 
+                <RoundedButton
+                  color={isContactFormValid() ? "green" : "red"}
+                  text="Submit"
                   Icon={Check}
                 />
               </div>
@@ -162,23 +201,23 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange }: Form
           </form>
         ) : (
           <form>
-            <Input label="Name"         name="name"         type="text" value={enterpriseData.Name}         onChange={handleChangeEnterprise} required />
-            <Input label="Industry"     name="industry"     type="text" value={enterpriseData.Industry}     onChange={handleChangeEnterprise} required />
-            <Input label="Description"  name="description"  type="text" value={enterpriseData.Description || ""}  onChange={handleChangeEnterprise} />
-            <Input label="Webpage URL"  name="webpageUrl"   type="url"  value={enterpriseData.WebPage || ""}   onChange={handleChangeEnterprise} />
+            <Input label="Name" name="name" type="text" value={enterpriseData.name} onChange={handleChangeEnterprise} required />
+            <Input label="Industry" name="industry" type="text" value={enterpriseData.industry} onChange={handleChangeEnterprise} required />
+            <Input label="Description" name="description" type="text" value={enterpriseData.description || ""} onChange={handleChangeEnterprise} />
+            <Input label="Webpage URL" name="webpageUrl" type="url" value={enterpriseData.website || ""} onChange={handleChangeEnterprise} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />
-              <div 
+              <div
                 onClick={(e) => {
                   const event = e as unknown as FormEvent;
                   handleSubmitEnterprise(event);
                 }}
                 className="cursor-pointer"
               >
-                <RoundedButton 
-                  color={isEnterpriseFormValid() ? "green" : "red"} 
-                  text="Submit" 
+                <RoundedButton
+                  color={isEnterpriseFormValid() ? "green" : "red"}
+                  text="Submit"
                   Icon={Check}
                 />
               </div>

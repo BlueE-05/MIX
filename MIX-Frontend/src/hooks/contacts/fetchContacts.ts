@@ -1,4 +1,4 @@
-import { ContactRecieve } from "@/types/ContactTypes";
+import { ContactRecieve, ContactView } from "@/types/ContactTypes";
 import { url } from "@/utils/constants";
 
 export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve[]> => {
@@ -23,11 +23,11 @@ export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve
       // Remove duplicates while preserving order
       const uniqueContacts = [...byNameContacts, ...byEnterpriseContacts].reduce(
         (acc: ContactRecieve[], current) => {
-          if (!acc.some(contact => contact.id === current.id)) {
+          if (!acc.some(contact => contact.ID === current.ID)) {
             acc.push(current);
           }
           return acc;
-        }, 
+        },
         []
       );
 
