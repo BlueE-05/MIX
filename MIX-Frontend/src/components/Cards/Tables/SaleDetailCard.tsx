@@ -1,15 +1,8 @@
 'use client'
 import { ContactData } from '@/components/Forms/ContactsForms'
-import { ChangeEvent, ReactNode, useState, useEffect } from 'react'
+import { ChangeEvent, ReactNode, useState } from 'react'
 import { Article, SaleItem } from '@/types/Sales'
 import { SaleDetailCardProps } from '@/types/DetailCards';
-
-interface Product {
-  ProductID: string;
-  ProductName: string;
-  UnitaryPrice: number;
-  Quantity: number;
-}
 
 export default function SaleDetailCard({
   sale,
@@ -25,8 +18,6 @@ export default function SaleDetailCard({
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
   
   const articleOptions: Article[] = [
     { id: '1', name: 'Laptop', price: 999.99 },
@@ -35,27 +26,6 @@ export default function SaleDetailCard({
     { id: '4', name: 'Keyboard', price: 49.99 },
     { id: '5', name: 'Mouse', price: 29.99 },
   ];
-
-  // Cargar productos cuando el componente se monta
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch(`http://localhost:3002/report/ProdInfo/${sale.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setErrorMessage('Failed to load products. Please try again.');
-      } finally {
-        setLoadingProducts(false);
-      }
-    };
-
-    fetchProducts();
-  }, [sale.id]);
 
   const [items, setItems] = useState<SaleItem[]>(sale.items || []);
 
@@ -185,22 +155,6 @@ export default function SaleDetailCard({
     phone: "",
     email: "",
   });
-  
-  const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
-  
-  const handleChangeContact = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ): void => {
-    setContactData({ ...contactData, [e.target.name]: e.target.value });
-    handleChange('enterprise', e.target.value);
-  };
-
-  // Calcular el total de la venta
-  const calculateTotal = () => {
-    return products.reduce((total, product) => {
-      return total + (product.UnitaryPrice * product.Quantity);
-    }, 0);
-  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -217,14 +171,12 @@ export default function SaleDetailCard({
           </button>
         </div>
         
-        {/* Error message display */}
         {errorMessage && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
             {errorMessage}
           </div>
         )}
         
-        {/* Delete confirmation dialog */}
         {showDeleteConfirm && (
           <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="font-medium text-yellow-800 mb-3">Are you sure you want to delete this sale?</p>
@@ -256,75 +208,19 @@ export default function SaleDetailCard({
               </label>
               <span className="font-bold text-md text-red-600">*</span>
             </div>
-            {isEditing ? (
-              <select
-                name="enterprise"
-                value={contactData.enterprise}
-                onChange={handleChangeContact}
-                required
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-900"
-              >
-                <option value="">Select Enterprise</option>
-                {enterprises.map((enterprise, index) => (
-                  <option key={index} value={enterprise}>
-                    {enterprise}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <p className="text-gray-700">{contactData.enterprise}</p>
-            )}
+            <p className="text-gray-700">{contactData.enterprise}</p>
           </div>
           
-          {/* Products Section */}
           <div className="border-b pb-4">
-            <h3 className="text-lg font-semibold text-gray-700 mb-3">Products</h3>
+            <h3 className="text-lg font-semibold text-gray-700 mb-3">Articles</h3>
             
-            {loadingProducts ? (
-              <div className="flex justify-center py-4">
-                <p>Loading products...</p>
-              </div>
-            ) : products.length === 0 ? (
-              <p className="text-gray-500">No products found for this sale</p>
-            ) : (
-              <div className="space-y-4">
-                <div className="grid grid-cols-12 gap-2 font-medium text-sm text-gray-500 border-b pb-2">
-                  <div className="col-span-5">Product</div>
-                  <div className="col-span-2 text-right">Unit Price</div>
-                  <div className="col-span-2 text-right">Quantity</div>
-                  <div className="col-span-3 text-right">Subtotal</div>
-                </div>
-                
-                {products.map((product, index) => (
-                  <div key={index} className="grid grid-cols-12 gap-2 text-sm border-b pb-2">
-                    <div className="col-span-5 font-medium">{product.ProductName}</div>
-                    <div className="col-span-2 text-right">${product.UnitaryPrice.toFixed(2)}</div>
-                    <div className="col-span-2 text-right">{product.Quantity}</div>
-                    <div className="col-span-3 text-right font-medium">
-                      ${(product.UnitaryPrice * product.Quantity).toFixed(2)}
-                    </div>
-                  </div>
-                ))}
-                
-                <div className="grid grid-cols-12 gap-2 font-bold text-md pt-2">
-                  <div className="col-span-9 text-right">Total:</div>
-                  <div className="col-span-3 text-right">${calculateTotal().toFixed(2)}</div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Articles Section (for editing) */}
-          {isEditing && (
-            <div className="border-b pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-3">Edit Articles</h3>
-              
-              {items.map((item, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-                  <div>
-                    <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                      Article {index + 1}
-                    </label>
+            {items.map((item, index) => (
+              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
+                <div>
+                  <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Article {index + 1}
+                  </label>
+                  {isEditing ? (
                     <select
                       id={`article-${index}`}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
@@ -338,12 +234,18 @@ export default function SaleDetailCard({
                         </option>
                       ))}
                     </select>
-                  </div>
+                  ) : (
+                    <p className="text-gray-700">
+                      {articleOptions.find(a => a.id === item.article)?.name || 'Not selected'}
+                    </p>
+                  )}
+                </div>
 
-                  <div>
-                    <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity
-                    </label>
+                <div>
+                  <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Quantity
+                  </label>
+                  {isEditing ? (
                     <input
                       type="number"
                       id={`quantity-${index}`}
@@ -352,29 +254,33 @@ export default function SaleDetailCard({
                       value={item.quantity}
                       onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
                     />
-                  </div>
-
-                  <div>
-                    <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                      Price
-                    </label>
-                    <p className="text-gray-700">${item.price.toFixed(2)}</p>
-                  </div>
-
-                  {items.length > 1 && (
-                    <div>
-                      <button
-                        type="button"
-                        onClick={() => removeItem(index)}
-                        className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                      >
-                        Remove
-                      </button>
-                    </div>
+                  ) : (
+                    <p className="text-gray-700">{item.quantity}</p>
                   )}
                 </div>
-              ))}
 
+                <div>
+                  <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
+                    Price
+                  </label>
+                  <p className="text-gray-700">${item.price.toFixed(2)}</p>
+                </div>
+
+                {isEditing && items.length > 1 && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => removeItem(index)}
+                      className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {isEditing && (
               <button
                 type="button"
                 onClick={handleAddItem}
@@ -382,8 +288,13 @@ export default function SaleDetailCard({
               >
                 Add Another Article
               </button>
-            </div>
-          )}
+            )}
+          </div>
+          
+          <div className="border-b pb-2">
+            <h3 className="font-semibold text-gray-500">Amount</h3>
+            <p className="text-gray-700">{editedSale.amount}</p>
+          </div>
           
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Status</h3>
