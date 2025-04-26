@@ -43,18 +43,23 @@ const usersData = [
 ];
 
 export default function Dashboard() {
-  const [reportType, setReportType] = useState<'team' | 'individual'>('team');
+  const isAdmin = false;
+  // Para usuarios no-admin, siempre mostrar su reporte individual
+  const [reportType, setReportType] = useState<'team' | 'individual'>(isAdmin ? 'team' : 'individual');
   const [selectedUserId, setSelectedUserId] = useState<string>('admin'); // Default admin
-  const isAdmin = true;
 
-  // Obtener datos actuales según selección
-  const currentData = reportType === 'team' 
-    ? teamData 
-    : usersData.find(user => user.id === selectedUserId) || adminData;
+  // Obtener datos actuales
+  const currentData = !isAdmin 
+    ? adminData // Para no-admins, siempre mostrar sus datos
+    : reportType === 'team' 
+      ? teamData 
+      : usersData.find(user => user.id === selectedUserId) || adminData;
 
-  const currentUserName = reportType === 'team' 
-    ? 'Team' 
-    : usersData.find(user => user.id === selectedUserId)?.name || 'Admin';
+  const currentUserName = !isAdmin 
+    ? 'My Performance' // Título genérico para no-admins
+    : reportType === 'team' 
+      ? 'Team' 
+      : usersData.find(user => user.id === selectedUserId)?.name || 'Admin';
 
   return (
     <main className="p-6 sm:pt-10">
@@ -70,7 +75,6 @@ export default function Dashboard() {
                 value={reportType}
                 onChange={(e) => {
                   setReportType(e.target.value as 'team' | 'individual');
-                  // Resetear al admin cuando cambia a individual
                   if (e.target.value === 'individual') setSelectedUserId('admin');
                 }}
               >
@@ -103,12 +107,14 @@ export default function Dashboard() {
         {/* Left Side - Expanded Chart */}
         <div className="bg-white p-6 rounded-xl shadow-md lg:col-span-4">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            {reportType === 'team' 
-              ? 'Team Monthly Trend' 
-              : `${currentUserName}'s Performance`}
+            {!isAdmin 
+              ? 'My Monthly Performance' 
+              : reportType === 'team' 
+                ? 'Team Monthly Trend' 
+                : `${currentUserName}'s Performance`}
           </h2>
           <div className="h-96 md:h-[500px]">
-            <LinesChart salesData={currentData.sales} reportType={reportType} />
+            <LinesChart salesData={currentData.sales} reportType={!isAdmin ? 'individual' : reportType} />
           </div>
         </div>
 
@@ -125,9 +131,11 @@ export default function Dashboard() {
 
           <div className="p-6 bg-white rounded-xl shadow-md flex flex-col items-center justify-center">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              {reportType === 'team' 
-                ? 'Team Sales Distribution' 
-                : `${currentUserName}'s Distribution`}
+              {!isAdmin 
+                ? 'My Sales Distribution' 
+                : reportType === 'team' 
+                  ? 'Team Sales Distribution' 
+                  : `${currentUserName}'s Distribution`}
             </h2>
             <PieChart distribution={currentData.distribution} />
           </div>
