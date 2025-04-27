@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+//endpoint
+import { HTTPURL } from "@/constants/utils";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,6 +30,14 @@ interface LinesChartProps {
   daysofMonth?: string[];
 }
 
+interface SaleData {
+    Fecha: string;
+    VentasCerradas: number;
+    DiaDelMes:number;
+    DiaSeman: string;
+  }
+  
+
 export default function LinesChart({ salesData, reportType, daysofMonth }: LinesChartProps) {
   const [days, setDays] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,41 +47,30 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
   useEffect(() => {
     const fetchDaysOfMonth = async () => {
       try {
-        if (!daysofMonth) {
-          const response = await fetch('http://localhost:3003/report/DaysMonth');
+        setLoading(true);
+          const response = await fetch(`${HTTPURL}/report/DaysMonth`);
           if (!response.ok) {
             throw new Error('Error al obtener los días del mes');
           }
-          const data = await response.json();
-          const formattedDays = data.map((item: { Fecha: string }) => {
-            const date = new Date(item.Fecha);
-            // Asegurarse de usar la fecha local
-            return date.getUTCDate().toString(); // o getDate() si el servidor usa zona horaria local
-          });
-          setDays(formattedDays);
-        }
+          const data: SaleData[] = await response.json();
         
-        // Generar datos aleatorios para el eje Y (simulando ventas)
-        const randomData = Array(daysofMonth?.length)
-          .fill(0)
-          .map(() => Math.floor(Math.random() * 1000) + 100);
-        setChartData(randomData);
-        
+        // Procesar los datos como en el ejemplo
+        const daysArray = data.map(item => item.DiaDelMes.toString());
+        setDays(daysArray);
         setLoading(false);
-      } catch (err) {
+        } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
         setLoading(false);
       }
     };
-
     fetchDaysOfMonth();
-  }, [daysofMonth]);
+  }, []);
 
   // Usar days del estado o el prop daysofMonth si está disponible
   const labels = daysofMonth || days;
 
-  const data = {
-    labels,
+  const chartDataSale = {
+    labels:days,
     datasets: [
       {
         label: reportType === 'team' ? 'Team sale' : 'individual sale',
@@ -108,7 +108,7 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
       y: {
         title: {
           display: true,
-          text: 'Number of sales in each state'
+          text: '# closed sales per day'
         },
         beginAtZero: true
       }
@@ -125,7 +125,7 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
 
   return (
     <div className="w-full h-full">
-      <Line data={data} options={options} />
+      <Line data={chartDataSale} options={options} />
     </div>
   );
 }

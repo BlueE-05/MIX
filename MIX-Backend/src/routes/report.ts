@@ -16,5 +16,7 @@ router.get('/SalesTeam', ReportHTTPHandler.getTotalSalesByTeam);
 router.get('/ComissionTeam', ReportHTTPHandler.getTotalComissionByTeam);
 router.get('/SalesTeamMember', ReportHTTPHandler.getTotalSalesByMember);
 router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
+router.get('/DailyClosedSalesByTeam', ReportHTTPHandler.getDailyClosedSalesByTeam);
+router.get('/DailyClosedSalesByMember', ReportHTTPHandler.getDailyClosedSalesByMember);
 
 export default router;

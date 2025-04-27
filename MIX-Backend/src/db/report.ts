@@ -163,6 +163,7 @@ class ReportService{
         return result.recordset;
     }
 
+    //obtener el total de ventas por equipo
     async getTotalSalesByTeam(IDEmail: string){
       const pool = await poolPromise;
       const result = await pool.request()
@@ -215,6 +216,24 @@ class ReportService{
         return result.recordset;
     }
 
+
+    async getDailyClosedSalesByTeam(IDEmail: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('IDEmail', sql.VarChar, IDEmail)
+        .query(`EXEC sp_GetDailyClosedSalesByTeam @UserEmail = @IDEmail`);
+        return result.recordset;
+    }
+
+ 
+    //obtener las ventas cerradas por día por miembro del equipo
+    async getDailyClosedSalesByMember(IDEmail: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('IDEmail', sql.VarChar, IDEmail)
+        .query(`EXEC sp_GetDailyClosedSalesByTeamMembers @UserEmail = @IDEmail`);
+        return result.recordset;
+    }
 
     
     

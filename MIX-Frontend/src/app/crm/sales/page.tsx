@@ -1,5 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
+//endpoint
+import { HTTPURL } from '@/constants/utils';
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import CustomTable from "@/components/Tables/CustomTable";
 import { CirclePlus } from "lucide-react";
@@ -64,7 +66,7 @@ export default function SalesPage() {
     const fetchSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3003/sale/AllSales`);
+        const response = await fetch(`${HTTPURL}/sale/AllSales`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

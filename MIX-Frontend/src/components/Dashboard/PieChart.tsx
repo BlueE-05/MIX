@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import axios from 'axios';
+//endpoint
+import { HTTPURL } from "@/constants/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -57,9 +59,9 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
         
         
         const [cierreResponse, activeResponse, prospectoResponse] = await Promise.all([
-          axios.get(`http://localhost:3003/report/allCierre`),
-          axios.get(`http://localhost:3003/report/allActive`),
-          axios.get(`http://localhost:3003/report/allCancelled`)
+          axios.get(`${HTTPURL}/report/allCierre`),
+          axios.get(`${HTTPURL}/report/allActive`),
+          axios.get(`${HTTPURL}/report/allCancelled`)
         ]);
 
         // Extraer los datos de las respuestas

@@ -1,4 +1,6 @@
 'use client'
+//endpoint
+import { HTTPURL } from '@/constants/utils'
 import { ContactData } from '@/components/Forms/ContactsForms'
 import { ChangeEvent, ReactNode, useState, useEffect } from 'react'
 import { Article, SaleItem } from '@/types/Sales'
@@ -43,8 +45,6 @@ export default function SaleDetailCard({
     { id: '5', name: 'Mouse', price: 29.99 },
   ];
 
-  const [items, setItems] = useState<SaleItem[]>([]);
-
   const normalizeStatus = (status: ReactNode | string): string => {
     if (typeof status === 'string') return status;
     return 'In Progress';
@@ -64,13 +64,13 @@ export default function SaleDetailCard({
       
       try {
         // Fetch phases
-        const phasesResponse = await fetch('http://localhost:3003/newsale/Phases');
+        const phasesResponse = await fetch(`${HTTPURL}/newsale/Phases`);
         if (!phasesResponse.ok) throw new Error('Failed to fetch phases');
         const phasesData = await phasesResponse.json();
         setPhases(phasesData);
 
         // Fetch products
-        const productsResponse = await fetch(`http://localhost:3003/report/ProdInfo/${sale.id}`);
+        const productsResponse = await fetch(`${HTTPURL}/report/ProdInfo/${sale.id}`);
         if (!productsResponse.ok) throw new Error('Failed to fetch products');
         const productsData = await productsResponse.json();
         setProducts(productsData);
@@ -90,18 +90,11 @@ export default function SaleDetailCard({
   const handleEdit = () => {
     setIsEditing(true);
     setErrorMessage(null);
-    // Inicializar items con los productos existentes convertidos a SaleItem
-    setItems(products.map(product => ({
-      article: product.ProductID,
-      quantity: product.Quantity,
-      price: product.UnitaryPrice * product.Quantity
-    })));
   }
 
   const handleSave = () => {
     onSave({
-      ...editedSale,
-      items: items.filter(item => item.article !== '')
+      ...editedSale
     });
     setIsEditing(false);
   }
@@ -112,7 +105,6 @@ export default function SaleDetailCard({
       status: normalizeStatus(sale.status),
       items: sale.items || []
     });
-    setItems([]);
     setIsEditing(false);
     setShowDeleteConfirm(false);
     setErrorMessage(null);
@@ -123,7 +115,7 @@ export default function SaleDetailCard({
     setErrorMessage(null);
     
     try {
-      const response = await fetch(`http://localhost:3003/sale/${sale.id}`, {
+      const response = await fetch(`${HTTPURL}/sale/${sale.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -153,42 +145,6 @@ export default function SaleDetailCard({
 
   const handlePhaseChange = (e: ChangeEvent<HTMLSelectElement>) => {
     handleChange('status', e.target.value);
-  };
-
-  const handleAddItem = () => {
-    setItems([...items, { article: '', quantity: 1, price: 0 }]);
-  };
-
-  const handleArticleChange = (index: number, articleId: string) => {
-    const newItems = [...items];
-    const selectedArticle = articleOptions.find(a => a.id === articleId);
-    
-    newItems[index] = {
-      ...newItems[index],
-      article: articleId,
-      price: selectedArticle ? selectedArticle.price * newItems[index].quantity : 0
-    };
-    
-    setItems(newItems);
-  };
-
-  const handleQuantityChange = (index: number, quantity: number) => {
-    const newItems = [...items];
-    const article = articleOptions.find(a => a.id === newItems[index].article);
-    
-    newItems[index] = {
-      ...newItems[index],
-      quantity: quantity > 0 ? quantity : 1,
-      price: article ? article.price * (quantity > 0 ? quantity : 1) : 0
-    };
-    
-    setItems(newItems);
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    setItems(newItems);
   };
 
   const [contactData, setContactData] = useState<ContactData>({
@@ -258,117 +214,45 @@ export default function SaleDetailCard({
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-3">Articles</h3>
             
-            {isEditing ? (
-              items.length > 0 ? (
-                items.map((item, index) => (
-                  <div key={`edit-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end border-t pt-4">
+            {loadingProducts ? (
+              <p>Loading products...</p>
+            ) : (
+              products.length > 0 ? (
+                products.map((product, index) => (
+                  <div key={`prod-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Article {index + 1}
+                        Product {index + 1}
                       </label>
-                      <select
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        value={item.article}
-                        onChange={(e) => handleArticleChange(index, e.target.value)}
-                      >
-                        <option value="">Select article</option>
-                        {articleOptions.map((option) => (
-                          <option key={option.id} value={option.id}>
-                            {option.name} (${option.price.toFixed(2)})
-                          </option>
-                        ))}
-                      </select>
+                      <p className="text-gray-700">{product.ProductName}</p>
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Quantity
                       </label>
-                      <input
-                        type="number"
-                        min="1"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        value={item.quantity}
-                        onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                      />
+                      {isEditing ? (
+                        <p className="text-gray-700">{product.Quantity}</p>
+                      ) : (
+                        <p className="text-gray-700">{product.Quantity}</p>
+                      )}
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Unit Price
                       </label>
-                      <p className="text-gray-700">
-                        ${articleOptions.find(a => a.id === item.article)?.price.toFixed(2) || '0.00'}
-                      </p>
+                      <p className="text-gray-700">${product.UnitaryPrice.toFixed(2)}</p>
                     </div>
-
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Total
                       </label>
-                      <p className="text-gray-700">${item.price.toFixed(2)}</p>
-                      {items.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeItem(index)}
-                          className="mt-2 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                        >
-                          Remove
-                        </button>
-                      )}
+                      <p className="text-gray-700">${(product.UnitaryPrice * product.Quantity).toFixed(2)}</p>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500">No articles added</p>
+                <p className="text-gray-500">No products in this sale</p>
               )
-            ) : (
-              loadingProducts ? (
-                <p>Loading products...</p>
-              ) : (
-                products.length > 0 ? (
-                  products.map((product, index) => (
-                    <div key={`prod-${index}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Product {index + 1}
-                        </label>
-                        <p className="text-gray-700">{product.ProductName}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Quantity
-                        </label>
-                        <p className="text-gray-700">{product.Quantity}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Unit Price
-                        </label>
-                        <p className="text-gray-700">${product.UnitaryPrice.toFixed(2)}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Total
-                        </label>
-                        <p className="text-gray-700">${(product.UnitaryPrice * product.Quantity).toFixed(2)}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-500">No products in this sale</p>
-                )
-              )
-            )}
-
-            {isEditing && (
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="mt-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-              >
-                Add Another Article
-              </button>
             )}
           </div>
           

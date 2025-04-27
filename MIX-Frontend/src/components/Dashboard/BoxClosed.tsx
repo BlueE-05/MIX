@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+//endpoint
+import { HTTPURL } from '@/constants/utils';
 
 interface BoxClosedProps {
   closedDeals?: number;
@@ -15,7 +17,7 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   //const deals = closedDeals ?? 42;
 
   useEffect(() => {
-    axios.get(`http://localhost:3003/report/allCierre`)
+    axios.get(`${HTTPURL}/report/allCierre`)
       .then((response) => {
         const valor = response.data[0].TotalCierre;
         setCierres(Number(valor));

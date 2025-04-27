@@ -17,7 +17,7 @@ app.use(express.json());
 
 app.use(bodyParser.json());
 
-const PORT = 3003;
+const PORT = 3005;
 
 app.use('/report', reportRoutes);
 app.use('/newsale', newsaleRoutes);

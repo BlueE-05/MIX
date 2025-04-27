@@ -52,6 +52,14 @@ class ReportController {
     return this.reportService.getEveryDayClosedByUser(IDUser);
   }
 
+  async getDailyClosedSalesByTeam(IDUser: string) {
+    return this.reportService.getDailyClosedSalesByTeam(IDUser);
+  }
+
+  async getDailyClosedSalesByMember(IDUser: string) {
+    return this.reportService.getDailyClosedSalesByMember(IDUser);
+  }
+
 }
 
 export default new ReportController();

@@ -1,5 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
+//endpoint
+import { HTTPURL } from '@/constants/utils';
 import LinesChartReport from '@/components/Dashboard/LinesChartReport';
 import LinesChart from '@/components/Dashboard/LinesChart';
 import PieChart from '@/components/Dashboard/PieChart';
@@ -25,9 +27,9 @@ export default function Dashboard() {
         try {
           // Fetch team sales data
           const [salesResponse, comissionsResponse, membersResponse] = await Promise.all([
-            fetch('http://localhost:3003/report/SalesTeam'),
-            fetch('http://localhost:3003/report/ComissionTeam'),
-            fetch('http://localhost:3003/report/SalesTeamMember')
+            fetch(`${HTTPURL}/report/SalesTeam`),
+            fetch(`${HTTPURL}/report/ComissionTeam`),
+            fetch(`${HTTPURL}/report/SalesTeamMember`)
           ]);
 
           const [salesData, comissionsData, membersData] = await Promise.all([

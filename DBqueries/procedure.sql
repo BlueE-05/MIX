@@ -346,3 +346,70 @@ BEGIN
     
     DROP TABLE #DiasMes;
 END;
+
+
+
+---obtener de cada dia del mes las ventas con modificacion a fase 5 de un equipo
+CREATE PROCEDURE sp_GetDailyClosedSalesByTeam
+    @UserEmail VARCHAR(255)
+AS
+BEGIN
+    -- Obtener el equipo del usuario
+    DECLARE @TeamID INT;
+    
+    SELECT @TeamID = TeamID 
+    FROM [User] 
+    WHERE IDEmail = @UserEmail;
+    
+    -- Si no se encuentra el usuario, terminar
+    IF @TeamID IS NULL
+    BEGIN
+        SELECT 'Usuario no encontrado' AS Resultado;
+        RETURN;
+    END;
+    
+    -- Crear tabla temporal con los días del mes
+    CREATE TABLE #DiasMes (Fecha DATE);
+    
+    INSERT INTO #DiasMes
+    EXEC getDiasDelMesActual;
+    
+    -- Consulta principal para ventas del equipo
+    SELECT 
+        dm.Fecha,
+        COUNT(sl.IDSale) AS VentasCerradas,
+        DAY(dm.Fecha) AS DiaDelMes,
+        DATENAME(WEEKDAY, dm.Fecha) AS DiaSemana,
+        (SELECT TeamName FROM Team WHERE ID = @TeamID) AS Equipo
+    FROM 
+        #DiasMes dm
+    LEFT JOIN (
+        -- Subconsulta para obtener el último cambio de fase por venta del equipo
+        SELECT 
+            sl.IDSale,
+            CAST(sl.ChangeDate AS DATE) AS FechaCambio,
+            sl.SalePhase
+        FROM (
+            SELECT 
+                sl.IDSale,
+                sl.SalePhase,
+                sl.ChangeDate,
+                ROW_NUMBER() OVER (PARTITION BY sl.IDSale ORDER BY sl.ChangeDate DESC) AS rn
+            FROM SaleLifespan sl
+            JOIN Sale s ON sl.IDSale = s.ID
+            JOIN [User] u ON s.IDUser = u.IDEmail
+            WHERE u.TeamID = @TeamID -- Filtro por equipo
+        ) sl
+        WHERE sl.rn = 1
+        AND sl.SalePhase = 5 -- Solo fase 5 (cerradas)
+    ) sl ON dm.Fecha = sl.FechaCambio
+    GROUP BY 
+        dm.Fecha
+    ORDER BY 
+        dm.Fecha;
+    
+    DROP TABLE #DiasMes;
+END;
+
+---ejemplo para ejecutar 
+EXEC sp_GetDailyClosedSalesByTeam @UserEmail = 'jorge.lopez@empresa.com';

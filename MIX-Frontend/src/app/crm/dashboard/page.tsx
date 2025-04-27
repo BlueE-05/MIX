@@ -1,10 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
+//endoint
+import {HTTPURL} from "@/constants/utils";
 import BoxClosed from "@/components/Dashboard/BoxClosed";
 import PieChart from "@/components/Dashboard/PieChart";
 import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 import CustomTable from "@/components/Tables/CustomTable";
 import AwardsBox from "@/components/Dashboard/Awards";
+
 
 interface TopSale {
   SaleID: number;
@@ -48,7 +51,7 @@ const DashboardPage = () => {
     const fetchTopSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3003/sale/TopSales`);
+        const response = await fetch(`${HTTPURL}/sale/TopSales`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -73,7 +76,7 @@ const DashboardPage = () => {
     const fetchTeamPos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3003/report/TeamPos`);
+        const response = await fetch(`${HTTPURL}/report/TeamPos`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -99,7 +102,7 @@ const DashboardPage = () => {
     const fetchAward = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`http://localhost:3003/report/Award`);
+        const response = await fetch(`${HTTPURL}/report/Award`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

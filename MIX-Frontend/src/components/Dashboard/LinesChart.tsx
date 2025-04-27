@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+//endpoint
+import { HTTPURL } from "@/constants/utils";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -33,23 +36,23 @@ interface SaleData {
 export default function LinesChart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [days, setDays] = useState<string[]>([]);
+  const [days, setDays] = useState<number[]>([]);
   const [closedSales, setClosedSales] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3003/report/ClosedDayUser');
+        const response = await fetch(`${HTTPURL}/report/ClosedDayUser`);
         
         if (!response.ok) {
-          throw new Error('Error al obtener los datos de ventas');
+          throw new Error('Error loading data');
         }
         
         const data: SaleData[] = await response.json();
         
-        // Procesar los datos como en el ejemplo
-        const daysArray = data.map(item => item.DiaDelMes.toString());
+        
+        const daysArray = data.map(item => item.DiaDelMes);
         const salesArray = data.map(item => item.VentasCerradas);
         
         setDays(daysArray);
@@ -64,7 +67,7 @@ export default function LinesChart() {
     fetchData();
   }, []);
 
-  // Configuración del gráfico idéntica al ejemplo
+  
   const chartData = {
     labels: days,
     datasets: [

@@ -1,6 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+//endpoint
+import { HTTPURL } from '@/constants/utils';
+
+
 
 interface BoxComisionesProps {
   comisiones?: number;
@@ -14,7 +18,7 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
   const iduser = 'ana.gomez@empresa.com'; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
 
   useEffect(() => {
-    axios.get(`http://localhost:3003/report/comisTotal`)
+    axios.get(`${HTTPURL}/report/comisTotal`)
       .then((response) => {
         console.log('Respuesta del backend:', response.data);
         const valor = response.data[0].TotalCommission;

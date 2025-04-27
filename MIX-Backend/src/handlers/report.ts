@@ -140,6 +140,26 @@ class ReportHTTPHandler {
       }
     };
 
+    getDailyClosedSalesByTeam= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getDailyClosedSalesByTeam(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
+    getDailyClosedSalesByMember= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getDailyClosedSalesByMember(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
     
 
 }
