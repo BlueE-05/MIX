@@ -5,6 +5,7 @@ interface InputProps {
   name: string;
   type: string;
   value: string;
+  max_lenght?: number;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
   disabled?: boolean;
@@ -15,6 +16,7 @@ const Input: React.FC<InputProps> = ({
   name,
   type,
   value,
+  max_lenght,
   onChange,
   required = false,
   disabled = false,
@@ -25,8 +27,11 @@ const Input: React.FC<InputProps> = ({
         {label}
         {required && <span className="font-bold text-md text-red-600">*</span>}
       </label>
-      <input type={type} name={name} value={value} onChange={onChange} required={required} disabled={disabled}
+      <input type={type} name={name} value={value} maxLength={max_lenght} onChange={onChange} required={required} disabled={disabled}
         className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"/>
+      <div className="text-xs text-gray-500 text-right">
+        {value.length}/{max_lenght}
+      </div>
     </div>
   );
 };

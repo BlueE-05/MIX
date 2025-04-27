@@ -14,23 +14,34 @@ interface FormularioProps {
   onFormTypeChange: (type: string) => void;
   formType: 'contact' | 'enterprise';
 }
+	
+const MAX_LENGTHS = {
+  name: 100,
+  lastName: 100,
+  phoneNumber: 30,
+  email: 255,
+  enterpriseName: 100,
+  industry: 100,
+  description: 500,
+  webpageUrl: 255,
+};
 
 export default function Formulario({ onClose, onSubmit, onFormTypeChange, formType: initialFormType }: FormularioProps) {
   const [formType, setFormType] = useState<string>(initialFormType === 'contact' ? "New Contact" : "New Enterprise");
   const [enterprises, setEnterprises] = useState<EnterpriseGet[]>([]);
   const [contactData, setContactData] = useState<ContactData>({
-    name: "",
-    lastName: "",
-    enterpriseName: "",
-    phoneNumber: "",
-    email: "",
+    Name: "",
+    LastName: "",
+    EnterpriseName: "",
+    PhoneNumber: "",
+    Email: "",
   });
 
   const [enterpriseData, setEnterpriseData] = useState<EnterpriseSend>({
-    name: "",
-    description: "",
-    industry: "",
-    website: "",
+    Name: "",
+    Description: "",
+    Industry: "",
+    Website: "",
   });
 
   const loadEnterprises = useCallback(async () => {
@@ -50,28 +61,86 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
         await createEnterprise(data as EnterpriseSend);
       }
       onClose();
-    } catch (err) {
-      console.error("Error creating:", err);
+    } catch (error) {
+      console.error("Error creating:", error);
     }
   }, [formType, onClose]);
 
   const handleChangeContact = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ): void => {
-    setContactData({ ...contactData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let trimmedValue = value;
+    
+    // Apply max length restriction for contact fields
+    switch (name) {
+      case 'Name':
+        trimmedValue = value.slice(0, MAX_LENGTHS.name);
+        break;
+      case 'LastName':
+        trimmedValue = value.slice(0, MAX_LENGTHS.lastName);
+        break;
+      case 'PhoneNumber':
+        trimmedValue = value.slice(0, MAX_LENGTHS.phoneNumber);
+        break;
+      case 'Email':
+        trimmedValue = value.slice(0, MAX_LENGTHS.email);
+        break;
+      case 'EnterpriseName':
+        trimmedValue = value.slice(0, MAX_LENGTHS.enterpriseName);
+        break;
+      default:
+        break;
+    }
+    setContactData({ ...contactData, [name]: trimmedValue });
   };
 
   const handleChangeEnterprise = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ): void => {
-    setEnterpriseData({ ...enterpriseData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    let trimmedValue = value;
+    // Apply max length restriction for enterprise fields
+    switch (name) {
+      case 'Name':
+        trimmedValue = value.slice(0, MAX_LENGTHS.name);
+        break;
+      case 'Industry':
+        trimmedValue = value.slice(0, MAX_LENGTHS.industry);
+        break;
+      case 'Description':
+        trimmedValue = value.slice(0, MAX_LENGTHS.description);
+        break;
+      case 'WebpageUrl':
+        trimmedValue = value.slice(0, MAX_LENGTHS.webpageUrl);
+        break;
+      default:
+        break;
+    }
+    setEnterpriseData({ ...enterpriseData, [name]: trimmedValue });
   };
 
   const handleSubmitContact = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
+
     if (isContactFormValid()) {
-      await handleCreateSubmitForm(contactData);
-      if (onSubmit) onSubmit(contactData);
+      // Find the selected enterprise's ID from the list
+      const selectedEnterprise = enterprises.find(
+        (enterprise) => enterprise.Name === contactData.EnterpriseName
+      );
+
+      if (selectedEnterprise) {
+        // Add the IDEnterprise field to the contact data
+        const contactDataWithEnterprise = {
+          ...contactData,
+          IDEnterprise: selectedEnterprise.ID, // Assuming 'ID' is the identifier for the enterprise
+        };
+
+        await handleCreateSubmitForm(contactDataWithEnterprise);
+        if (onSubmit) onSubmit(contactDataWithEnterprise);
+      } else {
+        console.error("Enterprise not found");
+      }
     }
   };
 
@@ -91,16 +160,16 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
 
   const isContactFormValid = (): boolean => {
     return (
-      contactData.name.trim() !== "" &&
-      contactData.lastName.trim() !== "" &&
-      contactData.enterpriseName.trim() !== ""
+      contactData.Name.trim() !== "" &&
+      contactData.LastName.trim() !== "" &&
+      contactData.EnterpriseName.trim() !== ""
     );
   };
 
   const isEnterpriseFormValid = (): boolean => {
     return (
-      enterpriseData.name.trim() !== "" &&
-      enterpriseData.industry.trim() !== ""
+      enterpriseData.Name.trim() !== "" &&
+      enterpriseData.Industry.trim() !== ""
     );
   };
 
@@ -137,23 +206,23 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
           <form>
             <div className="flex gap-10 w-full">
               <div className="flex-1">
-                <Input label="Name" name="name" type="text" value={contactData.name} onChange={handleChangeContact} required />
+                <Input label="Name" name="Name" type="text" value={contactData.Name} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.name} />
               </div>
               <div className="flex-1">
-                <Input label="Last Name" name="lastName" type="text" value={contactData.lastName} onChange={handleChangeContact} required />
+                <Input label="Last Name" name="LastName" type="text" value={contactData.LastName} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.lastName} />
               </div>
             </div>
 
             <div className="mb-4">
               <div className="flex">
-                <label htmlFor="enterpriseName" className="block text-sm font-bold text-gray-700 mb-2">
+                <label htmlFor="EnterpriseName" className="block text-sm font-bold text-gray-700 mb-2">
                   Enterprise
                 </label>
                 <span className="font-bold text-md text-red-600">*</span>
               </div>
               <select
-                name="enterpriseName"
-                value={contactData.enterpriseName}
+                name="EnterpriseName"
+                value={contactData.EnterpriseName}
                 onChange={handleChangeContact}
                 required
                 className="w-auto px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
@@ -167,8 +236,8 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
               </select>
             </div>
 
-            <Input label="Phone" name="phone" type="tel" value={contactData.phoneNumber} onChange={handleChangeContact} />
-            <Input label="Email" name="email" type="email" value={contactData.email} onChange={handleChangeContact} />
+            <Input label="Phone" name="PhoneNumber" type="tel" value={contactData.PhoneNumber} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
+            <Input label="Email" name="Email" type="email" value={contactData.Email} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />
@@ -189,10 +258,10 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
           </form>
         ) : (
           <form>
-            <Input label="Name" name="name" type="text" value={enterpriseData.name} onChange={handleChangeEnterprise} required />
-            <Input label="Industry" name="industry" type="text" value={enterpriseData.industry} onChange={handleChangeEnterprise} required />
-            <Input label="Description" name="description" type="text" value={enterpriseData.description || ""} onChange={handleChangeEnterprise} />
-            <Input label="Webpage URL" name="webpageUrl" type="url" value={enterpriseData.website || ""} onChange={handleChangeEnterprise} />
+            <Input label="Name" name="name" type="text" value={enterpriseData.Name} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.name} />
+            <Input label="Industry" name="industry" type="text" value={enterpriseData.Industry} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.industry} />
+            <Input label="Description" name="description" type="text" value={enterpriseData.Description || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.description} />
+            <Input label="Webpage URL" name="webpageUrl" type="url" value={enterpriseData.Website || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.webpageUrl} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />
