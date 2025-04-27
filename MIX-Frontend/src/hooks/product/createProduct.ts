@@ -1,7 +1,7 @@
-import { ProductReceive } from "@/types/ProductTypes";
+import { ProductSend } from "@/types/ProductTypes";
 import { url } from "@/utils/constants";
 
-export const createProduct = async (productData: ProductReceive): Promise<void> => {
+export const createProduct = async (productData: ProductSend): Promise<void> => {
   try {
     const response = await fetch(`${url}/api/products`, {
       method: "POST",

@@ -85,7 +85,7 @@ export default function ProductPage() {
       )}
 
       {showForm && (
-        <Formulario onClose={() => setShowForm(false)} />
+        <Formulario onClose={() => { setShowForm(false); loadProducts(); }} />
       )}
 
       {isAdmin && (
