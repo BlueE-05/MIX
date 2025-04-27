@@ -220,19 +220,19 @@ class ReportService{
       const pool = await poolPromise;
       const result = await pool.request()
         .input('iduser', sql.VarChar, iduser)
-        .query(`DECLARE @UserEmail VARCHAR(255) = @iduser;
+        .query(`DECLARE @UserEmail VARCHAR(255) = @iduser
 
--- Obtener el ID del equipo del usuario
+
 DECLARE @TeamID INT = (SELECT TeamID FROM [User] WHERE IDEmail = @UserEmail);
 
--- Mostrar resultados o mensaje de error
+
 IF @TeamID IS NULL
 BEGIN
     SELECT 'Usuario no encontrado' AS Resultado;
 END
 ELSE
 BEGIN
-    -- Consulta principal para obtener estadísticas de los miembros del equipo
+  
     SELECT 
         u.IDEmail AS UsuarioID,
         u.Name AS NombreCompleto,

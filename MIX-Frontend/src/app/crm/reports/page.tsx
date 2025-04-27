@@ -150,20 +150,12 @@ export default function Dashboard() {
         {/* Left Side - Expanded Chart */}
         <div className="bg-white p-6 rounded-xl shadow-md lg:col-span-4">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            {reportType === 'team' ? 'Team Monthly Trend' : `${currentUserName}'s Performance`}
+            Team Monthly Trend
           </h2>
           <div className="h-96 md:h-[500px]">
-            {isLoading ? (
-              <div className="flex items-center justify-center h-full">
-                <p>Loading chart data...</p>
-              </div>
-            ) : showNoSelection ? (
-              <div className="flex items-center justify-center h-full">
-                <p>Please select a user from the dropdown</p>
-              </div>
-            ) : isAdmin ? (
-              <LinesChart/>
-            ) : (<LinesChart/> )}
+            
+              <LinesChart/> 
+      
           </div>
         </div>
 
