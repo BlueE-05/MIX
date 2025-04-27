@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ReactNode } from 'react';
 
-import { ContactRecieve } from '@/types/ContactTypes';
+import { ContactReceive } from '@/types/ContactTypes';
 import { fetchContacts } from '@/hooks/contacts/fetchContacts';
 
 import CustomTable from '@/components/Tables/CustomTable';
@@ -21,13 +21,13 @@ export default function ContactPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [formType, setFormType] = useState<'contact' | 'enterprise'>('contact');
-  const [selectedContact, setSelectedContact] = useState<ContactRecieve | null>(null);
+  const [selectedContact, setSelectedContact] = useState<ContactReceive | null>(null);
   const [tableData, setTableData] = useState<ReactNode[][]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Method to transform ContactRecieve to ReactNode[][] for table display
-  const transformToTableData = useCallback((contacts: ContactRecieve[]): ReactNode[][] => {
+  // Method to transform ContactReceive to ReactNode[][] for table display
+  const transformToTableData = useCallback((contacts: ContactReceive[]): ReactNode[][] => {
     return contacts.map((contact, index) => [
       index + 1,
       contact.Name,

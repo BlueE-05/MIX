@@ -6,159 +6,71 @@ import CustomTable from '@/components/Tables/CustomTable';
 import Formulario from '@/components/Forms/ProductsForms';
 import RoundedButton from '@/components/Buttons/RoundedButton';
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
-import { CirclePlus } from 'lucide-react';
+import { CirclePlus, LoaderCircle } from 'lucide-react';
 import ProductDetailCard from '@/components/Cards/Tables/ProductDetailCard';
-
-import { ProductView, ProductSent, ProductFromAPI } from '@/types/ProductTypes';
+import { fetchProducts } from '@/hooks/product/fetchProducts';
+import { ProductReceive } from '@/types/ProductTypes';
 
 export default function ProductPage() {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission(%)", "Product Sheet", ""];
+  const [tableData, setTableData] = useState<ReactNode[][]>([]);
 
-  const [productData, setProductData] = useState<ProductView[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const [showForm, setShowForm] = useState(false);
   const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
-  const [selectedProduct, setSelectedProduct] = useState<ProductView | null>(null); void setIsAdmin // Quitar este setIsAdmin, solo se agrego para el build...
+  const [selectedProduct, setSelectedProduct] = useState<ProductReceive | null>(null);
 
-  const transformAndSetData = (data: ProductFromAPI[]) => {
-    const transformed: ProductView[] = data.map((product, index) => {
-      return {
-        id: index + 1,
-        name: product.name,
-        refNum: product.refNum,
-        description: product.description,
-        unitaryPrice: product.unitaryPrice,
-        commission: product.commission,
-        productSheet: <a 
-                        key={`link-${index}`} 
-                        href={product.productSheetURL} 
-                        className="text-blue-500 underline"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        View Sheet
-                      </a>,
-        actions: <ArrowRightButton 
-                  color='orange'
-                  key={`arrow-${index}`} 
-                  onClick={() => {
-                    setSelectedProduct({
-                      id: index + 1,
-                      name: product.name,
-                      refNum: product.refNum,
-                      description: product.description,
-                      unitaryPrice: product.unitaryPrice,
-                      commission: product.commission,
-                      productSheet: <a 
-                                      href={product.productSheetURL} 
-                                      className="text-blue-500 underline"
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                    >
-                                      View Sheet
-                                    </a>,
-                      actions: <ArrowRightButton />
-                    });
-                  }}
-                />
-      };
-    });
+  // Method to transform ContactRecieve to ReactNode[][] for table display
+  const transformToTableData = useCallback((products: ProductReceive[]): ReactNode[][] => {
+    return products.map((product, index) => [
+      index + 1,
+      product.Name,
+      product.RefNum,
+      `$${product.UnitaryPrice.toFixed(2)}`,
+      `${product.Commission.toFixed(2)}%`,
+      <a href={product.ProductSheetURL} className="text-blue-500 hover:underline">View Sheet</a>,
+      <ArrowRightButton key={`arrow-${product.RefNum}`} onClick={() => setSelectedProduct(product)} aria-label={`View details of ${product.Name}`} />
+    ]);
+  }, []);
 
-    setProductData(transformed);
-  };
-
-  const fetchProducts = useCallback(async (searchTerm?: string) => {
+  // Load products and transform to view model
+  const loadProducts = useCallback(async (searchTerm?: string) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const baseUrl = "http://localhost:5000/api/products";
-
-      if (searchTerm && searchTerm.trim() !== '') {
-        const [idResponse, nameResponse] = await Promise.all([
-          fetch(`${baseUrl}/id/${encodeURIComponent(searchTerm)}`),
-          fetch(`${baseUrl}/name/${encodeURIComponent(searchTerm)}`)
-        ]);
-
-        if (!idResponse.ok && !nameResponse.ok) {
-          throw new Error('Search requests failed');
-        }
-
-        // Handle cases where one endpoint might succeed and the other fails
-        const idResults: ProductFromAPI[] = idResponse.ok ? await idResponse.json() : [];
-        const nameResults: ProductFromAPI[] = nameResponse.ok ? await nameResponse.json() : [];
-
-        const combinedResults = [...idResults, ...nameResults];
-        const uniqueResults = combinedResults.filter((product, index, self) =>
-          index === self.findIndex(p => p.refNum === product.refNum)
-        );
-
-        transformAndSetData(uniqueResults);
-      } else {
-        const res = await fetch(baseUrl);
-        if (!res.ok) {
-          throw new Error('Failed to fetch products');
-        }
-        const data: ProductFromAPI[] = await res.json();
-        transformAndSetData(data);
-      }
-    } catch (err) {
-      console.error("Error fetching products:", err);
-      setProductData([]);
+      const products = await fetchProducts(searchTerm);
+      setTableData(transformToTableData(products));
+    } catch (error) {
+      setError(`Failed to load products. Please try again later. Error: ${error}`);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
+  // if search term is provided, load contacts with that term
+  const handleSearch = useCallback((searchTerm: string) => {
+    loadProducts(searchTerm);
+  }, [loadProducts]);
+
+  // Load products on component mount
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
-
-  const handleSearch = (searchTerm: string) => {
-    fetchProducts(searchTerm);
-  };
-
-  const handleNewProduct = async (data: ProductData) => { // ProductData ahora cuenta con un error: Menciona que no se le puede encontrar... eso estaba ayer .-.
-    const productDataToSend: ProductSent = {
-      refNum: data.refNum,
-      name: data.name,
-      description: data.description,
-      unitaryPrice: data.unitaryPrice,
-      commission: data.commission,
-      productSheetURL: data.productSheetURL || '' // Make sure to handle this in your form
-    };
-
-    try {
-      const response = await fetch('http://localhost:5000/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productDataToSend),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create product');
-      }
-
-      await fetchProducts();
-      setShowForm(false);
-    } catch (error) {
-      console.error('Error creating product:', error);
-    }
-  };
-
-  const productDataForTable: ReactNode[][] = productData.map(product => [
-    product.id,
-    product.name,
-    product.refNum,
-    `$${product.unitaryPrice.toFixed(2)}`,
-    `${product.commission.toFixed(2)}%`,
-    product.productSheet,
-    product.actions,
-  ]);
+    loadProducts();
+  }, [loadProducts]);
 
   return (
     <main className="min-h-screen p-6">
-      <h1 className="font-bold text-3xl mb-5">Products List</h1>
+
+      {/* Title of the page */}
+      <div className="flex justify-between items-center mb-5 mr-5">
+        <h1 className="font-bold text-3xl mb-5">Products List</h1>
+        {isLoading && <LoaderCircle className="animate-spin text-stone-900" />}
+      </div>
 
       <CustomTable
         headers={productHeaders}
-        data={productDataForTable}
+        data={tableData}
         color="orange"
         onSearch={handleSearch}
       />
@@ -166,17 +78,14 @@ export default function ProductPage() {
       {selectedProduct && (
         <ProductDetailCard
           product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
+          onClose={() => { setSelectedProduct(null); loadProducts(); setShowForm(false); }}
           editButtonText="Edit Product"
           closeButtonText="Close"
         />
       )}
 
       {showForm && (
-        <Formulario 
-          onClose={() => setShowForm(false)} 
-          onSubmit={handleNewProduct} 
-        />
+        <Formulario onClose={() => setShowForm(false)} />
       )}
 
       {isAdmin && (
