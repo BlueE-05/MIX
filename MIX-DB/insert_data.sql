@@ -1,28 +1,75 @@
 USE MIXtesting;
 
 -- Equipos
-INSERT INTO Team (TeamName) VALUES
-('Equipo Gominola'),
-('Equipo Sigma');
+INSERT INTO Team VALUES 
+('Sales', 'Handles client acquisition and revenue generation.'),
+('Marketing', 'Focuses on brand awareness and lead generation.'),
+('Customer Support', 'Assists customers with issues and inquiries.'),
+('Development', 'Builds and maintains software products.'),
+('Operations', 'Manages internal processes and logistics.');
+
 
 -- Posiciones
-INSERT INTO JobPosition (Name, IDTeam) VALUES
-('Agente de Ventas', 1),
-('Gerente de Ventas', 1),
-('Vendedor', 2),
-('Líder de Ventas', 2);
+INSERT INTO JobPosition VALUES 
+	-- Sales
+	('Sales Executive', 2),
+	('Sales Development Representative (SDR)', 2),
+	('Key Account Manager', 2),
+	('Sales Consultant', 2),
+	('Inside Sales Coordinator', 2),
+	('Sales Analyst', 2),
+	('Sales Team Lead', 2),
+
+	-- Marketing
+	('Digital Marketing Specialist', 3),
+	('Community Manager', 3),
+	('Graphic Designer', 3),
+	('Product Marketing Manager', 3),
+	('SEO/SEM Specialist', 3),
+	('Content Coordinator', 3),
+	('Marketing Analyst', 3),
+
+	-- Customer Support
+	('Customer Service Representative', 4),
+	('Technical Support Agent', 4),
+	('Customer Retention Specialist', 4),
+	('Customer Support Supervisor', 4),
+	('Multichannel Support Coordinator', 4),
+	('Tier 2 Support Agent', 4),
+	('Customer Experience Manager', 4),
+
+	-- Development
+	('Full Stack Developer', 5),
+	('Backend Software Engineer', 5),
+	('Frontend Developer', 5),
+	('Software Architect', 5),
+	('DevOps Engineer', 5),
+	('QA Tester', 5),
+	('Technical Lead', 5),
+
+	-- Operations
+	('Operations Coordinator', 6),
+	('Process Analyst', 6),
+	('Logistics Manager', 6),
+	('Supply Chain Specialist', 6),
+	('Project Manager', 6),
+	('Warehouse Supervisor', 6),
+	('Operations Controller', 6)
+
+    -- Unnasigned
+    ('UNNASSIGNED', NULL);
 
 -- Usuarios (8 en total, 4 por equipo)
-INSERT INTO [User] ([IDEmail], [Name], [LastName], [PhoneNumber], [IDJobPos], [Education], [ProfilePic], [TeamID]) VALUES
-('ana.gomez@empresa.com', 'Ana', 'Gómez', '555-1234', 1, 'Licenciatura en Marketing', NULL, 1),
-('luis.perez@empresa.com', 'Luis', 'Pérez', '555-5678', 1, 'Ingeniería Comercial', NULL, 1),
-('carla.sanchez@empresa.com', 'Carla', 'Sánchez', '555-8765', 1, 'Lic. en Administración', NULL, 1),
-('jorge.lopez@empresa.com', 'Jorge', 'López', '555-4321', 2, 'MBA', NULL, 1), -- Gerente Gominola
+INSERT INTO [User] ([ID], [Name], [LastName], [PhoneNumber], [IDJobPosition], [Education], [ProfilePic]) VALUES
+('ana.gomez@empresa.com', 'Ana', 'Gómez', '555-1234', 1, 'Licenciatura en Marketing', NULL),
+('luis.perez@empresa.com', 'Luis', 'Pérez', '555-5678', 1, 'Ingeniería Comercial', NULL),
+('carla.sanchez@empresa.com', 'Carla', 'Sánchez', '555-8765', 1, 'Lic. en Administración', NULL),
+('jorge.lopez@empresa.com', 'Jorge', 'López', '555-4321', 2, 'MBA', NULL),
 
-('sofia.martinez@empresa.com', 'Sofía', 'Martínez', '555-1111', 2, 'Lic. en Comunicación', NULL, 2),
-('diego.ramirez@empresa.com', 'Diego', 'Ramírez', '555-2222', 2, 'Lic. en Mercadotecnia', NULL, 2),
-('valeria.fernandez@empresa.com', 'Valeria', 'Fernández', '555-3333', 2, 'Lic. en Publicidad', NULL, 2),
-('miguel.torres@empresa.com', 'Miguel', 'Torres', '555-4444', 3, 'MBA', NULL, 2); -- Gerente Sigma
+('sofia.martinez@empresa.com', 'Sofía', 'Martínez', '555-1111', 2, 'Lic. en Comunicación', NULL),
+('diego.ramirez@empresa.com', 'Diego', 'Ramírez', '555-2222', 2, 'Lic. en Mercadotecnia', NULL),
+('valeria.fernandez@empresa.com', 'Valeria', 'Fernández', '555-3333', 2, 'Lic. en Publicidad', NULL),
+('miguel.torres@empresa.com', 'Miguel', 'Torres', '555-4444', 3, 'MBA', NULL);
 
 -- Admins (los gerentes)
 INSERT INTO Admin (IDUser, IDTeam) VALUES
