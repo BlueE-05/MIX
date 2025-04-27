@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
+//endpoint
+import { HTTPURL } from "@/constants/utils";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -8,7 +11,8 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 } from 'chart.js';
 
 ChartJS.register(
@@ -18,49 +22,64 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
-interface LinesChartProps {
-  data?: number[]; // Lista de datos numéricos
-  labels?: number[];
-  reportType: 'team' | 'individual';
-  
+interface SaleData {
+  Fecha: string;
+  VentasCerradas: number;
+  DiaDelMes: number;
+  DiaSemana: string;
+  Equipo: string;
 }
 
-export default function LinesChart({ data, labels, reportType}: LinesChartProps) {
-  const [internalLabels, setInternalLabels] = useState<number[]>([]);
-  const [internalData, setInternalData] = useState<number[]>([]);
+export default function LinesChart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [days, setDays] = useState<number[]>([]);
+  const [closedSales, setClosedSales] = useState<number[]>([]);
 
-  // Si no se proporcionan labels o data, puedes mantener tu lógica de fetch aquí
   useEffect(() => {
-    if (!labels || !data) {
-      // Puedes mantener tu lógica de fetch si es necesario
-      // o simplemente usar los valores por defecto
-      setInternalLabels([1,2,3,4,5,6,7]);
-      setInternalData([0, 0, 0, 0, 0, 0, 0]);
-      setLoading(false);
-    } else {
-      setLoading(false);
-    }
-  }, [labels, data]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${HTTPURL}/report/DailyClosedSalesByTeam`);
+        
+        if (!response.ok) {
+          throw new Error('Error loading data');
+        }
+        
+        const data: SaleData[] = await response.json();
+        
+        
+        const daysArray = data.map(item => item.DiaDelMes);
+        const salesArray = data.map(item => item.VentasCerradas);
+        
+        setDays(daysArray);
+        setClosedSales(salesArray);
+        setLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setLoading(false);
+      }
+    };
 
-  // Usar los props si están disponibles, de lo contrario usar el estado interno
-  const chartLabels = labels || internalLabels;
-  const chartDataValues = data || internalData;
+    fetchData();
+  }, []);
 
+  
   const chartData = {
-    labels: chartLabels,
+    labels: days,
     datasets: [
       {
-        label: reportType === 'team' ? 'Team sales' : 'Individual sales',
-        data: chartDataValues,
-        borderColor: reportType === 'team' ? 'rgb(75, 192, 192)' : 'rgb(153, 102, 255)',
-        backgroundColor: reportType === 'team' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(153, 102, 255, 0.2)',
+        label: 'Closed Sales',
+        data: closedSales,
         tension: 0.1,
-        fill: true
+        fill: true,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderWidth: 2
       }
     ]
   };
@@ -69,41 +88,22 @@ export default function LinesChart({ data, labels, reportType}: LinesChartProps)
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      
       legend: {
         position: 'top' as const,
       },
-      tooltip: {
-        callbacks: {
-          label: function(context: any) {
-            return `${context.dataset.label}: $${context.raw.toLocaleString()}`;
-          }
-        }
-      }
     },
-    scales: {
-      x: {
-        title: {
-          display: true,
-          text: "# closed sales"
-        }
-      },
-      y: {
-        title: {
-          display: true,
-          text: "Days of month"
-        },
-        beginAtZero: true
-      }
-    }
   };
 
-  if (loading && !labels && !data) {
-    return <div>Loading data...</div>;
+  if (loading) {
+    return <div className="text-white text-center py-8">Cargando datos de ventas...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    return <div className="text-red-500 text-center py-8">Error: {error}</div>;
+  }
+
+  if (days.length === 0 || closedSales.length === 0) {
+    return <div className="text-gray-400 text-center py-8">No hay datos de ventas disponibles</div>;
   }
 
   return (

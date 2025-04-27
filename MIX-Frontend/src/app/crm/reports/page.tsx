@@ -150,12 +150,19 @@ export default function Dashboard() {
         {/* Left Side - Expanded Chart */}
         <div className="bg-white p-6 rounded-xl shadow-md lg:col-span-4">
           <h2 className="text-xl font-semibold text-gray-700 mb-4">
-            Team Monthly Trend
+            {reportType === 'team' ? 'Monthly Trend' : 'Monthly Trend'}
           </h2>
           <div className="h-96 md:h-[500px]">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <p>Loading chart data...</p>
+              </div>
             
-              <LinesChart/> 
-      
+              
+            ) : isAdmin ? (
+              
+              <LinesChartReport/>
+              ) : (<LinesChart/> )}
           </div>
         </div>
 
@@ -207,7 +214,7 @@ export default function Dashboard() {
                 <p>Select a user to view distribution</p>
               </div>
             )  : isAdmin ? (
-              <PieChart compact={true}  />
+              <PieChart compact={true}/>
             ) : (
               <PieChart compact={true} />
             )}
@@ -217,3 +224,4 @@ export default function Dashboard() {
     </main>
   );
 }
+

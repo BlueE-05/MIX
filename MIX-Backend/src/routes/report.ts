@@ -19,5 +19,6 @@ router.get('/SalesInfoMember', ReportHTTPHandler.getSalesInfoByMember);
 router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
 router.get('/DailyClosedSalesByTeam', ReportHTTPHandler.getDailyClosedSalesByTeam);
 router.get('/DailyClosedSalesByMember', ReportHTTPHandler.getDailyClosedSalesByMember);
+router.get('/PieChartInfoByUser', ReportHTTPHandler.getPieChartInfoByUser);
 
 export default router;

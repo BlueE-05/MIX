@@ -170,6 +170,16 @@ class ReportHTTPHandler {
       }
     };
 
+      getPieChartInfoByUser= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getPieChartInfoByUser(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
     
 
 }
