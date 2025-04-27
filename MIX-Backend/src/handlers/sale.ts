@@ -62,6 +62,17 @@ class SaleHTTPHandler {
       }
     }; 
 
+    updatePhaseSale= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const idsale=Number(req.params.idsale);
+        const idphase=Number(req.params.idphase);
+        const resultado = await this.saleController.updatePhaseSale(idsale, idphase);
+        res.json(resultado);
+      } catch (error) {
+        next(error);
+      }
+    }; 
+
 
 
   // En tu clase handler, cambia la declaración a arrow function:
@@ -77,10 +88,7 @@ class SaleHTTPHandler {
 
    
     
-    
-
-
-
+  
 }
 
 export default new SaleHTTPHandler();

@@ -413,3 +413,44 @@ END;
 
 ---ejemplo para ejecutar 
 EXEC sp_GetDailyClosedSalesByTeam @UserEmail = 'jorge.lopez@empresa.com';
+
+
+
+------Update a la fase de una venta
+CREATE PROCEDURE sp_UpdateSalePhase
+    @SaleID INT,
+    @NewPhaseID INT
+AS
+BEGIN
+    DECLARE @ChangeDate DATETIME = GETDATE();
+    
+    BEGIN TRANSACTION;
+    
+    BEGIN TRY
+        -- 1. Actualizar la fase en la tabla Sale
+        UPDATE Sale
+        SET IDPhase = @NewPhaseID
+        WHERE ID = @SaleID;
+        
+        -- 2. Registrar el cambio en el historial (SaleLifespan)
+        INSERT INTO SaleLifespan (IDSale, SalePhase, ChangeDate)
+        VALUES (@SaleID, @NewPhaseID, @ChangeDate);
+        
+        COMMIT TRANSACTION;
+        
+        SELECT 'Success' AS Result, 'Fase actualizada correctamente' AS Message;
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        
+        SELECT 'Error' AS Result, 
+               'Error al actualizar la fase: ' + ERROR_MESSAGE() AS Message,
+               ERROR_NUMBER() AS ErrorNumber,
+               ERROR_LINE() AS ErrorLine;
+    END CATCH;
+END;
+
+---ejemplo de ejecución
+EXEC sp_UpdateSalePhase 
+    @SaleID = 81, 
+    @NewPhaseID = 5;

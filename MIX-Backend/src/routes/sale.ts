@@ -9,6 +9,7 @@ router.get('/AllEnt', SaleHTTPHandler.getAllEnt);
 router.get('/AllProd', SaleHTTPHandler.getAllProd);
 router.get('/TopSales', SaleHTTPHandler.getTopSales);
 router.delete('/:idsale', SaleHTTPHandler.deleteSale.bind(SaleHTTPHandler));
+router.put('/:idsale/:idphase', SaleHTTPHandler.updatePhaseSale);
 
 
 

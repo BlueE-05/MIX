@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { HTTPURL } from '@/constants/utils';
 import LinesChartReport from '@/components/Dashboard/LinesChartReport';
 import LinesChart from '@/components/Dashboard/LinesChart';
+import PieChartReport from '@/components/Dashboard/PieChartReport';
 import PieChart from '@/components/Dashboard/PieChart';
 import BoxComisionesReport from '@/components/Dashboard/BoxComisionesReport';
 import BoxClosedReport from '@/components/Dashboard/BoxClosedReport';
@@ -211,6 +212,8 @@ export default function Dashboard() {
               <div className="flex items-center justify-center h-full">
                 <p>Select a user to view distribution</p>
               </div>
+            )  : isAdmin ? (
+              <PieChart compact={true}  />
             ) : (
               <PieChart compact={true} />
             )}

@@ -36,6 +36,7 @@ export default function SaleDetailCard({
   const [loadingPhases, setLoadingPhases] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const [selectedPhaseId, setSelectedPhaseId] = useState<number | null>(null);
   
   const articleOptions: Article[] = [
     { id: '1', name: 'Laptop', price: 999.99 },
@@ -69,6 +70,12 @@ export default function SaleDetailCard({
         const phasesData = await phasesResponse.json();
         setPhases(phasesData);
 
+        // Set initial selected phase based on current status
+        const currentPhase = phasesData.find((phase: Phase) => phase.Name === normalizeStatus(sale.status));
+        if (currentPhase) {
+          setSelectedPhaseId(currentPhase.IDPhase);
+        }
+
         // Fetch products
         const productsResponse = await fetch(`${HTTPURL}/report/ProdInfo/${sale.id}`);
         if (!productsResponse.ok) throw new Error('Failed to fetch products');
@@ -85,18 +92,46 @@ export default function SaleDetailCard({
     };
 
     fetchData();
-  }, [sale.id]);
+  }, [sale.id, sale.status]);
 
   const handleEdit = () => {
     setIsEditing(true);
     setErrorMessage(null);
   }
 
-  const handleSave = () => {
-    onSave({
-      ...editedSale
-    });
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      if (selectedPhaseId !== null) {
+        // Update the phase using the PUT endpoint
+        const response = await fetch(`${HTTPURL}/sale/${sale.id}/${selectedPhaseId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update sale phase');
+        }
+
+        // Find the phase name to update the local state
+        const selectedPhase = phases.find(phase => phase.IDPhase === selectedPhaseId);
+        if (selectedPhase) {
+          const updatedSale = {
+            ...editedSale,
+            status: selectedPhase.Name
+          };
+          
+          setEditedSale(updatedSale);
+          onSave(updatedSale);
+        }
+      }
+      
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error updating sale phase:', error);
+      setErrorMessage('Failed to update sale phase. Please try again.');
+    }
   }
 
   const handleCancel = () => {
@@ -105,6 +140,11 @@ export default function SaleDetailCard({
       status: normalizeStatus(sale.status),
       items: sale.items || []
     });
+    // Reset selected phase to original
+    const originalPhase = phases.find(phase => phase.Name === normalizeStatus(sale.status));
+    if (originalPhase) {
+      setSelectedPhaseId(originalPhase.IDPhase);
+    }
     setIsEditing(false);
     setShowDeleteConfirm(false);
     setErrorMessage(null);
@@ -144,7 +184,14 @@ export default function SaleDetailCard({
   }
 
   const handlePhaseChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    handleChange('status', e.target.value);
+    const phaseId = parseInt(e.target.value);
+    setSelectedPhaseId(phaseId);
+    
+    // Update the displayed status immediately
+    const selectedPhase = phases.find(phase => phase.IDPhase === phaseId);
+    if (selectedPhase) {
+      handleChange('status', selectedPhase.Name);
+    }
   };
 
   const [contactData, setContactData] = useState<ContactData>({
@@ -268,13 +315,13 @@ export default function SaleDetailCard({
                 <p>Loading phases...</p>
               ) : (
                 <select
-                  value={typeof editedSale.status === 'string' ? editedSale.status : ''}
+                  value={selectedPhaseId || ''}
                   onChange={handlePhaseChange}
                   className="w-full p-2 border rounded"
                 >
                   <option value="">Select a phase</option>
                   {phases.map((phase) => (
-                    <option key={phase.IDPhase} value={phase.Name}>
+                    <option key={phase.IDPhase} value={phase.IDPhase}>
                       {phase.Name}
                     </option>
                   ))}

@@ -141,6 +141,23 @@ class SaleService{
       }
   }
 
+
+  async updatePhaseSale(idsale: number, idphase:number) {
+    try {
+       const pool = await poolPromise;
+       const request = pool.request();
+       const result = await request
+       .input('idsale', sql.Int, idsale)
+       .input('idphase', sql.Int, idphase).query(
+      `EXEC sp_UpdateSalePhase @SaleID = @idsale, @NewPhaseID = @idphase`);
+       return result.recordset;
+       console.log(result.recordset);
+    } catch (error) {
+       console.error('❌ Error en updatePhaseSale:', error);
+       throw new Error('Error al actualizar fase de venta');
+    }
+}
+
   
  
 }
