@@ -1,11 +1,8 @@
-const deleteProduct = async (refnum: number): Promise<void> => {
-    const url = process.env.NEXT_PUBLIC_API_URL;
-    if (!url) {
-        console.error("API URL not defined in environment variables");
-    }
+import { url } from "@/utils/constants";
 
+export const deleteProduct = async (refnum: string): Promise<void> => {
     try {
-        const response = await fetch(`${url}/products/${refnum}`, {
+        const response = await fetch(`${url}/api/products/${refnum}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",

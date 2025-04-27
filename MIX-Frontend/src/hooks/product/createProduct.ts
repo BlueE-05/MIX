@@ -1,13 +1,9 @@
-import { ProductAPI } from "@/types/ProductTypes";
+import { ProductReceive } from "@/types/ProductTypes";
+import { url } from "@/utils/constants";
 
-const createProduct = async (productData: ProductAPI): Promise<void> => {
-  const url = process.env.NEXT_PUBLIC_API_URL;
-  if (!url) {
-    console.error("API URL not defined in environment variables");
-  }
-
+export const createProduct = async (productData: ProductReceive): Promise<void> => {
   try {
-    const response = await fetch(`${url}/products`, {
+    const response = await fetch(`${url}/api/products`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

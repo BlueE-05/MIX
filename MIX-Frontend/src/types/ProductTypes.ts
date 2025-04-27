@@ -10,21 +10,19 @@ export interface ProductReceive {
     CreationDate: Date;
 }
 
-export interface ProductView {
-    Index: number;
-    RefNum: string;
-    Name: string;
-    Description: string;
-    UnitaryPrice: number;
-    Commission: number;
-    ProductSheetURL: ReactNode;
-    Actions: ReactNode;
-}
-
 export interface ProductUpdate {
     Name: string;
     Description: string | '';
     UnitaryPrice: number;
     Commission: number;
     ProductSheetURL: string | '';
+}
+
+export interface ProductSend {
+    RefNum: string;
+    Name: string;
+    Description: string;
+    UnitaryPrice: number;
+    Commission: number;
+    ProductSheetURL: string;
 }

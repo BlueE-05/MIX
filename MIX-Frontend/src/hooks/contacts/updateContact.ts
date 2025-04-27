@@ -12,6 +12,6 @@ export const updateContact = async (contactId: number, updatedData: ContactData)
     
     if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Data: ${JSON.stringify(updatedData.enterpriseName)} Error updating contact: ${response.status} - ${errorText}`);
+        throw new Error(`Data: ${JSON.stringify(updatedData.EnterpriseName)} Error updating contact: ${response.status} - ${errorText}`);
     }
 };

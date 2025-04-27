@@ -2,14 +2,12 @@ import { ContactData } from "@/types/ContactTypes";
 import { url } from "@/utils/constants";
 
 export const createContact = async (contactData: ContactData): Promise<void> => {
-  const enterpriseData = contactData.enterpriseName;
-  console.log("enterprise:", enterpriseData);
   const response = await fetch(`${url}/api/contacts`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(contactData),
+    body: JSON.stringify(contactData.EnterpriseName),
   });
 
   if (!response.ok) {

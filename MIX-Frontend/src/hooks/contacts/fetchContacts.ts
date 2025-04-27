@@ -1,7 +1,7 @@
-import { ContactRecieve } from "@/types/ContactTypes";
+import { ContactReceive } from "@/types/ContactTypes";
 import { url } from "@/utils/constants";
 
-export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve[]> => {
+export const fetchContacts = async (searchTerm?: string): Promise<ContactReceive[]> => {
   try {
     if (searchTerm && searchTerm.trim() !== '') {
       const encodedTerm = encodeURIComponent(searchTerm);
@@ -15,14 +15,14 @@ export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve
         throw new Error("Error fetching filtered contacts");
       }
 
-      const [byNameContacts, byEnterpriseContacts]: [ContactRecieve[], ContactRecieve[]] = await Promise.all([
+      const [byNameContacts, byEnterpriseContacts]: [ContactReceive[], ContactReceive[]] = await Promise.all([
         byNameResults.json(),
         byEnterpriseResults.json()
       ]);
 
       // Remove duplicates while preserving order
       const uniqueContacts = [...byNameContacts, ...byEnterpriseContacts].reduce(
-        (acc: ContactRecieve[], current) => {
+        (acc: ContactReceive[], current) => {
           if (!acc.some(contact => contact.ID === current.ID)) {
             acc.push(current);
           }
@@ -36,7 +36,7 @@ export const fetchContacts = async (searchTerm?: string): Promise<ContactRecieve
       const response = await fetch(`${url}/api/contacts`);
       if (!response.ok) throw new Error("Error fetching all contacts");
 
-      const allContacts: ContactRecieve[] = await response.json();
+      const allContacts: ContactReceive[] = await response.json();
       return allContacts;
     }
   } catch (error) {
