@@ -79,8 +79,6 @@ export default function ProductPage() {
         <ProductDetailCard
           product={selectedProduct}
           onClose={() => { setSelectedProduct(null); loadProducts(); setShowForm(false); }}
-          editButtonText="Edit Product"
-          closeButtonText="Close"
         />
       )}
 

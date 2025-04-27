@@ -3,7 +3,7 @@ import { url } from "@/utils/constants";
 
 export const updateProduct = async (refNum: string, updatedData: ProductUpdate): Promise<void> => {
     try {
-        const response = await fetch(`${url}/products/${refNum}`, {
+        const response = await fetch(`${url}/api/products/${refNum}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",

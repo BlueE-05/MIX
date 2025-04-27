@@ -1,5 +1,5 @@
 export interface NumberInputProps {
-    label: string;
+    label?: string;
     name: string;
     value: number;
     onChange: (value: number) => void;
