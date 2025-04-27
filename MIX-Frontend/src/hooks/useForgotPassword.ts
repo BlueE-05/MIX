@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { url } from '@/utils/constants';
 
 export function useForgotPassword() {
   const [loading, setLoading] = useState(false);
@@ -11,7 +12,7 @@ export function useForgotPassword() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('http://localhost:4000/api/forgot-password', {
+      const res = await fetch(`${url}/api/forgot-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

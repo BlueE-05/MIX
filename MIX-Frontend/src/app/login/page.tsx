@@ -8,6 +8,7 @@ import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAc
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import { Eye, EyeOff } from "lucide-react";
 import ForgotPassword from "@/components/Forms/ForgotPassword";
+import { url } from '@/utils/constants';
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -48,7 +49,7 @@ export default function Login() {
     }
 
     try {
-      const res = await fetch("http://localhost:4000/api/login", {
+      const res = await fetch(`${url}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -62,7 +63,7 @@ export default function Login() {
         return;
       }
 
-      const profileRes = await fetch("http://localhost:4000/api/profile", {
+      const profileRes = await fetch(`${url}/api/profile`, {
         credentials: "include",
       });
 

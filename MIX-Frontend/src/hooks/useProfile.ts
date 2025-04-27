@@ -2,9 +2,10 @@
 
 import useSWR from "swr";
 import { LayOutProfileData } from "@/types/profile";
+import { url } from '@/utils/constants';
 
 const fetchProfile = async (): Promise<LayOutProfileData> => {
-  const res = await fetch("http://localhost:4000/api/profile", {
+  const res = await fetch(`${url}/api/profile`, {
     credentials: "include",
   });
   if (!res.ok) throw new Error("Unauthorized");
@@ -19,7 +20,7 @@ const fetchProfile = async (): Promise<LayOutProfileData> => {
 
 export function useProfile() {
   const { data: profile, error, isLoading, mutate } = useSWR(
-    "http://localhost:4000/api/profile",
+    `${url}/api/profile`,
     fetchProfile
   );
 

@@ -8,6 +8,7 @@ import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import Navbar from "@/components/NavBar";
 import { Eye, EyeOff } from 'lucide-react';
 import { fieldMaxLengths, fieldMinLengths, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange, educationLevels } from "@/constants/formFields";
+import { url } from '@/utils/constants';
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
   const router = useRouter();
@@ -55,14 +56,14 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   } = useEmailVerificationStatus();
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/teams")
+    fetch(`${url}/api/teams`)
       .then(res => res.json())
       .then(setTeamsFromDb)
       .catch(err => console.error("Error fetching teams:", err));
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/jobs")
+    fetch(`${url}/api/jobs`)
       .then(res => res.json())
       .then(setJobsFromDb)
       .catch(err => console.error("Error fetching jobs:", err));
@@ -107,7 +108,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     const cleaned = cleanFormData(data);
 
     try {
-      const response = await fetch("http://localhost:4000/api/signup", {
+      const response = await fetch(`${url}/api/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cleaned),
@@ -116,7 +117,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
       if (!response.ok) throw new Error("Signup failed");
 
-      const profileRes = await fetch("http://localhost:4000/api/email-status", { credentials: "include" });
+      const profileRes = await fetch(`${url}/api/email-status`, { credentials: "include" });
       if (profileRes.status === 403) {
         setShowVerification(true);
         return;
@@ -192,7 +193,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   
     if (currentStep === 2) {
       try {
-        const res = await fetch(`http://localhost:4000/api/users/exists?email=${formData.Email}`);
+        const res = await fetch(`${url}/api/users/exists?email=${formData.Email}`);
         const data = await res.json();
         if (data.exists) {
           setErrors(prev => ({ ...prev, Email: "Email is already registered" }));

@@ -2,9 +2,10 @@
 
 import useSWR from "swr";
 import { ProfileData } from "@/types/profile";
+import { url } from '@/utils/constants';
 
 const fetchFullProfile = async (): Promise<ProfileData> => {
-  const res = await fetch("http://localhost:4000/api/profile", {
+  const res = await fetch(`${url}/api/profile`, {
     credentials: "include",
     cache: "no-store",
   });

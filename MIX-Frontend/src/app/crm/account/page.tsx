@@ -7,6 +7,7 @@ import { useFullProfile } from "@/hooks/useFullProfile";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
 import { MiniSpinner } from "@/components/MiniSpinner";
 import { useProfile } from "@/hooks/useProfile";
+import { url } from '@/utils/constants';
 
 export default function Profile() {
   const { profile, loading, refresh: refreshFullProfile } = useFullProfile();
@@ -17,7 +18,7 @@ export default function Profile() {
 
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:4000/api/logout", {
+      await fetch(`${url}/api/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -49,7 +50,7 @@ export default function Profile() {
     if (!tempProfilePic) return;
     setUploading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/upload-profile-pic", {
+      const res = await fetch(`${url}/api/upload-profile-pic`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

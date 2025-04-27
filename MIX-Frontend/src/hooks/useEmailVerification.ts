@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import { url } from '@/utils/constants';
 
 export function useEmailVerificationStatus() {
   const [emailVerified, setEmailVerified] = useState<boolean | null>(null);
@@ -12,7 +13,7 @@ export function useEmailVerificationStatus() {
 
   const fetchStatus = async () => {
     try {
-      const statusRes = await fetch("http://localhost:4000/api/email-status", {
+      const statusRes = await fetch(`${url}/api/email-status`, {
         credentials: "include",
       });
       if (statusRes.ok) {
@@ -50,7 +51,7 @@ export function useEmailVerificationStatus() {
     setError(null);
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/resend-verification", {
+      const res = await fetch(`${url}/api/resend-verification`, {
         method: "POST",
         credentials: "include",
       });

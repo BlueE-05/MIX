@@ -20,7 +20,7 @@ const Sidebar = () => {
     { name: "Maximo Ramírez", role: "Frontend", social: "@maximo", socialLink:"https://www.linkedin.com/in/maximo-ramirez" },
     { name: "Fatima Castillo", role: "Backend", social: "@fatima", socialLink:"https://www.linkedin.com/in/fatimacastilloaguirre" },
     { name: "Daniel Sanchez", role: "Videogame", social: "@daniel", socialLink:"" },
-    { name: "Sandino Ortiz", role: "Backend", social: "@sandino", socialLink:"https://www.linkedin.com/in/ernesto-sandino-ortiz-de-le%C3%B3n-91255227a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" }
+    { name: "Sandino Ortiz", role: "Fullstack", social: "@sandino", socialLink:"https://www.linkedin.com/in/ernesto-sandino-ortiz-de-le%C3%B3n-91255227a/?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" }
   ];
 
   useEffect(() => {
