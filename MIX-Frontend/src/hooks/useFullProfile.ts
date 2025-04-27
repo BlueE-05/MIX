@@ -6,6 +6,7 @@ import { ProfileData } from "@/types/profile";
 const fetchFullProfile = async (): Promise<ProfileData> => {
   const res = await fetch("http://localhost:4000/api/profile", {
     credentials: "include",
+    cache: "no-store",
   });
 
   if (!res.ok) throw new Error("Unauthorized");
@@ -24,18 +25,23 @@ const fetchFullProfile = async (): Promise<ProfileData> => {
       year: "numeric",
     }),
     position: !data.JobPositionName || data.JobPositionName === "UNNASSIGNED"
-    ? "Unassigned"
-    : data.JobPositionName,
+      ? "Unassigned"
+      : data.JobPositionName,
     profilePic: data.ProfilePic || null,
-    isAdmin: data.isAdmin
+    isAdmin: data.isAdmin,
   };
 };
 
 export function useFullProfile() {
-  const { data, error, isLoading } = useSWR("full-profile", fetchFullProfile);
+  const { data, error, isLoading, mutate } = useSWR("full-profile", fetchFullProfile, {
+    revalidateOnMount: true,
+    shouldRetryOnError: false,
+  });
+
   return {
     profile: data,
     loading: isLoading,
     error,
+    refresh: mutate,
   };
 }

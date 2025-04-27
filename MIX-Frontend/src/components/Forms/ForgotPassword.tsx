@@ -1,124 +1,101 @@
 'use client';
 
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { MiniSpinner } from '@/components/MiniSpinner';
+import { useForgotPassword } from '@/hooks/useForgotPassword';
 
-interface ForgotPasswordModalProps {
+interface ForgotPasswordProps {
   onClose: () => void;
 }
 
-export default function ForgotPasswordModal({ onClose }: ForgotPasswordModalProps) {
+export default function ForgotPassword({ onClose }: ForgotPasswordProps) {
+  const { loading, error, secondsLeft, startForgotPassword } = useForgotPassword();
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState('');
 
   const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    
-    if (value && !validateEmail(value)) {
-      setEmailError('Please enter a valid email address');
-    } else {
-      setEmailError('');
-    }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email) ? "" : "Invalid email format";
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validación final antes de enviar
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email address');
-      return;
-    }
 
-    setLoading(true);
-    setError('');
-    setSuccess('');
+    const emailValidationError = validateEmail(email);
+    setEmailError(emailValidationError);
+    if (emailValidationError) return;
 
-    try {
-      const response = await fetch('http://localhost:4000/api/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+    await startForgotPassword(email);
+  };
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to send reset email');
-      }
-
-      setSuccess('Password reset email sent. Please check your inbox.');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    } finally {
-      setLoading(false);
-    }
+  const formatTime = (sec: number) => {
+    const min = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${min}:${s.toString().padStart(2, '0')}`;
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md relative">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          disabled={loading}
-        >
-          <X size={24} />
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-100/70 backdrop-blur-sm">
+      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-2xl">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Recover Password</h2>
 
-        <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Reset your password</h2>
-          <p className="text-gray-600 mb-6">
-            Enter your email address and we'll send you a link to reset your password.
-          </p>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email address
+            </label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              placeholder="your@email.com"
+              className={`w-full px-4 py-3 rounded-lg border-2 ${
+                (emailError || error)
+                  ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                  : "border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              } focus:outline-none focus:ring-2 transition`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={loading || (secondsLeft !== null && secondsLeft > 0)}
+            />
+            {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
+            {error && (
+              <p className="mt-2 text-sm text-red-600">
+                {error}. Please check the email entered is correct.
+              </p>
+            )}
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="forgot-email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email address
-              </label>
-              <input
-                id="forgot-email"
-                type="email"
-                required
-                className={`w-full px-4 py-2 rounded-lg border ${
-                  emailError ? 'border-red-500' : 'border-gray-300'
-                } focus:ring-blue-500 focus:border-blue-500`}
-                value={email}
-                onChange={handleEmailChange}
-                placeholder="your@email.com"
-              />
-              {emailError && (
-                <p className="mt-1 text-sm text-red-600">{emailError}</p>
-              )}
-            </div>
+          {secondsLeft !== null && secondsLeft > 0 && (
+            <p className="text-sm text-gray-500 text-center">
+              You can request another email in {formatTime(secondsLeft)}
+            </p>
+          )}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            {success && <p className="text-green-500 text-sm">{success}</p>}
-
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-1/2 rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 transition"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
-              disabled={loading || !!emailError || !email}
-              className={`w-full py-2 px-4 rounded-lg text-white font-medium ${
-                loading || !!emailError || !email
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              }`}
+              disabled={loading || (secondsLeft !== null && secondsLeft > 0)}
+              className="w-1/2 flex items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? 'Sending...' : 'Send reset link'}
+              {loading ? (
+                <>
+                  <MiniSpinner />
+                  Sending...
+                </>
+              ) : (
+                'Send reset email'
+              )}
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
   );

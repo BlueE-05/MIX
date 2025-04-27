@@ -7,7 +7,7 @@ import { SignupFormProps, SignupFormData } from "@/types/signup";
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import Navbar from "@/components/NavBar";
 import { Eye, EyeOff } from 'lucide-react';
-import { educationLevels, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange } from "@/constants/formFields";
+import { fieldMaxLengths, fieldMinLengths, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange, educationLevels } from "@/constants/formFields";
 
 export default function SignupForm({ onSubmit }: SignupFormProps) {
   const router = useRouter();
@@ -43,6 +43,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
   const [selectedTeamId, setSelectedTeamId] = useState("");
   const [showVerification, setShowVerification] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const {
     emailVerified,
     secondsLeft,
@@ -67,16 +68,30 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
       .catch(err => console.error("Error fetching jobs:", err));
   }, []);
 
-  const requiredFields = ["Name", "LastName", "BirthDate", "PhoneNumber", "Email", "Password", "Education"];
+    const validateField = (name: string, value: string) => {
+        if (!value) return `${fieldLabels[name]} is required`;
 
-  const validateField = (name: string, value: string) => {
-    if (requiredFields.includes(name) && !value) return `${fieldLabels[name]} is required`;
-    if (name === "Email" && !emailRegex.test(value)) return "Invalid email format";
-    if (name === "Password" && !passwordRegex.test(value)) return "Password must be at least 8 characters, include an uppercase letter, a number, and a special character";
-    if (name === "PhoneNumber" && (!phoneRegex.test(value) || value.length < 13)) return "Phone number must be at least 13 characters (including country code) with no spaces";
-    if (name === "BirthDate" && (value < birthDateRange.min || value > birthDateRange.max)) return "Birthdate must be between 1935 and 2009";
-    return "";
-  };
+        if (fieldMinLengths[name] && value.length < fieldMinLengths[name])
+            return `${fieldLabels[name]} must be at least ${fieldMinLengths[name]} characters`;
+
+        if (fieldMaxLengths[name] && value.length > fieldMaxLengths[name])
+            return `${fieldLabels[name]} must be at most ${fieldMaxLengths[name]} characters`;
+
+        if (name === "Email" && !emailRegex.test(value))
+            return "Invalid email format";
+
+        if (name === "Password" && !passwordRegex.test(value))
+            return "Password must include uppercase, number, and special character";
+
+        if (name === "PhoneNumber" && !phoneRegex.test(value))
+            return "Invalid phone number format";
+
+        if (name === "BirthDate" && (value < birthDateRange.min || value > birthDateRange.max))
+            return `Birthdate must be between ${birthDateRange.min.slice(0, 4)} and ${birthDateRange.max.slice(0, 4)}`;
+
+        return "";
+    };
+  
 
   const isStepValid = () => {
     const stepFields: (keyof SignupFormData)[] =
@@ -153,12 +168,27 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: validateField(name, value) }));
-  };
+    const cleanedValue = name === "Email" ? value.trim() : value;
+    setFormData((prev) => ({ ...prev, [name]: cleanedValue }));
+    setErrors((prev) => ({ ...prev, [name]: validateField(name, cleanedValue) }));
+  };  
 
   const handleNext = async () => {
-    if (!isStepValid()) return;
+    const stepFields: (keyof SignupFormData)[] =
+      currentStep === 1 ? ["Name", "LastName", "BirthDate", "PhoneNumber"] :
+      currentStep === 2 ? ["Email", "Password"] :
+      ["Education"];
+  
+    // Validar los campos actuales
+    const newErrors: { [key: string]: string } = {};
+    stepFields.forEach((field) => {
+      const value = formData[field] as string;
+      const error = validateField(field, value);
+      if (error) newErrors[field] = error;
+    });
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+  
+    if (Object.keys(newErrors).length > 0) return;
   
     if (currentStep === 2) {
       try {
@@ -176,7 +206,7 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
     }
   
     setCurrentStep((prev) => prev + 1);
-  };
+  };  
   
   const handleBack = () => setCurrentStep((prev) => prev - 1);
   const handleSubmit = (e: React.FormEvent) => isStepValid() && handleFormSubmit(e, formData);
@@ -222,13 +252,15 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                                       {fieldLabels[field] ?? field} <span className="text-red-500">*</span>
                                                     </label>
                                                     <input
-                                                        id={field}
-                                                        type={field === "BirthDate" ? "date" : "text"}
-                                                        name={field}
-                                                        value={formData[field as keyof typeof formData] || ""}
-                                                        placeholder={fieldLabels[field] ?? field}
-                                                        className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
-                                                        onChange={handleChange}
+                                                    id={field}
+                                                    type={field === "BirthDate" ? "date" : "text"}
+                                                    name={field}
+                                                    value={formData[field as keyof typeof formData] || ""}
+                                                    placeholder={fieldLabels[field] ?? field}
+                                                    min={field === "BirthDate" ? birthDateRange.min : undefined}
+                                                    max={field === "BirthDate" ? birthDateRange.max : undefined}
+                                                    className={`w-full px-4 py-3 rounded-lg border ${errors[field] ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} focus:outline-none focus:ring-2 transition`}
+                                                    onChange={handleChange}
                                                     />
                                                     {errors[field] && (
                                                         <p className="mt-2 text-sm text-red-600">{errors[field]}</p>
@@ -273,23 +305,28 @@ export default function SignupForm({ onSubmit }: SignupFormProps) {
                                             onChange={handleChange}
                                             />
                                             <button
-                                            type="button"
-                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
-                                            onClick={() => setShowPassword(!showPassword)}
+                                                type="button"
+                                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                                                onClick={() => {
+                                                setShowPassword((prev) => {
+                                                    if (!prev) {
+                                                    const id = setTimeout(() => {
+                                                        setShowPassword(false);
+                                                    }, 3000);
+                                                    setTimeoutId(id);
+                                                    } else if (timeoutId) {
+                                                    clearTimeout(timeoutId);
+                                                    }
+                                                    return !prev;
+                                                });
+                                                }}
                                             >
-                                            {showPassword ? (
-                                                <EyeOff className="h-5 w-5" />
-                                            ) : (
-                                                <Eye className="h-5 w-5" />
-                                            )}
+                                                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                                             </button>
                                         </div>
                                         {errors["Password"] && (
                                             <p className="mt-2 text-sm text-red-600">{errors["Password"]}</p>
                                         )}
-                                        <p className="mt-2 text-xs text-gray-500">
-                                            Password must be at least 8 characters, include an uppercase letter, a number, and a special character
-                                        </p>
                                         </div>
                                     </div>
                                     )}

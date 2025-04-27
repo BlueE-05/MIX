@@ -18,6 +18,15 @@ const fetchProfile = async (): Promise<LayOutProfileData> => {
 };
 
 export function useProfile() {
-  const { data: profile, error, isLoading } = useSWR("http://localhost:4000/api/profile", fetchProfile);
-  return { profile, loading: isLoading, error };
+  const { data: profile, error, isLoading, mutate } = useSWR(
+    "http://localhost:4000/api/profile",
+    fetchProfile
+  );
+
+  return {
+    profile,
+    loading: isLoading,
+    error,
+    refresh: mutate,
+  };
 }
