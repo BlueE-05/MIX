@@ -34,6 +34,23 @@ CREATE TABLE [Admin] (
   FOREIGN KEY ([IDTeam]) REFERENCES [Team] ([ID])
 );
 
+CREATE TABLE [EmailType] (
+  [ID] INT PRIMARY KEY IDENTITY(1,1),
+  [Name] VARCHAR(100) NOT NULL
+);
+
+INSERT INTO [EmailType] ([Name]) VALUES ('Email Verification');
+INSERT INTO [EmailType] ([Name]) VALUES ('Password Reset');
+
+CREATE TABLE [EmailSend] (
+  [ID] INT PRIMARY KEY IDENTITY(1,1),
+  [Email] VARCHAR(255) NOT NULL,
+  [EmailTypeID] INT NOT NULL,
+  [SentAt] DATETIME NOT NULL DEFAULT GETDATE(),
+  FOREIGN KEY ([Email]) REFERENCES [User]([ID]),
+  FOREIGN KEY ([EmailTypeID]) REFERENCES [EmailType]([ID])
+);
+
 CREATE TABLE [Enterprise] (
   [ID] integer IDENTITY(1,1) PRIMARY KEY,
   [Name] varchar(100),
