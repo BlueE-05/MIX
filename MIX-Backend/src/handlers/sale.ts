@@ -25,7 +25,7 @@ class SaleHTTPHandler {
     getSaleByEnt= async (req: Request, res: Response, next: NextFunction) => {
       try {
         const ent = String(req.params.ent);
-        const iduser = String(req.params.iduser);  
+        const iduser = UserEmail;  
         const resultado = await this.saleController.getSaleByEnt(ent, iduser);
         res.json(resultado);
       } catch (error) {

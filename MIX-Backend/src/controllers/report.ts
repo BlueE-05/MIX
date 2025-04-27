@@ -42,6 +42,10 @@ class ReportController {
   async getTotalSalesByMember(IDUser: string) {
     return this.reportService.getTotalSalesByMember(IDUser);
   }
+
+  async getSalesInfoByMember(IDUser: string) {
+    return this.reportService.getSalesInfoByMember(IDUser);
+  }
   
  
   async getDaysCurrentMonth() {

@@ -120,6 +120,16 @@ class ReportHTTPHandler {
       }
     };
 
+    getSalesInfoByMember= async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const iduser=UserEmail;
+        const products = await this.reportController.getSalesInfoByMember(iduser);
+        res.json(products);
+      } catch (error) {
+        next(error);
+      }
+    };
+
 
     getDaysCurrentMonth = async (req: Request, res: Response, next: NextFunction) => {
       try {

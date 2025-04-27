@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-//endpoint
-import { HTTPURL } from "@/constants/utils";
-
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,56 +22,41 @@ ChartJS.register(
 );
 
 interface LinesChartProps {
-  salesData?: number[];
+  data?: number[]; // Lista de datos numéricos
+  labels?: number[];
   reportType: 'team' | 'individual';
-  daysofMonth?: string[];
+  
 }
 
-interface SaleData {
-    Fecha: string;
-    VentasCerradas: number;
-    DiaDelMes:number;
-    DiaSeman: string;
-  }
-  
-
-export default function LinesChart({ salesData, reportType, daysofMonth }: LinesChartProps) {
-  const [days, setDays] = useState<string[]>([]);
+export default function LinesChart({ data, labels, reportType}: LinesChartProps) {
+  const [internalLabels, setInternalLabels] = useState<number[]>([]);
+  const [internalData, setInternalData] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<number[]>([]);
 
+  // Si no se proporcionan labels o data, puedes mantener tu lógica de fetch aquí
   useEffect(() => {
-    const fetchDaysOfMonth = async () => {
-      try {
-        setLoading(true);
-          const response = await fetch(`${HTTPURL}/report/DaysMonth`);
-          if (!response.ok) {
-            throw new Error('Error al obtener los días del mes');
-          }
-          const data: SaleData[] = await response.json();
-        
-        // Procesar los datos como en el ejemplo
-        const daysArray = data.map(item => item.DiaDelMes.toString());
-        setDays(daysArray);
-        setLoading(false);
-        } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        setLoading(false);
-      }
-    };
-    fetchDaysOfMonth();
-  }, []);
+    if (!labels || !data) {
+      // Puedes mantener tu lógica de fetch si es necesario
+      // o simplemente usar los valores por defecto
+      setInternalLabels([1,2,3,4,5,6,7]);
+      setInternalData([0, 0, 0, 0, 0, 0, 0]);
+      setLoading(false);
+    } else {
+      setLoading(false);
+    }
+  }, [labels, data]);
 
-  // Usar days del estado o el prop daysofMonth si está disponible
-  const labels = daysofMonth || days;
+  // Usar los props si están disponibles, de lo contrario usar el estado interno
+  const chartLabels = labels || internalLabels;
+  const chartDataValues = data || internalData;
 
-  const chartDataSale = {
-    labels:days,
+  const chartData = {
+    labels: chartLabels,
     datasets: [
       {
-        label: reportType === 'team' ? 'Team sale' : 'individual sale',
-        data: salesData || chartData,
+        label: reportType === 'team' ? 'Team sales' : 'Individual sales',
+        data: chartDataValues,
         borderColor: reportType === 'team' ? 'rgb(75, 192, 192)' : 'rgb(153, 102, 255)',
         backgroundColor: reportType === 'team' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(153, 102, 255, 0.2)',
         tension: 0.1,
@@ -87,6 +69,7 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
+      
       legend: {
         position: 'top' as const,
       },
@@ -102,20 +85,20 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
       x: {
         title: {
           display: true,
-          text: 'Days of month'
+          text: "# closed sales"
         }
       },
       y: {
         title: {
           display: true,
-          text: '# closed sales per day'
+          text: "Days of month"
         },
         beginAtZero: true
       }
     }
   };
 
-  if (loading && !daysofMonth) {
+  if (loading && !labels && !data) {
     return <div>Loading data...</div>;
   }
 
@@ -125,7 +108,7 @@ export default function LinesChart({ salesData, reportType, daysofMonth }: Lines
 
   return (
     <div className="w-full h-full">
-      <Line data={chartDataSale} options={options} />
+      <Line data={chartData} options={options} />
     </div>
   );
 }

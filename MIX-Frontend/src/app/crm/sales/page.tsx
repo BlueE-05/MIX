@@ -179,7 +179,8 @@ export default function SalesPage() {
       <CustomTable 
         headers={salesHeaders} 
         data={salesDataForTable} 
-        color="#0C43A8" 
+        color="#0C43A8"
+        
       />
 
       {/* Modal Form */}

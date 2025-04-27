@@ -216,6 +216,52 @@ class ReportService{
         return result.recordset;
     }
 
+    async getSalesInfoByMember(iduser: string){
+      const pool = await poolPromise;
+      const result = await pool.request()
+        .input('iduser', sql.VarChar, iduser)
+        .query(`DECLARE @UserEmail VARCHAR(255) = @iduser;
+
+-- Obtener el ID del equipo del usuario
+DECLARE @TeamID INT = (SELECT TeamID FROM [User] WHERE IDEmail = @UserEmail);
+
+-- Mostrar resultados o mensaje de error
+IF @TeamID IS NULL
+BEGIN
+    SELECT 'Usuario no encontrado' AS Resultado;
+END
+ELSE
+BEGIN
+    -- Consulta principal para obtener estadísticas de los miembros del equipo
+    SELECT 
+        u.IDEmail AS UsuarioID,
+        u.Name AS NombreCompleto,
+        u.PhoneNumber AS Telefono,
+        COALESCE(SUM(sa.Quantity * p.UnitaryPrice * p.Commission), 0) AS TotalComisiones,
+        COUNT(DISTINCT CASE WHEN s.IDPhase = 5 THEN s.ID END) AS VentasCerradas,
+        COUNT(DISTINCT s.ID) AS TotalVentas,
+        (SELECT TeamName FROM Team WHERE ID = @TeamID) AS Equipo
+    FROM 
+        dbo.[User] u
+    LEFT JOIN 
+        Sale s ON u.IDEmail = s.IDUser
+    LEFT JOIN 
+        SaleArticle sa ON s.ID = sa.IDSale
+    LEFT JOIN 
+        Product p ON sa.IDProduct = p.RefNum
+    WHERE 
+        u.TeamID = @TeamID
+    GROUP BY 
+        u.IDEmail, u.Name, u.PhoneNumber
+    ORDER BY 
+        TotalComisiones DESC;
+END`);
+        return result.recordset;
+    }
+
+
+
+
 
     async getDailyClosedSalesByTeam(IDEmail: string){
       const pool = await poolPromise;

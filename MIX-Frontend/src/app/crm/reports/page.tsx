@@ -16,9 +16,17 @@ export default function Dashboard() {
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [teamSalesData, setTeamSalesData] = useState<{TeamID: number, TeamName: string, TotalCompletedSales: number}[]>([]);
   const [teamComissionsData, setTeamComissionsData] = useState<{TeamID: number, TeamName: string, ComisionTotal: number}[]>([]);
-  const [teamMembersData, setTeamMembersData] = useState<{IDEmail: string, TeamMember: string, TotalSalesCompleted: number, ComisionTotal: number}[]>([]);
+  const [teamMembersData, setTeamMembersData] = useState<{
+    UsuarioID: string,
+    NombreCompleto: string,
+    Telefono: string,
+    TotalComisiones: number,
+    VentasCerradas: number,
+    TotalVentas: number,
+    Equipo: string
+  }[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const isAdmin = false;
+  const isAdmin = true;
 
   // Obtener datos del equipo y miembros
   useEffect(() => {
@@ -26,11 +34,11 @@ export default function Dashboard() {
       setIsLoading(true);
       const fetchTeamData = async () => {
         try {
-          // Fetch team sales data
+          // Obtener datos de miembros del equipo desde el nuevo endpoint
           const [salesResponse, comissionsResponse, membersResponse] = await Promise.all([
             fetch(`${HTTPURL}/report/SalesTeam`),
             fetch(`${HTTPURL}/report/ComissionTeam`),
-            fetch(`${HTTPURL}/report/SalesTeamMember`)
+            fetch(`${HTTPURL}/report/SalesInfoMember`)
           ]);
 
           const [salesData, comissionsData, membersData] = await Promise.all([
@@ -55,7 +63,7 @@ export default function Dashboard() {
   }, [reportType]);
 
   // Obtener datos del usuario seleccionado
-  const selectedUserData = teamMembersData.find(member => member.IDEmail === selectedUserId);
+  const selectedUserData = teamMembersData.find(member => member.UsuarioID === selectedUserId);
 
   // Determinar qué datos mostrar
   const getCurrentData = () => {
@@ -77,8 +85,8 @@ export default function Dashboard() {
     if (selectedUserData) {
       return {
         sales: [], // No hay datos de ventas mensuales en el endpoint
-        closed: selectedUserData.TotalSalesCompleted,
-        comisiones: selectedUserData.ComisionTotal,
+        closed: selectedUserData.VentasCerradas,
+        comisiones: selectedUserData.TotalComisiones,
         distribution: [] // No hay datos de distribución
       };
     }
@@ -88,7 +96,7 @@ export default function Dashboard() {
 
   const currentData = getCurrentData();
   const currentUserName = reportType === 'individual' && selectedUserId
-    ? selectedUserData?.TeamMember || 'Usuario no encontrado'
+    ? selectedUserData?.NombreCompleto || 'Usuario no encontrado'
     : 'Equipo';
 
   // Verificar si se debe mostrar el estado "no seleccionado"
@@ -126,8 +134,8 @@ export default function Dashboard() {
                 >
                   <option value="">Select User</option>
                   {teamMembersData.map((member) => (
-                    <option key={member.IDEmail} value={member.IDEmail}>
-                      {member.TeamMember}
+                    <option key={member.UsuarioID} value={member.UsuarioID}>
+                      {member.NombreCompleto}
                     </option>
                   ))}
                 </select>
@@ -154,17 +162,11 @@ export default function Dashboard() {
                 <p>Please select a user from the dropdown</p>
               </div>
             ) : isAdmin ? (
-              
-              <LinesChartReport
-                salesData={currentData?.sales || []} 
-                reportType={reportType} 
-                
-              />
-              ) : (<LinesChart/> )}
+              <LinesChart/>
+            ) : (<LinesChart/> )}
           </div>
         </div>
 
-     
         {/* Right Side - Stacked Content */}
         <div className="lg:col-span-1 h-full flex flex-col gap-4">
           <div className="grid grid-cols-1 gap-4">
