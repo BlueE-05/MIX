@@ -55,6 +55,24 @@ export class UserHttpHandler {
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }
-  }  
+  }
 
+  public async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const controller = await userControllerPromise;
+      await controller.forgotPassword(req, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async uploadProfilePicture(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const controller = await userControllerPromise;
+      await controller.updateProfilePicture(req as any, res);
+    } catch (error) {
+      next(error);
+    }
+  }
+  
 }

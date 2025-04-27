@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { serverConfig } from '@/config/server';
+import { serverConfig } from './config/server';
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import signupRoutes from "./routes/user.routes";

@@ -80,22 +80,25 @@ export class UserDbService {
   public async getLastVerificationSent(email: string): Promise<Date | null> {
     const result = await this.db.request()
       .input("email", sql.NVarChar, email.toLowerCase())
+      .input("emailTypeId", sql.Int, 1)
       .query(`
-        SELECT LastVerificationSent
-        FROM [User]
-        WHERE LOWER(ID) = @email
+        SELECT TOP 1 [SentAt]
+        FROM [EmailSend]
+        WHERE LOWER([Email]) = @email
+          AND [EmailTypeID] = @emailTypeId
+        ORDER BY [SentAt] DESC
       `);
-
-    return result.recordset[0]?.LastVerificationSent ?? null;
+  
+    return result.recordset[0]?.SentAt ?? null;
   }
 
-  public async updateLastVerificationSent(email: string): Promise<void> {
+  public async insertVerificationEmail(email: string): Promise<void> {
     await this.db.request()
       .input("email", sql.NVarChar, email.toLowerCase())
+      .input("emailTypeId", sql.Int, 1)
       .query(`
-        UPDATE [User]
-        SET LastVerificationSent = GETDATE()
-        WHERE LOWER(ID) = @email
+        INSERT INTO [EmailSend] ([Email], [EmailTypeID])
+        VALUES (@email, @emailTypeId)
       `);
   }
 
@@ -104,12 +107,47 @@ export class UserDbService {
       .input("email", sql.NVarChar, email.toLowerCase())
       .query(`
         SELECT 1
-        FROM [Admin] a
-        INNER JOIN [User] u ON a.IDUser = u.ID
-        WHERE LOWER(u.ID) = @email
+        FROM [Admin]
+        WHERE IDUser = @email
       `);
   
     return result.recordset.length > 0;
+  }
+  
+  public async getLastForgotPasswordSent(email: string): Promise<Date | null> {
+    const result = await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .input("emailTypeId", sql.Int, 2)
+      .query(`
+        SELECT TOP 1 [SentAt]
+        FROM [EmailSend]
+        WHERE LOWER([Email]) = @email
+          AND [EmailTypeID] = @emailTypeId
+        ORDER BY [SentAt] DESC
+      `);
+  
+    return result.recordset[0]?.SentAt ?? null;
+  }
+  
+  public async insertForgotPasswordEmail(email: string): Promise<void> {
+    await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .input("emailTypeId", sql.Int, 2)
+      .query(`
+        INSERT INTO [EmailSend] ([Email], [EmailTypeID])
+        VALUES (@email, @emailTypeId)
+      `);
+  }
+
+  public async updateProfilePictureInDb(email: string, buffer: Buffer): Promise<void> {
+    await this.db.request()
+      .input("email", sql.NVarChar, email.toLowerCase())
+      .input("profilePic", sql.VarBinary(sql.MAX), buffer)
+      .query(`
+        UPDATE [User]
+        SET ProfilePic = @profilePic
+        WHERE LOWER(ID) = @email
+      `);
   }
   
 }

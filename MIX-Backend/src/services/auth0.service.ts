@@ -8,6 +8,7 @@ export class Auth0Service {
   private clientSecret = auth0Config.clientSecret;
   private audience = auth0Config.audience;
   private managementAudience = auth0Config.audienceManagement;
+  private connectionId = auth0Config.connectionId;
 
   private async getAccessToken(audience1: string): Promise<string> {
     if (!audience1 || !audience1.startsWith("https://") || !audience1.includes("/api/v2")) {
@@ -111,4 +112,25 @@ export class Auth0Service {
       }
     );
   }
+
+  public async linkPasswordResetEmail(email: string): Promise<{ ticket: string }> {
+    const token = await this.getAccessToken(this.managementAudience);
+    
+    try {
+    const res = await axios.post(`https://${this.domain}/api/v2/tickets/password-change`, {
+      email,
+      connection_id: this.connectionId,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    return res.data;
+    } catch (error: any) {
+      console.error("Auth0 Error Details:", error.response?.data || error.message);
+      throw error;
+    }
+  }
+
 }
