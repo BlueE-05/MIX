@@ -10,6 +10,8 @@ import { CirclePlus, LoaderCircle } from 'lucide-react';
 import ProductDetailCard from '@/components/Cards/Tables/ProductDetailCard';
 import { fetchProducts } from '@/hooks/product/fetchProducts';
 import { ProductReceive } from '@/types/ProductTypes';
+import { useFullProfile } from '@/hooks/useFullProfile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function ProductPage() {
   const productHeaders = ["#", "Name of Product", "Ref. Number", "Unitary Price", "Commission(%)", "Product Sheet", ""];
@@ -18,7 +20,10 @@ export default function ProductPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [showForm, setShowForm] = useState(false);
-  const [isAdmin/*, setIsAdmin*/] = useState(true); // Simulating admin status //TODO: connect to backend
+
+  const { profile, loading } = useFullProfile();
+  const [isAdmin, setIsAdmin] = useState(false);
+  
   const [selectedProduct, setSelectedProduct] = useState<ProductReceive | null>(null);
 
   // Method to transform ContactRecieve to ReactNode[][] for table display
@@ -56,6 +61,16 @@ export default function ProductPage() {
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
+
+  useEffect(() => {
+    if (!loading && profile) {
+      setIsAdmin(profile.isAdmin);
+    }
+  }, [loading, profile]);
+
+
+  if (loading || !profile) return <LoadingSpinner />;
+  
 
   return (
     <main className="min-h-screen p-6">
