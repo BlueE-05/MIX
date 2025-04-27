@@ -167,11 +167,11 @@ export default class ContactService {
   async createContact(userID: string, data: ContactDB): Promise<void> {
     await this.pool.request()
       .input('idUser', sql.VarChar, userID)
-      .input('name', sql.VarChar, data.name)
-      .input('lastName', sql.VarChar, data.lastName)
-      .input('email', sql.VarChar, data.email)
-      .input('phoneNumber', sql.VarChar, data.phoneNumber)
-      .input('nameEnterprise', sql.VarChar, data.enterpriseName)
+      .input('name', sql.VarChar, data.Name)
+      .input('lastName', sql.VarChar, data.LastName)
+      .input('email', sql.VarChar, data.Email)
+      .input('phoneNumber', sql.VarChar, data.PhoneNumber)
+      .input('nameEnterprise', sql.VarChar, data.EnterpriseName)
       .query(
         `INSERT INTO Contact (Name, LastName, Email, PhoneNumber, IDEnterprise, IDUser)
         VALUES (
@@ -187,11 +187,11 @@ export default class ContactService {
 
   async createEnterprise(enterpriseData: EnterpriseDB): Promise<void> {
     await this.pool.request()
-      .input('name', sql.VarChar, enterpriseData.name)
-      .input('description', sql.VarChar, enterpriseData.description)
-      .input('industry', sql.VarChar, enterpriseData.industry)
-      .input('website', sql.VarChar, enterpriseData.website)
-      .input('address', sql.VarChar, enterpriseData.address)
+      .input('name', sql.VarChar, enterpriseData.Name)
+      .input('description', sql.VarChar, enterpriseData.Description)
+      .input('industry', sql.VarChar, enterpriseData.Industry)
+      .input('website', sql.VarChar, enterpriseData.Website)
+      .input('address', sql.VarChar, enterpriseData.Address)
       .query(
         `INSERT INTO Enterprise (Name, Description, Industry, WebPage, Location)
         VALUES (@name, @description, @industry, @website, @address);`
@@ -201,11 +201,11 @@ export default class ContactService {
   async updateContact(id: number, data: ContactDB): Promise<void> {
     await this.pool.request()
       .input('id', sql.Int, id)
-      .input('name', sql.VarChar, data.name)
-      .input('lastName', sql.VarChar, data.lastName)
-      .input('email', sql.VarChar, data.email)
-      .input('phoneNumber', sql.VarChar, data.phoneNumber)
-      .input('enterpriseName', sql.VarChar, data.enterpriseName)
+      .input('name', sql.VarChar, data.Name)
+      .input('lastName', sql.VarChar, data.LastName)
+      .input('email', sql.VarChar, data.Email)
+      .input('phoneNumber', sql.VarChar, data.PhoneNumber)
+      .input('enterpriseName', sql.VarChar, data.EnterpriseName)
       .query(
         `UPDATE [Contact]
         SET

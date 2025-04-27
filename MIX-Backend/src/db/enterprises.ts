@@ -29,11 +29,11 @@ export default class ContactService {
 
   async createEnterprise(enterpriseData: EnterpriseDB): Promise<void> {
     await this.pool.request()
-      .input('name', sql.VarChar, enterpriseData.name)
-      .input('description', sql.VarChar, enterpriseData.description)
-      .input('industry', sql.VarChar, enterpriseData.industry)
-      .input('website', sql.VarChar, enterpriseData.website)
-      .input('address', sql.VarChar, enterpriseData.address)
+      .input('name', sql.VarChar, enterpriseData.Name)
+      .input('description', sql.VarChar, enterpriseData.Description)
+      .input('industry', sql.VarChar, enterpriseData.Industry)
+      .input('website', sql.VarChar, enterpriseData.Website)
+      .input('address', sql.VarChar, enterpriseData.Address)
       .query(
         `INSERT INTO Enterprise (Name, Description, Industry, WebPage, Location)
         VALUES (@name, @description, @industry, @website, @address);`

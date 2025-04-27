@@ -42,12 +42,12 @@ export default class ProductService {
 
   async createProduct(data: ProductDB): Promise<void> {
     const result = await this.pool.request()
-      .input('refNum', sql.VarChar, data.refNum)
-      .input('name', sql.VarChar, data.name)
-      .input('description', sql.VarChar, data.description)
-      .input('unitaryPrice', sql.Float, data.unitaryPrice)
-      .input('commission', sql.Float, data.commission)
-      .input('productSheetURL', sql.VarChar, data.productSheetURL)
+      .input('refNum', sql.VarChar, data.RefNum)
+      .input('name', sql.VarChar, data.Name)
+      .input('description', sql.VarChar, data.Description)
+      .input('unitaryPrice', sql.Float, data.UnitaryPrice)
+      .input('commission', sql.Float, data.Commission)
+      .input('productSheetURL', sql.VarChar, data.ProductSheetURL)
       .query(
               `INSERT INTO Product (RefNum, Name, Description, UnitaryPrice, Commission, ProductSheetURL)
               VALUES (@refNum, @name, @description, @unitaryPrice, @commission, @productSheetURL);`
@@ -57,11 +57,11 @@ export default class ProductService {
   async updateProduct(id: string, data: ProductDB): Promise<void> {
     const result = await this.pool.request()
       .input('id', sql.VarChar, id)
-      .input('name', sql.VarChar, data.name)
-      .input('description', sql.VarChar, data.description)
-      .input('unitaryPrice', sql.Float, data.unitaryPrice)
-      .input('commission', sql.Float, data.commission)
-      .input('productSheetURL', sql.VarChar, data.productSheetURL)
+      .input('name', sql.VarChar, data.Name)
+      .input('description', sql.VarChar, data.Description)
+      .input('unitaryPrice', sql.Float, data.UnitaryPrice)
+      .input('commission', sql.Float, data.Commission)
+      .input('productSheetURL', sql.VarChar, data.ProductSheetURL)
       .query(`UPDATE Product
               SET
                 Name = @name,

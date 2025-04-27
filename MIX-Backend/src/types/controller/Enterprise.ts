@@ -1,4 +1,4 @@
 export default interface Enterprise {
-    id: number;
-    name: string;
+    ID: number;
+    Name: string;
 }

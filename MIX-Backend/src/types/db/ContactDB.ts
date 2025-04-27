@@ -1,9 +1,9 @@
 export default interface ContactDB {
-    id: number | null;
-    name: string;
-    lastName: string;
-    email?: string | null;
-    phoneNumber?: string | null;
-    enterpriseName: string;
-    creationDate?: Date | null;
+    ID: number | null;
+    Name: string;
+    LastName: string;
+    Email?: string | null;
+    PhoneNumber?: string | null;
+    EnterpriseName: string;
+    CreationDate?: Date | null;
 }
