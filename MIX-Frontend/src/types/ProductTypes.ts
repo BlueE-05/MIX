@@ -1,5 +1,3 @@
-import { ReactNode } from 'react';
-
 export interface ProductReceive {
     RefNum: string;
     Name: string;

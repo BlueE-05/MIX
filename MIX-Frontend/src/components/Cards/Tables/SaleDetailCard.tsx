@@ -1,5 +1,5 @@
 'use client'
-import { ContactData } from '@/components/Forms/ContactsForms'
+import { ContactData } from '@/types/ContactTypes'
 import { ChangeEvent, ReactNode, useState } from 'react'
 import { Article, SaleItem } from '@/types/Sales'
 import { SaleDetailCardProps } from '@/types/DetailCards';
@@ -126,11 +126,11 @@ export default function SaleDetailCard({
   };
 
   const [contactData, setContactData] = useState<ContactData>({
-    name: "",
-    lastName: "",
-    enterprise: sale.enterprise || "", // Inicializar con el valor de la venta
-    phone: "",
-    email: "",
+    Name: "",
+    LastName: "",
+    EnterpriseName: sale.enterprise || "", // Inicializar con el valor de la venta
+    PhoneNumber: "",
+    Email: "",
   });
   
   const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
@@ -168,7 +168,7 @@ export default function SaleDetailCard({
             {isEditing ? (
               <select
                 name="enterprise"
-                value={contactData.enterprise}
+                value={contactData.EnterpriseName}
                 onChange={handleChangeContact}
                 required
                 className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-900"
@@ -181,7 +181,7 @@ export default function SaleDetailCard({
                 ))}
               </select>
             ) : (
-              <p className="text-gray-700">{contactData.enterprise}</p>
+              <p className="text-gray-700">{contactData.EnterpriseName}</p>
             )}
           </div>
           

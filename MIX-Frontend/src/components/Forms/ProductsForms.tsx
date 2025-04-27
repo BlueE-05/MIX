@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, ChangeEvent, FormEvent, useCallback } from "react";
+import React, { useState, ChangeEvent, useCallback } from "react";
 import Input from "@/components/Forms/Input";
 import NumberInput from "@/components/Forms/NumberInput";
 import RoundedButton from "@/components/Buttons/RoundedButton";
@@ -9,7 +9,6 @@ import { createProduct } from "@/hooks/product/createProduct";
 
 interface FormularioProps {
   onClose: () => void;
-  onSubmit?: (data: ProductSend) => void;
 }
 
 const MAX_LENGTHS = {
@@ -19,7 +18,7 @@ const MAX_LENGTHS = {
   productsheet: 255,
 }
 
-export default function Formulario({ onClose, onSubmit }: FormularioProps) {
+export default function Formulario({ onClose }: FormularioProps) {
   const [productData, setProductData] = useState<ProductSend>({
     RefNum: "",
     Name: "",

@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 // Cargar variables desde el archivo .env
 dotenv.config();
 
-// Cargar variables desde el archivo .env.local
+// Cargar variables desde el archivo .env
 dotenv.config({ path: '.env' });
 
 export const url = process.env.NEXT_PUBLIC_API_URL;

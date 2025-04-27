@@ -8,7 +8,6 @@ import NumberInput from '@/components/Forms/NumberInput'
 interface ProductDetailCardProps {
   product: ProductReceive;
   onClose: () => void;
-  onSave?: (refNum: string, data: ProductUpdate) => void;
   editButtonText?: string;
   closeButtonText?: string;
   saveButtonText?: string;
@@ -25,7 +24,6 @@ const MAX_LENGTHS = {
 export default function ProductDetailCard({
   product,
   onClose,
-  onSave,
   editButtonText = 'Edit',
   closeButtonText = 'Close',
   saveButtonText = 'Save',

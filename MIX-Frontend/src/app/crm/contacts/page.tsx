@@ -52,7 +52,7 @@ export default function ContactPage() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [transformToTableData]);
 
   // if search term is provided, load contacts with that term
   const handleSearch = useCallback((searchTerm: string) => {

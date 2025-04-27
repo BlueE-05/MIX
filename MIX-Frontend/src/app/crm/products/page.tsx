@@ -16,10 +16,9 @@ export default function ProductPage() {
   const [tableData, setTableData] = useState<ReactNode[][]>([]);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const [showForm, setShowForm] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(true); // Simulating admin status //TODO: connect to backend
+  const [isAdmin/*, setIsAdmin*/] = useState(true); // Simulating admin status //TODO: connect to backend
   const [selectedProduct, setSelectedProduct] = useState<ProductReceive | null>(null);
 
   // Method to transform ContactRecieve to ReactNode[][] for table display
@@ -31,23 +30,22 @@ export default function ProductPage() {
       `$${product.UnitaryPrice.toFixed(2)}`,
       `${product.Commission.toFixed(2)}%`,
       <a href={product.ProductSheetURL} className="text-blue-500 hover:underline">View Sheet</a>,
-      <ArrowRightButton key={`arrow-${product.RefNum}`} onClick={() => setSelectedProduct(product)} aria-label={`View details of ${product.Name}`} />
+      <ArrowRightButton key={`arrows-${index}`} onClick={() => setSelectedProduct(product)} aria-label={`View details of ${product.Name}`} />
     ]);
   }, []);
 
   // Load products and transform to view model
   const loadProducts = useCallback(async (searchTerm?: string) => {
     setIsLoading(true);
-    setError(null);
     try {
       const products = await fetchProducts(searchTerm);
       setTableData(transformToTableData(products));
     } catch (error) {
-      setError(`Failed to load products. Please try again later. Error: ${error}`);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [transformToTableData]);
 
   // if search term is provided, load contacts with that term
   const handleSearch = useCallback((searchTerm: string) => {
@@ -64,7 +62,7 @@ export default function ProductPage() {
 
       {/* Title of the page */}
       <div className="flex justify-between items-center mb-5 mr-5">
-        <h1 className="font-bold text-3xl mb-5">Products List</h1>
+        <h1 className="font-bold text-3xl">Products List</h1>
         {isLoading && <LoaderCircle className="animate-spin text-stone-900" />}
       </div>
 
