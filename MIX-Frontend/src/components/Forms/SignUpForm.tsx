@@ -3,14 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAccess";
-import { SignupFormData } from "@/types/signup";
+import { SignupFormProps, SignupFormData } from "@/types/signup";
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
 import Navbar from "@/components/NavBar";
 import { Eye, EyeOff } from 'lucide-react';
 import { fieldMaxLengths, fieldMinLengths, fieldLabels, passwordRegex, emailRegex, phoneRegex, birthDateRange, educationLevels } from "@/constants/formFields";
 import { url } from '@/utils/constants';
 
-export default function SignupForm() {
+export default function SignupForm({ onSubmit }: Partial<SignupFormProps>) {
   const router = useRouter();
 
   const cleanFormData = (data: SignupFormData): SignupFormData => {

@@ -1,3 +1,7 @@
+export interface SignupFormProps {
+  onSubmit: (event: React.FormEvent, formData: SignupFormData) => void;
+}
+
 export interface SignupFormData {
   Name: string;
   LastName: string;
