@@ -1,9 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BoxClosed from '@/components/Dashboard/BoxClosed';
 import LinesChart from '@/components/Dashboard/LinesChart';
 import PieChart from '@/components/Dashboard/PieChart';
 import BoxComisiones from '@/components/Dashboard/BoxComisiones';
+import { useFullProfile } from '@/hooks/useFullProfile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 // Datos mock para el equipo, admin y usuarios
 const teamData = {
@@ -43,8 +45,21 @@ const usersData = [
 ];
 
 export default function Dashboard() {
-  const isAdmin = false;
+  const { profile, loading } = useFullProfile();
+  const [isAdmin, setIsAdmin] = useState(false);
   // Para usuarios no-admin, siempre mostrar su reporte individual
+
+
+  
+  useEffect(() => {
+    if (!loading && profile) {
+      setIsAdmin(profile.isAdmin);
+    }
+  }, [loading, profile]);
+
+
+  if (loading || !profile) return <LoadingSpinner />;
+
   const [reportType, setReportType] = useState<'team' | 'individual'>(isAdmin ? 'team' : 'individual');
   const [selectedUserId, setSelectedUserId] = useState<string>('admin'); // Default admin
 
