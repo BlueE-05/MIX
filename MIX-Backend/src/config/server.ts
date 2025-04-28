@@ -3,5 +3,5 @@ dotenv.config();
 
 export const serverConfig = {
     port: process.env.PORT!,
-    urlFront: process.env.URL_FRONT!,
+    urlFrontend: process.env.URL_FRONTEND!,
 };
