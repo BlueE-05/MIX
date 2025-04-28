@@ -64,7 +64,7 @@ export default function Home() {
                 <p className="text-sm">
                     Contact us:  
                     <a className="text-green-400 hover:underline ml-1">
-                        support@raydevexample.com
+                        raydevcompany@gmail.com
                     </a>
                 </p>
             </div>

@@ -17,7 +17,7 @@ const fetchFullProfile = async (): Promise<ProfileData> => {
   return {
     name: data.Name,
     lastName: data.LastName,
-    email: data.ID,
+    email: data.IDEmail,
     phone: data.PhoneNumber,
     education: data.Education,
     dateOfJoining: new Date(data.JoiningDate).toLocaleDateString("en-US", {

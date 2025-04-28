@@ -160,7 +160,7 @@ export default function Profile() {
 
       <div className="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg flex flex-col justify-between min-h-[400px] mt-10">
         <div className="flex items-center space-x-6">
-          <Image src="/NexaCorp.png" alt="Company Logo" width={80} height={80} className="rounded-lg" />
+          <Image src="/instituto_minerva_br_logo.jpeg" alt="Company Logo" width={80} height={80} className="rounded-lg" />
           <div>
             <h1 className="text-3xl font-bold text-black">Instituto Minerva</h1>
             <p className="text-gray-700 font-semibold">
