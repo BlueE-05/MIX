@@ -1,4 +1,4 @@
-//* 3. Controller Conctacts
+//* 3. Controller Enterprises
 
 import EnterpriseService from '@/db/enterprises';
 import Enterprise from '@/types/controller/Enterprise';
