@@ -12,6 +12,6 @@ BEGIN
         WHERE [Name] = 'UNNASSIGNED'
     )  
     FROM [dbo].[User] u  
-    INNER JOIN inserted i ON u.ID = i.ID  
+    INNER JOIN inserted i ON u.IDEmail = i.IDEmail
     WHERE i.IDJobPosition IS NULL;
 END;

@@ -12,49 +12,49 @@ INSERT INTO Team VALUES
 -- Posiciones
 INSERT INTO JobPosition VALUES 
 	-- Sales
-	('Sales Executive', 2),
-	('Sales Development Representative (SDR)', 2),
-	('Key Account Manager', 2),
-	('Sales Consultant', 2),
-	('Inside Sales Coordinator', 2),
-	('Sales Analyst', 2),
-	('Sales Team Lead', 2),
+	('Sales Executive', 1),
+	('Sales Development Representative (SDR)', 1),
+	('Key Account Manager', 1),
+	('Sales Consultant', 1),
+	('Inside Sales Coordinator', 1),
+	('Sales Analyst', 1),
+	('Sales Team Lead', 1),
 
 	-- Marketing
-	('Digital Marketing Specialist', 3),
-	('Community Manager', 3),
-	('Graphic Designer', 3),
-	('Product Marketing Manager', 3),
-	('SEO/SEM Specialist', 3),
-	('Content Coordinator', 3),
-	('Marketing Analyst', 3),
+	('Digital Marketing Specialist', 2),
+	('Community Manager', 2),
+	('Graphic Designer', 2),
+	('Product Marketing Manager', 2),
+	('SEO/SEM Specialist', 2),
+	('Content Coordinator', 2),
+	('Marketing Analyst', 2),
 
 	-- Customer Support
-	('Customer Service Representative', 4),
-	('Technical Support Agent', 4),
-	('Customer Retention Specialist', 4),
-	('Customer Support Supervisor', 4),
-	('Multichannel Support Coordinator', 4),
-	('Tier 2 Support Agent', 4),
+	('Customer Service Representative', 3),
+	('Technical Support Agent', 3),
+	('Customer Retention Specialist', 3),
+	('Customer Support Supervisor', 3),
+	('Multichannel Support Coordinator', 3),
+	('Tier 2 Support Agent', 3),
 	('Customer Experience Manager', 4),
 
 	-- Development
-	('Full Stack Developer', 5),
-	('Backend Software Engineer', 5),
-	('Frontend Developer', 5),
-	('Software Architect', 5),
-	('DevOps Engineer', 5),
-	('QA Tester', 5),
-	('Technical Lead', 5),
+	('Full Stack Developer', 4),
+	('Backend Software Engineer', 4),
+	('Frontend Developer', 4),
+	('Software Architect', 4),
+	('DevOps Engineer', 4),
+	('QA Tester', 4),
+	('Technical Lead', 4),
 
 	-- Operations
-	('Operations Coordinator', 6),
-	('Process Analyst', 6),
-	('Logistics Manager', 6),
-	('Supply Chain Specialist', 6),
-	('Project Manager', 6),
-	('Warehouse Supervisor', 6),
-	('Operations Controller', 6)
+	('Operations Coordinator', 5),
+	('Process Analyst', 5),
+	('Logistics Manager', 5),
+	('Supply Chain Specialist', 5),
+	('Project Manager', 5),
+	('Warehouse Supervisor', 5),
+	('Operations Controller', 5),
 
     -- Unnasigned
     ('UNNASSIGNED', NULL);

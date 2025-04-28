@@ -5,7 +5,8 @@ USE MIXtesting;
 
 CREATE TABLE [Team] (
   [ID] integer IDENTITY(1,1) PRIMARY KEY,
-  [TeamName] varchar(30)
+  [TeamName] varchar(30),
+  [Description] varchar(100)
 );
 
 CREATE TABLE [JobPosition] (
@@ -16,21 +17,23 @@ CREATE TABLE [JobPosition] (
 );
 
 CREATE TABLE [User] (
-  [ID] varchar(255) NOT NULL PRIMARY KEY,
+  [IDEmail] varchar(255) NOT NULL PRIMARY KEY,
   [Name] varchar(100),
   [LastName] varchar(100),
   [PhoneNumber] varchar(30),
+  [BirthDate] DATE,
   [JoiningDate] date DEFAULT GETDATE(),
   [IDJobPosition] integer NOT NULL,
   [Education] varchar(255),
   [ProfilePic] varbinary(max),
+  [EmailVerified] bit,
   FOREIGN KEY ([IDJobPosition]) REFERENCES [JobPosition] ([ID]),
 );
 
 CREATE TABLE [Admin] (
   [IDUser] varchar(255) NOT NULL PRIMARY KEY,
   [IDTeam] integer NOT NULL,
-  FOREIGN KEY ([IDUser]) REFERENCES [User] ([ID]),
+  FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail]),
   FOREIGN KEY ([IDTeam]) REFERENCES [Team] ([ID])
 );
 
@@ -47,7 +50,7 @@ CREATE TABLE [EmailSend] (
   [Email] VARCHAR(255) NOT NULL,
   [EmailTypeID] INT NOT NULL,
   [SentAt] DATETIME NOT NULL DEFAULT GETDATE(),
-  FOREIGN KEY ([Email]) REFERENCES [User]([ID]),
+  FOREIGN KEY ([Email]) REFERENCES [User]([IDEmail]),
   FOREIGN KEY ([EmailTypeID]) REFERENCES [EmailType]([ID])
 );
 
@@ -70,7 +73,7 @@ CREATE TABLE [Contact] (
   [IDEnterprise] integer NOT NULL,
   [IDUser] varchar(255) NOT NULL,
   FOREIGN KEY ([IDEnterprise]) REFERENCES [Enterprise] ([ID]),
-  FOREIGN KEY ([IDUser]) REFERENCES [User] ([ID])
+  FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail])
 );
 
 CREATE TABLE [Product] (
@@ -94,7 +97,7 @@ CREATE TABLE [Sale] (
   [IDContact] integer NOT NULL,
   [StartDate] date DEFAULT GETDATE(),
   [IDPhase] integer NOT NULL,
-  FOREIGN KEY ([IDUser]) REFERENCES [User] ([ID]),
+  FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail]),
   FOREIGN KEY ([IDContact]) REFERENCES [Contact] ([ID]),
   FOREIGN KEY ([IDPhase]) REFERENCES [Phase] ([ID])
 );
@@ -120,7 +123,7 @@ CREATE TABLE [UserAward] (
   [IDAward] integer,
   [WinDate] datetime DEFAULT GETDATE(),
   PRIMARY KEY ([IDUser], [WinDate]),
-  FOREIGN KEY ([IDUser]) REFERENCES [User] ([ID]),
+  FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail]),
   FOREIGN KEY ([IDAward]) REFERENCES [Award] ([ID])
 );
 
@@ -138,7 +141,7 @@ CREATE TABLE [SaleLifespan] (
 CREATE TABLE [Score] (
   [IDUser] varchar(255) NOT NULL PRIMARY KEY,
   [Score] integer,
-  FOREIGN KEY ([IDUser]) REFERENCES [User] ([ID])
+  FOREIGN KEY ([IDUser]) REFERENCES [User] ([IDEmail])
 );
 
 CREATE TABLE [Quiz] (
