@@ -1,13 +1,21 @@
-import { poolPromise } from '../database';
 import sql from 'mssql';
+import config from '@/db/config';
 
-class NewSaleService{
+class NewSaleService {
+    private pool: sql.ConnectionPool;
 
+    constructor() {
+      this.pool = new sql.ConnectionPool(config);
+      // Conectar al pool una sola vez al crear la instancia
+      this.pool.connect().catch(err => {
+        console.error('Error connecting to the database', err);
+      });
+    }
   //Desplegar todos los contactos que haya registrado un User en especifico
   //LISTO
   async getAllContactByUser(id: string) {
     try {
-        const pool = await poolPromise;
+        const pool = await this.pool;
         const request = pool.request();
         const result = await request.input('id', sql.VarChar, id).query(
         `SELECT 
@@ -18,7 +26,7 @@ class NewSaleService{
         ORDER BY c.Name, c.LastName, c.ID`);
         return result.recordset;
     } catch (error) {
-        console.error('❌ Error en getAllCierre:', error);
+        console.error('Error en getAllCierre:', error);
         throw new Error('Error al obtener contactos by user');
     }
   }
@@ -28,13 +36,13 @@ class NewSaleService{
   //LISTO
   async getPrice(idprod: string) {
     try {
-        const pool = await poolPromise;
+        const pool = await this.pool;
         const result = await pool.request() 
             .input('idprod', sql.VarChar, idprod)  
             .query(`SELECT UnitaryPrice AS Price FROM Product WHERE RefNum = @idprod`);
         return result.recordset;
     } catch (error) {
-        console.error('❌ Error en getPrice:', error);
+        console.error('Error en getPrice:', error);
         throw new Error('Error al obtener price');
     }
   }
@@ -43,24 +51,24 @@ class NewSaleService{
   //LISTO
   async getPhases() {
     try {
-        const pool = await poolPromise;
+        const pool = await this.pool;
         const request = pool.request();
         const result = await request.query('select Name, ID as IDPhase from Phase;');
         return result.recordset;
     } catch (error) {
-        console.error('❌ Error en getAllCierre:', error);
+        console.error('Error en getAllCierre:', error);
         throw new Error('Error al obtener cierres');
     }
   }
 
   async getAllProd() {
     try {
-        const pool = await poolPromise;
+        const pool = await this.pool;
         const request = pool.request();
         const result = await request.query(`SELECT Name AS NombreArticulo, RefNum as IDProd FROM Product ORDER BY Name`);
         return result.recordset;
     } catch (error) {
-        console.error('❌ Error en getAllProd', error);
+        console.error('Error en getAllProd', error);
         throw new Error('Error al obtener productos');
     }
   }
@@ -68,18 +76,24 @@ class NewSaleService{
 
    
     async createSale(iduser: string, data: { idcont: number; idphase: number}) {
-          const pool = await poolPromise;
-          const result = await pool.request()
-              .input('iduser', sql.VarChar, iduser)  
-              .input('idcont', sql.Int, data.idcont)  
-              .input('idphase', sql.Int, data.idphase)
-              .query('INSERT INTO Sale (IDUser, IDContact, IDPhase)VALUES (@iduser, @idcont, @idphase)');
+        try {
+            const pool = await this.pool;
+            const result = await pool.request()
+                .input('iduser', sql.VarChar, iduser)  
+                .input('idcont', sql.Int, data.idcont)  
+                .input('idphase', sql.Int, data.idphase)
+                .query('INSERT INTO Sale (IDUser, IDContact, IDPhase)VALUES (@iduser, @idcont, @idphase)');
+        } catch (error) {
+            console.error('Error en createSale', error);
+            throw new Error('Error al crear venta');
+        }
     }
 
     //Prueba de nueva venta con un solo producto
     //FUNCIONA
     async createSaleONE(iduser: string, data: { idcont:number, idphase:number, idprod:string, quant:number }) {
-      const pool = await poolPromise;
+        try {
+        const pool = await this.pool;
       const result = await pool.request()
           .input('iduser', sql.VarChar, iduser)  
           .input('idcont', sql.Int, data.idcont)  
@@ -92,6 +106,10 @@ class NewSaleService{
                   @PhaseID = @idphase,
                   @ProductID = @idprod,
                   @Quantity = @quant`);
+        } catch (error) {
+            console.error('Error en createSaleONE', error);
+            throw new Error('Error al crear venta');
+        }
     }
 
 
@@ -105,7 +123,7 @@ class NewSaleService{
             Products: { ProductID: string, Quantity: number }[] 
         }
     ) {
-        const pool = await poolPromise;
+        const pool = await this.pool;
         
         // Validate input
         if (!data.UserID || !data.ContactID || !data.PhaseID || !data.Products || !Array.isArray(data.Products)) {

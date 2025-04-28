@@ -1,14 +1,22 @@
-import { poolPromise } from '../database';
 import sql from 'mssql';
+import config from '@/db/config';
 
 class SaleService{
 
+  private pool: sql.ConnectionPool;
 
+  constructor() {
+    this.pool = new sql.ConnectionPool(config);
+    // Conectar al pool una sola vez al crear la instancia
+    this.pool.connect().catch(err => {
+      console.error('Error connecting to the database', err);
+    });
+  }
   //Desplegar todas las ventas que corresponden a cierto usuario en particular
   // CAMBIO EN LA QUERY: LAST INTERACTION obtener de el ultimo cambio de fase?????
     async getAllSales(id: string) {
         try {
-           const pool = await poolPromise;
+           const pool = this.pool;
            const request = pool.request();
            const result = await request.input('id', sql.VarChar, id).query(
             `SELECT 
@@ -38,7 +46,7 @@ class SaleService{
     //Notas: Agregar el despliegue de un mensaje de "Empresa no encontrada" si no hay ninguna empresa registrada con ese nombre
     async getSaleByEnt(ent: string, iduser: string) {
         try {
-            const pool = await poolPromise;
+            const pool = this.pool;
             const request = pool.request();
             const result = await request.input('ent', sql.VarChar, ent)
             .input('iduser', sql.VarChar, iduser)
@@ -69,7 +77,7 @@ class SaleService{
     //Obtener todas las empresas
     async getAllEnt() {
       try {
-          const pool = await poolPromise;
+          const pool = this.pool;
           const request = pool.request();
           const result = await request.query('SELECT ID as IDSale, Name as EntName FROM Enterprise');
           return result.recordset;
@@ -82,7 +90,7 @@ class SaleService{
     //Obtener todas los productos
     async getAllProd() {
       try {
-          const pool = await poolPromise;
+          const pool = this.pool;
           const request = pool.request();
           const result = await request.query('SELECT RefNum as refnum, Name as NameProd, UnitaryPrice as UnPrice FROM Product');
           return result.recordset;
@@ -97,7 +105,7 @@ class SaleService{
     //LISTO
     async deleteSale(idsale:number) {
       try {
-          const pool = await poolPromise;
+          const pool = this.pool;
           const request = pool.request();
           const result = await request.input('idsale', sql.Int, idsale).query(`EXEC sp_DeleteSaleAndRelatedData @SaleID = @idsale;`);
           return result.recordset;
@@ -113,7 +121,7 @@ class SaleService{
     //LISTO
     async getTopSales(iduser: string) {
       try {
-         const pool = await poolPromise;
+        const pool = this.pool;
          const request = pool.request();
          const result = await request.input('iduser', sql.VarChar, iduser).query(
         `SELECT TOP 10
@@ -134,9 +142,8 @@ class SaleService{
         GROUP BY s.ID, c.Name, c.LastName, ph.Name, s.StartDate
         ORDER BY s.StartDate DESC`);
          return result.recordset;
-         console.log(result.recordset);
       } catch (error) {
-         console.error('❌ Error en getTopSales:', error);
+         console.error('Error en getTopSales:', error);
          throw new Error('Error al obtener topsales');
       }
   }
@@ -144,16 +151,15 @@ class SaleService{
 
   async updatePhaseSale(idsale: number, idphase:number) {
     try {
-       const pool = await poolPromise;
+      const pool = this.pool;
        const request = pool.request();
        const result = await request
        .input('idsale', sql.Int, idsale)
        .input('idphase', sql.Int, idphase).query(
       `EXEC sp_UpdateSalePhase @SaleID = @idsale, @NewPhaseID = @idphase`);
        return result.recordset;
-       console.log(result.recordset);
     } catch (error) {
-       console.error('❌ Error en updatePhaseSale:', error);
+       console.error('Error en updatePhaseSale:', error);
        throw new Error('Error al actualizar fase de venta');
     }
 }

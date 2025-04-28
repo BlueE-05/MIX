@@ -1,5 +1,3 @@
-//* 4. DB Contact
-
 import sql from 'mssql';
 import config from '@/db/config';
 import ContactDB from '@/types/db/ContactDB';
