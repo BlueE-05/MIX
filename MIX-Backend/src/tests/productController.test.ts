@@ -3,7 +3,7 @@ import ProductService from '@/db/products';
 import Product from '@/types/controller/Product';
 import ProductDB from '@/types/db/ProductDB';
 
-// Mock the ProductService completely
+// Mock the ProductService/product db
 jest.mock('@/db/products', () => {
   return jest.fn().mockImplementation(() => ({
     getAllProducts: jest.fn(),
@@ -19,6 +19,7 @@ describe('ProductController', () => {
   let controller: ProductController;
   let mockService: jest.Mocked<ProductService>;
 
+  // Mock product data
   const mockProduct: Product = {
     RefNum: 'REF123',
     Name: 'Test Product',
