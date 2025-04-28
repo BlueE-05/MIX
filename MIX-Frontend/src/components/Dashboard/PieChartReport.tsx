@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
@@ -10,9 +11,10 @@ interface PieChartProps {
 }
 
 export default function PieChart({ distribution, compact = false }: PieChartProps = {}) {
-  const defaultData = [0, 0, 0, 0, 0];
+
+  const defaultData = [0, 0, 0];
   const data = {
-    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Others'],
+    labels: ['Cancelled', 'Active', 'Closed'],
     datasets: [{
       data: distribution || defaultData,
       backgroundColor: [
@@ -23,6 +25,9 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
       borderWidth: 1,
     }],
   };
+
+
+  
 
   return (
     <div className={`w-full ${compact ? 'h-[250px]' : 'h-full min-h-[300px]'} flex items-center justify-center`}>

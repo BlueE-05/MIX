@@ -21,6 +21,8 @@ export default function Dashboard() {
     NombreCompleto: string,
     Telefono: string,
     TotalComisiones: number,
+    Activas:number,
+    Canceladas: number,
     VentasCerradas: number,
     TotalVentas: number,
     Equipo: string
@@ -71,10 +73,10 @@ export default function Dashboard() {
     
     if (reportType === 'team') {
       return {
-        sales: [], // No hay datos de ventas mensuales en el endpoint
+        sales: [], 
         closed: teamSalesData[0]?.TotalCompletedSales,
         comisiones: teamComissionsData[0]?.ComisionTotal,
-        distribution: [] // No hay datos de distribución
+        distribution: [] 
       };
     }
     
@@ -214,9 +216,22 @@ export default function Dashboard() {
                 <p>Select a user to view distribution</p>
               </div>
             )  : isAdmin ? (
-              <PieChart compact={true}/>
+              <PieChartReport 
+                compact={true}
+                distribution={
+                  selectedUserData 
+                    ? [selectedUserData.Canceladas, selectedUserData.Activas, selectedUserData.VentasCerradas]
+                    : teamMembersData.length > 0
+                      ? [
+                          teamMembersData.reduce((sum, member) => sum + member.Canceladas, 0),
+                          teamMembersData.reduce((sum, member) => sum + member.Activas, 0),
+                          teamMembersData.reduce((sum, member) => sum + member.VentasCerradas, 0)
+                        ]
+                      : undefined
+                }
+              />
             ) : (
-              <PieChart compact={true} />
+              <PieChart compact={true}/>
             )}
           </div>
         </div>

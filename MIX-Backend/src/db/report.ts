@@ -234,6 +234,8 @@ class ReportService{
                 u.PhoneNumber AS Telefono,
                 COALESCE(SUM(sa.Quantity * p.UnitaryPrice * p.Commission), 0) AS TotalComisiones,
                 COUNT(DISTINCT CASE WHEN s.IDPhase = 5 THEN s.ID END) AS VentasCerradas,
+                COUNT(DISTINCT CASE WHEN s.IDPhase IN (2, 3, 4) THEN s.ID END) AS Activas,
+                COUNT(DISTINCT CASE WHEN s.IDPhase = 6 THEN s.ID END) AS Canceladas,
                 COUNT(DISTINCT s.ID) AS TotalVentas,
                 (SELECT TeamName FROM Team WHERE ID = @TeamID) AS Equipo
                 FROM 

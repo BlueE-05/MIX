@@ -186,7 +186,10 @@ export default function SalesPage() {
       {/* Modal Form */}
       {showForm && (
         <Formulario
-          onClose={() => setShowForm(false)}
+          onClose={() => {
+            setShowForm(false);
+            setIsLoading(false);
+          }}
           onSubmit={(data) => {
             const adaptedData = {
               ...data,
