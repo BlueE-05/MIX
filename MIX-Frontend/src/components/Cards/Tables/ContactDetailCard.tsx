@@ -1,4 +1,5 @@
 'use client'
+<<<<<<< HEAD
 import { useState, useEffect } from 'react'
 import { ContactData, ContactReceive } from '@/types/ContactTypes'
 import { updateContact } from '@/hooks/contacts/updateContact'
@@ -21,11 +22,40 @@ const MAX_LENGTHS = {
   lastName: 100,
   phoneNumber: 30,
   email: 255,
+=======
+import { ReactNode, useState } from 'react'
+import LabelOval from '@/components/Buttons/LabelOval'
+
+interface ContactDetailCardProps {
+  contact: {
+    id: number
+    name: string
+    lastName: string
+    enterprise: string
+    status: ReactNode | string
+    phone: string
+    email: string
+  }
+  onClose: () => void
+  onSave?: (updatedContact: {
+    id: number
+    name: string
+    lastName: string
+    enterprise: string
+    status: string
+    phone: string
+    email: string
+  }) => void
+  editButtonText?: string
+  closeButtonText?: string
+  saveButtonText?: string
+>>>>>>> origin/pruebanewmerge_sales_report
 }
 
 export default function ContactDetailCard({
   contact,
   onClose,
+<<<<<<< HEAD
   editButtonText = 'Edit',
   closeButtonText = 'Close',
   saveButtonText = 'Save',
@@ -63,11 +93,37 @@ export default function ContactDetailCard({
     }
     loadData()
   }, [contact])
+=======
+  onSave = () => {},
+  editButtonText = 'Edit',
+  closeButtonText = 'Close',
+  saveButtonText = 'Save'
+}: ContactDetailCardProps) {
+  const [isEditing, setIsEditing] = useState(false)
+  
+  // Función para normalizar el status a string
+  const normalizeStatus = (status: ReactNode | string): string => {
+    if (typeof status === 'string') return status
+    return 'Active' 
+  }
+
+  const [editedContact, setEditedContact] = useState({
+    ...contact,
+    status: normalizeStatus(contact.status)
+  })
+
+  const renderStatus = () => {
+    const statusString = normalizeStatus(contact.status)
+    const color = statusString === 'Active' ? 'green' : 'red'
+    return <LabelOval color={color} data={statusString} />
+  }
+>>>>>>> origin/pruebanewmerge_sales_report
 
   const handleEdit = () => {
     setIsEditing(true)
   }
 
+<<<<<<< HEAD
   const handleSave = async () => {
     setIsLoading(true)
     setError(null)
@@ -157,12 +213,35 @@ export default function ContactDetailCard({
     );
   };
 
+=======
+  const handleSave = () => {
+    onSave(editedContact)
+    setIsEditing(false)
+  }
+
+  const handleCancel = () => {
+    setEditedContact({
+      ...contact,
+      status: normalizeStatus(contact.status)
+    })
+    setIsEditing(false)
+  }
+
+  const handleChange = (field: keyof typeof editedContact, value: string) => {
+    setEditedContact(prev => ({
+      ...prev,
+      [field]: value
+    }))
+  }
+
+>>>>>>> origin/pruebanewmerge_sales_report
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
         <div className="flex justify-between items-start mb-4">
           <h2 className="text-2xl font-bold text-gray-800">
             {isEditing ? (
+<<<<<<< HEAD
               <div className="space-y-2">
                 <div>
                   <input
@@ -200,10 +279,34 @@ export default function ContactDetailCard({
             className="text-gray-500 hover:text-gray-700 text-xl"
             disabled={isLoading}
             aria-label="Close"
+=======
+              <>
+                <input
+                  type="text"
+                  value={editedContact.name}
+                  onChange={(e) => handleChange('name', e.target.value)}
+                  className="w-full p-2 border rounded mb-2"
+                />
+                <input
+                  type="text"
+                  value={editedContact.lastName}
+                  onChange={(e) => handleChange('lastName', e.target.value)}
+                  className="w-full p-2 border rounded"
+                />
+              </>
+            ) : (
+              `${contact.name} ${contact.lastName}`
+            )}
+          </h2>
+          <button 
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 text-xl"
+>>>>>>> origin/pruebanewmerge_sales_report
           >
             &times;
           </button>
         </div>
+<<<<<<< HEAD
 
         {error && (
           <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">
@@ -211,10 +314,14 @@ export default function ContactDetailCard({
           </div>
         )}
 
+=======
+        
+>>>>>>> origin/pruebanewmerge_sales_report
         <div className="space-y-3">
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Enterprise</h3>
             {isEditing ? (
+<<<<<<< HEAD
               <div className="mt-1">
                 <select
                   value={editedContact.EnterpriseName}
@@ -319,6 +426,92 @@ export default function ContactDetailCard({
                 onClick={onClose}
                 className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
                 disabled={isLoading}
+=======
+              <input
+                type="text"
+                value={editedContact.enterprise}
+                onChange={(e) => handleChange('enterprise', e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            ) : (
+              <p className="text-gray-700">{contact.enterprise}</p>
+            )}
+          </div>
+          
+          <div className="border-b pb-2">
+            <h3 className="font-semibold text-gray-500">Status</h3>
+            {isEditing ? (
+              <select
+                value={editedContact.status}
+                onChange={(e) => handleChange('status', e.target.value)}
+                className="w-full p-2 border rounded"
+              >
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+              </select>
+            ) : (
+              <div className="mt-1">{renderStatus()}</div>
+            )}
+          </div>
+          
+          <div className="border-b pb-2">
+            <h3 className="font-semibold text-gray-500">Phone</h3>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editedContact.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            ) : (
+              <p className="text-gray-700">{contact.phone}</p>
+            )}
+          </div>
+          
+          <div>
+            <h3 className="font-semibold text-gray-500">Email</h3>
+            {isEditing ? (
+              <input
+                type="email"
+                value={editedContact.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                className="w-full p-2 border rounded"
+              />
+            ) : (
+              <p className="text-gray-700">{contact.email}</p>
+            )}
+          </div>
+        </div>
+        
+        <div className="mt-6 flex justify-between">
+          {isEditing ? (
+            <>
+              <button 
+                onClick={handleCancel}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-red-600 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSave}
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors"
+              >
+                {saveButtonText}
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={handleEdit}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+              >
+                {editButtonText}
+              </button>
+              <button 
+                onClick={onClose}
+                className="px-4 py-2 bg-[#0C43A8] text-white rounded-md hover:bg-blue-700 transition-colors"
+>>>>>>> origin/pruebanewmerge_sales_report
               >
                 {closeButtonText}
               </button>
@@ -326,6 +519,7 @@ export default function ContactDetailCard({
           )}
         </div>
       </div>
+<<<<<<< HEAD
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg p-6 max-w-sm w-full">
@@ -348,6 +542,8 @@ export default function ContactDetailCard({
           </div>
         </div>
       )}
+=======
+>>>>>>> origin/pruebanewmerge_sales_report
     </div>
   )
 }

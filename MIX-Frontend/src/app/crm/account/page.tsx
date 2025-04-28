@@ -122,6 +122,7 @@ export default function Profile() {
           )}
           <div>
             <h1 className="text-3xl font-bold text-black">{`${profile.name} ${profile.lastName}`}</h1>
+
             <p className="text-gray-700 font-semibold">
               <span className="text-gray-900">Position:</span> {profile.position}
             </p>

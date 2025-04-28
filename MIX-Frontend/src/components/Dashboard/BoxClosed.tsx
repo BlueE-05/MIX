@@ -1,4 +1,5 @@
 'use client';
+<<<<<<< HEAD
 
 interface BoxClosedProps {
   closedDeals?: number;
@@ -13,6 +14,59 @@ export default function BoxClosed({ closedDeals, numberSize = "text-3xl"}: BoxCl
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">Closed Deals</h3>
       <p className={`font-bold text-blue-600 flex items-center justify-center ${numberSize}`}>{deals}</p>
+=======
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+//endpoint
+import { HTTPURL } from '@/constants/utils';
+
+interface BoxClosedProps {
+  closedDeals?: number;
+  justify?: string;
+}
+
+export default function BoxClosed({  justify }: BoxClosedProps = {}) {
+  const [cierres, setCierres] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+  const iduser = 'ana.gomez@empresa.com'; // Ajusta esto dinámicamente si lo necesitas
+
+  //const deals = closedDeals ?? 42;
+
+  useEffect(() => {
+    axios.get(`${HTTPURL}/report/allCierre`)
+      .then((response) => {
+        const valor = response.data[0].TotalCierre;
+        setCierres(Number(valor));
+      })
+      .catch((error) => {
+        console.error('Error al obtener cierres:', error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, );
+
+  const renderCierres = () => {
+    if (loading) {
+      return <div className="text-center py-8 text-gray-500">Loading data...</div>;
+    } else if (cierres === 0) {
+      return <div className="text-center py-8 text-gray-500">No yet</div>;
+    } else if (cierres !== null) {
+      return (
+        <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
+          {cierres}
+        </div>
+      );
+    } else {
+      return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
+    }
+  };
+  
+  return (
+    <div className="p-4">
+      <h3 className="text-lg font-semibold mb-2">Closed Sales</h3>
+      {renderCierres()}
+>>>>>>> origin/pruebanewmerge_sales_report
     </div>
   );
 }

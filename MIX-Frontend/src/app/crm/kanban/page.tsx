@@ -20,6 +20,10 @@ export default function KanbanPage() {
         <KanbanBoard />
       </div>
       
+<<<<<<< HEAD
+=======
+      {/* Botón de ayuda fijo en esquina inferior derecha */}
+>>>>>>> origin/pruebanewmerge_sales_report
       <div className="fixed bottom-6 right-6">
         <button 
           className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-xl shadow-md"
@@ -29,7 +33,10 @@ export default function KanbanPage() {
           ?
         </button>
         
+<<<<<<< HEAD
         {/* Info Icon */}
+=======
+>>>>>>> origin/pruebanewmerge_sales_report
         {showTooltip && (
           <div className="absolute bottom-14 right-0 bg-white p-4 rounded-lg shadow-lg w-64 z-10 border border-gray-200">
             <h3 className="font-bold mb-2">Kanban Phases</h3>

@@ -112,13 +112,13 @@ const Sidebar = () => {
                   </div>
                 ))}
               </div>
-
               <p className="text-xs text-gray-500 mt-4 text-center">
                 Press Space or click outside to close
               </p>
             </div>
           </div>
         </>
+
       )}
 
       <div className={`flex flex-col h-screen bg-gray-800 text-white transition-all duration-300 ease-in-out ${isCollapsed ? 'w-20' : 'w-58'}`}>

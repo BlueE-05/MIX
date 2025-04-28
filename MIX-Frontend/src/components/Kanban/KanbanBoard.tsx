@@ -62,7 +62,6 @@ const KanbanBoard: React.FC = () => {
     window.addEventListener('resize', calculateVisibleColumns);
     return () => window.removeEventListener('resize', calculateVisibleColumns);
   }, []);
-
   const columnGroups = React.useMemo(() => {
     const columnNames = Object.keys(columns);
     const groups = [];
@@ -79,7 +78,6 @@ const KanbanBoard: React.FC = () => {
     for (let i = 0; i < orderedColumns.length; i += visibleColumnsCount) {
       groups.push(orderedColumns.slice(i, i + visibleColumnsCount));
     }
-    
     return groups;
   }, [columns, visibleColumnsCount]);
 
@@ -142,7 +140,6 @@ const KanbanBoard: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
           </div>
         </div>
-
         {/* Board Container with pagination controls */}
         <div className="relative">
           {columnGroups.length > 1 && (
@@ -166,7 +163,6 @@ const KanbanBoard: React.FC = () => {
               </button>
             </div>
           )}
-
           <div className="overflow-x-auto">
             <div className="flex gap-6 min-w-max">
               {visibleColumns.map(columnName => (

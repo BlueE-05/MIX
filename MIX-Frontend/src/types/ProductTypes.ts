@@ -7,7 +7,6 @@ export interface ProductReceive {
     ProductSheetURL: string;
     CreationDate: Date;
 }
-
 export interface ProductUpdate {
     Name: string;
     Description: string | '';

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+<<<<<<< HEAD
 import Navbar from "@/components/NavBar";
 import UnauthorizedAccess from "@/components/Cards/Authorizations/UnauthorizedAccess";
 import { useEmailVerificationStatus } from "@/hooks/useEmailVerification";
@@ -21,6 +22,16 @@ export default function LoginForm() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const router = useRouter();
+=======
+import EmailVerification from '../../components/Cards/Autorizations/EmailVerification';
+
+export default function Login() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+    const [showVerification, setShowVerification] = useState(false); // Estado para controlar el modal
+>>>>>>> origin/pruebanewmerge_sales_report
 
   const {
     emailVerified,
@@ -48,6 +59,7 @@ export default function LoginForm() {
       return;
     }
 
+<<<<<<< HEAD
     try {
       const res = await fetch(`${url}/api/login`, {
         method: "POST",
@@ -66,6 +78,35 @@ export default function LoginForm() {
       const profileRes = await fetch(`${url}/api/profile`, {
         credentials: "include",
       });
+=======
+        // Reset errors
+        setEmailError("");
+        setPasswordError("");
+
+        // Validación de email
+        const emailValidationError = validateEmail(email);
+        if (emailValidationError) {
+            setEmailError(emailValidationError);
+            return;
+        }
+
+        // Validación de credenciales
+        if (email === correctEmail && password === correctPassword) {
+            console.log("Login successful for Mary Sue");
+            setShowVerification(true); // Mostrar modal de verificación
+        } else {
+            setEmailError("Invalid credentials");
+            setPasswordError("Invalid credentials");
+        }
+    };
+
+    const handleContinueToDashboard = () => {
+        setShowVerification(false);
+        router.push("/crm/dashboard");
+    };
+
+    const isButtonDisabled = !email || !password;
+>>>>>>> origin/pruebanewmerge_sales_report
 
       if (profileRes.status === 403) {
         setShowVerification(true);
@@ -208,6 +249,7 @@ export default function LoginForm() {
                 </div>
               </div>
             </div>
+<<<<<<< HEAD
           </div>
 
         {showForgotPassword && <ForgotPassword onClose={() => setShowForgotPassword(false)} />}
@@ -215,4 +257,16 @@ export default function LoginForm() {
     )}
   </>
 );
+=======
+
+            {/* Modal de verificación de email */}
+            {showVerification && (
+                <EmailVerification 
+                    isVerified={false} // Siempre mostrará el modal en este caso
+                    onContinue={handleContinueToDashboard} // Función para redirigir
+                />
+            )}
+        </div>
+    );
+>>>>>>> origin/pruebanewmerge_sales_report
 }

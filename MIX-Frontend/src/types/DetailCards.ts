@@ -42,13 +42,13 @@ export interface ProductDetailCardProps {
   }
 
 
-  export interface ContactDetailCardProps {
-    contact: ContactReceive
-    onClose: () => void
-    onSave?: (updatedContact: ContactData & { id: number }) => void
-    onDelete?: (contactId: number) => void
-    editButtonText?: string
-    closeButtonText?: string
-    saveButtonText?: string
-    deleteButtonText?: string
-  }
+export interface ContactDetailCardProps {
+  contact: ContactReceive
+  onClose: () => void
+  onSave?: (updatedContact: ContactData & { id: number }) => void
+  onDelete?: (contactId: number) => void
+  editButtonText?: string
+  closeButtonText?: string
+  saveButtonText?: string
+  deleteButtonText?: string
+}
