@@ -204,64 +204,66 @@ export default function Formulario({ onClose, onSubmit, onFormTypeChange, formTy
 
         {formType === "New Contact" ? (
           <form>
-            <div className="flex gap-10 w-full">
-              <div className="flex-1">
-                <Input label="Name" name="Name" type="text" value={contactData.Name} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.name} />
-              </div>
-              <div className="flex-1">
-                <Input label="Last Name" name="LastName" type="text" value={contactData.LastName} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.lastName} />
-              </div>
+          <div className="flex gap-10 w-full">
+            <div className="flex-1">
+              <Input label="Name" name="Name" type="text" value={contactData.Name} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.name} />
             </div>
-
-            <div className="mb-4">
-              <div className="flex">
-                <label htmlFor="EnterpriseName" className="block text-sm font-bold text-gray-700 mb-2">
-                  Enterprise
-                </label>
-                <span className="font-bold text-md text-red-600">*</span>
-              </div>
-              <select
-                name="EnterpriseName"
-                value={contactData.EnterpriseName}
-                onChange={handleChangeContact}
-                required
-                className="w-auto px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
-              >
-                <option value="">Select Enterprise</option>
-                {enterprises.map((enterprise) => (
-                  <option key={enterprise.ID} value={enterprise.Name}>
-                    {enterprise.Name}
-                  </option>
-                ))}
-              </select>
+            <div className="flex-1">
+              <Input label="Last Name" name="LastName" type="text" value={contactData.LastName} onChange={handleChangeContact} required max_lenght={MAX_LENGTHS.lastName} />
             </div>
-
-            <Input label="Phone" name="PhoneNumber" type="tel" value={contactData.PhoneNumber} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
-            <Input label="Email" name="Email" type="email" value={contactData.Email} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
-
-            <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
-              <button type="submit" className="hidden" aria-hidden="true" />
-              <div
-                onClick={(e) => {
+          </div>
+        
+          <div className="mb-4">
+            <div className="flex">
+              <label htmlFor="EnterpriseName" className="block text-sm font-bold text-gray-700 mb-2">
+                Enterprise
+              </label>
+              <span className="font-bold text-md text-red-600">*</span>
+            </div>
+            <select
+              name="EnterpriseName"
+              value={contactData.EnterpriseName}
+              onChange={handleChangeContact}
+              required
+              className="w-auto px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-900"
+            >
+              <option value="">Select Enterprise</option>
+              {enterprises.map((enterprise) => (
+                <option key={enterprise.ID} value={enterprise.Name}>
+                  {enterprise.Name}
+                </option>
+              ))}
+            </select>
+          </div>
+        
+          <Input label="Phone" name="PhoneNumber" type="tel" value={contactData.PhoneNumber} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
+          <Input label="Email" name="Email" type="email" value={contactData.Email} onChange={handleChangeContact} max_lenght={MAX_LENGTHS.phoneNumber} />
+        
+          <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
+            <button type="submit" className="hidden" aria-hidden="true" />
+            <div
+              onClick={(e) => {
+                if (isContactFormValid()) {
                   const event = e as unknown as FormEvent;
                   handleSubmitContact(event);
-                }}
-                className="cursor-pointer"
-              >
-                <RoundedButton
-                  color={isContactFormValid() ? "green" : "red"}
-                  text="Submit"
-                  Icon={Check}
-                />
-              </div>
+                }
+              }}
+              className={`cursor-pointer ${!isContactFormValid() ? 'pointer-events-none opacity-50' : ''}`}
+            >
+              <RoundedButton
+                color={isContactFormValid() ? "green" : "gray"}
+                text="Submit"
+                Icon={Check}
+              />
             </div>
-          </form>
+          </div>
+        </form>
         ) : (
           <form>
-            <Input label="Name" name="name" type="text" value={enterpriseData.Name} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.name} />
-            <Input label="Industry" name="industry" type="text" value={enterpriseData.Industry} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.industry} />
-            <Input label="Description" name="description" type="text" value={enterpriseData.Description || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.description} />
-            <Input label="Webpage URL" name="webpageUrl" type="url" value={enterpriseData.Website || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.webpageUrl} />
+            <Input label="Name" name="Name" type="text" value={enterpriseData.Name} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.name} />
+            <Input label="Industry" name="Industry" type="text" value={enterpriseData.Industry} onChange={handleChangeEnterprise} required max_lenght={MAX_LENGTHS.industry} />
+            <Input label="Description" name="Description" type="text" value={enterpriseData.Description || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.description} />
+            <Input label="Webpage URL" name="Website" type="url" value={enterpriseData.Website || ""} onChange={handleChangeEnterprise} max_lenght={MAX_LENGTHS.webpageUrl} />
 
             <div className="flex justify-end w-full mt-10 border-t border-gray-300 pt-4">
               <button type="submit" className="hidden" aria-hidden="true" />

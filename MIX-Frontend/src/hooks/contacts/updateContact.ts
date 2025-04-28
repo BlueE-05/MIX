@@ -8,6 +8,7 @@ export const updateContact = async (contactId: number, updatedData: ContactData)
             "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedData),
+        credentials: "include",
     });
     
     if (!response.ok) {

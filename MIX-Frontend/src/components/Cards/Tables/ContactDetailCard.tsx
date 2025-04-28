@@ -42,6 +42,7 @@ export default function ContactDetailCard({
     PhoneNumber: contact.PhoneNumber,
     EnterpriseName: contact.EnterpriseName
   })
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -100,21 +101,29 @@ export default function ContactDetailCard({
     setError(null)
   }
 
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this contact?')) {
-      setIsLoading(true)
-      setError(null)
-      try {
-        await deleteContact(contact.ID)
-        onClose()
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Failed to delete contact")
-        console.error("Error deleting contact:", error)
-      } finally {
-        setIsLoading(false)
-      }
+  const handleDeleteClick = () => {
+    setShowConfirmModal(true);
+  };
+
+
+  const handleConfirmDelete = async () => {
+    setShowConfirmModal(false);
+    setIsLoading(true);
+    setError(null);
+    try {
+      await deleteContact(contact.ID);
+      onClose();
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to delete contact");
+      console.error("Error deleting contact:", error);
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmModal(false);
+  };
 
   const handleChange = (field: keyof ContactData, value: string) => {
     // Apply length limit according to field
@@ -138,6 +147,15 @@ export default function ContactDetailCard({
       [field]: trimmedValue
     }))
   }
+
+  const isEditedContactValid = () => {
+    return (
+      editedContact.Name.trim() !== '' &&
+      editedContact.LastName.trim() !== '' &&
+      editedContact.Email.trim() !== '' &&
+      editedContact.EnterpriseName.trim() !== ''
+    );
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -272,7 +290,7 @@ export default function ContactDetailCard({
                   Cancel
                 </button>
                 <button
-                  onClick={handleDelete}
+                  onClick={handleDeleteClick}
                   className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:opacity-50"
                   disabled={isLoading}
                 >
@@ -280,12 +298,13 @@ export default function ContactDetailCard({
                 </button>
               </div>
               <button
-                onClick={handleSave}
-                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Saving...' : saveButtonText}
-              </button>
+              onClick={handleSave}
+              className={`px-4 py-2 ${isEditedContactValid() ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-400'} text-white rounded-md transition-colors disabled:opacity-50`}
+              disabled={isLoading || !isEditedContactValid()}
+            >
+              {isLoading ? 'Saving...' : saveButtonText}
+            </button>
+
             </>
           ) : (
             <>
@@ -307,6 +326,28 @@ export default function ContactDetailCard({
           )}
         </div>
       </div>
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 max-w-sm w-full">
+            <h2 className="text-lg font-bold mb-4">Confirm Deletion</h2>
+            <p className="mb-6 text-gray-600">Are you sure you want to delete this contact?</p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={handleCancelDelete}
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -7,8 +7,8 @@ export const fetchContacts = async (searchTerm?: string): Promise<ContactReceive
       const encodedTerm = encodeURIComponent(searchTerm);
 
       const [byNameResults, byEnterpriseResults] = await Promise.all([
-        fetch(`${url}/api/contacts/name/${encodedTerm}`),
-        fetch(`${url}/api/contacts/enterprise/${encodedTerm}`)
+        fetch(`${url}/api/contacts/name/${encodedTerm}`, { credentials: "include" }),
+        fetch(`${url}/api/contacts/enterprise/${encodedTerm}`,  { credentials: "include" })
       ]);
 
       if (!byNameResults.ok || !byEnterpriseResults.ok) {
@@ -33,7 +33,7 @@ export const fetchContacts = async (searchTerm?: string): Promise<ContactReceive
 
       return uniqueContacts;
     } else {
-      const response = await fetch(`${url}/api/contacts`);
+      const response = await fetch(`${url}/api/contacts`, { credentials: "include" });
       if (!response.ok) throw new Error("Error fetching all contacts");
 
       const allContacts: ContactReceive[] = await response.json();

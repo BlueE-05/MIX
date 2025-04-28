@@ -8,6 +8,7 @@ export const createContact = async (contactData: ContactData): Promise<void> => 
       "Content-Type": "application/json",
     },
     body: JSON.stringify(contactData),
+    credentials: "include",
   });
 
   if (!response.ok) {
