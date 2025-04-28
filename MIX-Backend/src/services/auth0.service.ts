@@ -22,7 +22,6 @@ export class Auth0Service {
       audience: audience1,
     });
   
-    console.log("scope:", response.data.scope);
     return response.data.access_token;
   }
 

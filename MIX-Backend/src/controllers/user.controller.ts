@@ -16,31 +16,35 @@ export class UserController {
   public async signup(req: Request, res: Response): Promise<Response> {
     const userData: UserDTO = req.body;
     const { Email, Password } = userData;
-
-    if (!Email || !Password) {
+  
+    const normalizedEmail = Email?.toLowerCase();
+  
+    if (!normalizedEmail || !Password) {
       return res.status(400).json({ error: "Email and password are required" });
     }
-
+  
     try {
-      const auth0User = await this.auth0Service.createUser(Email, Password);
+      const auth0User = await this.auth0Service.createUser(normalizedEmail, Password);
       await this.auth0Service.sendVerificationEmail(auth0User.user_id);
-
+  
       await this.userDbService.createUser({
         ...userData,
+        Email: normalizedEmail,
         email_verified: auth0User.email_verified,
       });
-
-      const tokens = await this.auth0Service.loginWithEmailPassword(Email, Password);
+  
+      const tokens = await this.auth0Service.loginWithEmailPassword(normalizedEmail, Password);
       setAuthCookies(res, tokens);
-
-      await this.userDbService.insertVerificationEmail(Email);
-
+  
+      await this.userDbService.insertVerificationEmail(normalizedEmail);
+  
       return res.status(201).json({ message: "User created and logged in" });
     } catch (error: any) {
       console.error("Error creating Auth0 user:", error.response?.data || error.message);
       return res.status(500).json({ error: "Error creating user" });
     }
   }
+  
 
   public async getProfile(req: AuthRequest, res: Response): Promise<Response> {
     const sub = req.auth?.sub;
@@ -96,7 +100,7 @@ export class UserController {
   }
   
   public async forgotPassword(req: Request, res: Response): Promise<Response> {
-    const email = req.body.email;
+    const email = req.body.email?.toLowerCase();
   
     if (!email || typeof email !== "string") {
       return res.status(400).json({ error: "Email is required" });

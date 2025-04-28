@@ -21,7 +21,6 @@ export async function getTeamsDB(req: Request, res: Response) {
     const result = await db.request().query(`
       SELECT ID, TeamName 
       FROM Team
-      WHERE ID <> 1
     `);
     res.json(result.recordset);
   } catch (err) {

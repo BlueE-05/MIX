@@ -22,7 +22,7 @@ export class UserDbService {
       .input("idJobPosition", sql.Int, user.IDJobPosition ? parseInt(user.IDJobPosition) : null)
       .query(`
         INSERT INTO [User] (
-          Name, LastName, ID, EmailVerified,
+          Name, LastName, IDEmail, EmailVerified,
           PhoneNumber, BirthDate, Education,
           ProfilePic, IDJobPosition
         ) VALUES (
@@ -39,7 +39,7 @@ export class UserDbService {
       .input("email", sql.NVarChar, email.toLowerCase())
       .query(`
         SELECT 
-          u.ID,
+          u.IDEmail,
           u.Name,
           u.LastName,
           u.PhoneNumber,
@@ -50,7 +50,7 @@ export class UserDbService {
           u.ProfilePic
         FROM [User] u
         INNER JOIN [JobPosition] jp ON u.IDJobPosition = jp.ID
-        WHERE LOWER(u.ID) = @email
+        WHERE LOWER(u.IDEmail) = @email
       `);
 
     const user = result.recordset[0];
@@ -73,7 +73,7 @@ export class UserDbService {
       .query(`
         UPDATE [User]
         SET EmailVerified = @emailVerified
-        WHERE LOWER(ID) = @email
+        WHERE LOWER(IDEmail) = @email
       `);
   }
 
@@ -146,7 +146,7 @@ export class UserDbService {
       .query(`
         UPDATE [User]
         SET ProfilePic = @profilePic
-        WHERE LOWER(ID) = @email
+        WHERE LOWER(IDEmail) = @email
       `);
   }
   
