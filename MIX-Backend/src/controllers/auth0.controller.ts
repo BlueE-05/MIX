@@ -17,7 +17,6 @@ export class AuthController {
   
     try {
       const tokens = await this.auth0Service.loginWithEmailPassword(email, password);
-  
       setAuthCookies(res, tokens);
   
       return res.status(200).json({ message: "Login correcto" });

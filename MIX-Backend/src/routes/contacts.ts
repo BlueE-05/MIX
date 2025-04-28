@@ -1,10 +1,11 @@
-//* 1. Routes Contacts
-
 import express from 'express';
 import ContactHTTPHandler from '@/handlers/contacts';
+import { jwtCheckFromCookie, tryRefreshTokenMiddleware } from '@/middleware/auth0';
 
 const router = express.Router();
 const contactHandler = new ContactHTTPHandler();
+
+router.use(jwtCheckFromCookie, tryRefreshTokenMiddleware);
 
 router.get('/', contactHandler.getContacts);
 router.get('/id/:id', contactHandler.getContactById);

@@ -70,7 +70,7 @@ export class Auth0Service {
       audience: this.audience,
       client_id: auth0Config.clientIdFront,
       client_secret: auth0Config.clientSecretFront,
-      scope: "openid profile email",
+      scope:  "openid profile email offline_access",
       connection: "Username-Password-Authentication"
     });
 
