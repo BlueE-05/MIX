@@ -16,17 +16,24 @@ export function useEmailVerificationStatus() {
       const statusRes = await fetch(`${url}/api/email-status`, {
         credentials: "include",
       });
-      if (statusRes.ok) {
-        const data = await statusRes.json();
-        const verified = Boolean(data.EmailVerified ?? data.email_verified ?? false);
-        setEmailVerified(verified);
-        return verified;
+  
+      if (!statusRes.ok) {
+        console.warn("Not authenticated or server error, skipping email status fetch.");
+        setEmailVerified(false);
+        return false;
       }
+  
+      const data = await statusRes.json();
+      const verified = Boolean(data.EmailVerified ?? data.email_verified ?? false);
+      setEmailVerified(verified);
+      return verified;
     } catch (err: any) {
-      setError(err.message);
+      console.error("Error fetching email status:", err.message);
+      setEmailVerified(false);
+      return false;
     }
-    return false;
   };
+  
 
   useEffect(() => {
     fetchStatus();

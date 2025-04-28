@@ -134,17 +134,20 @@ export class UserController {
   }
   
   public async getEmailStatus(req: AuthRequest, res: Response): Promise<Response> {
-    const sub = req.auth?.sub;
-    if (!sub) return res.status(400).json({ error: "Token without sub" });
-  
     try {
+      const sub = req.auth?.sub;
+      if (!sub) {
+        return res.status(200).json({ email: null, email_verified: false });
+      }
+  
       const { email, email_verified } = await this.auth0Service.getUserBySub(sub);
       return res.status(200).json({ email, email_verified });
     } catch (err: any) {
       console.error("Error fetching email status:", err.message);
-      return res.status(500).json({ error: "Failed to get email status" });
+      return res.status(200).json({ email: null, email_verified: false });
     }
   }
+  
 
   public logout(req: Request, res: Response): void {
     clearAuthCookies(res);

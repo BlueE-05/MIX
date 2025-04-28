@@ -15,7 +15,7 @@ export const jwtCheckFromCookie = jwt({
     `https://${auth0Config.domain}/userinfo`,
   ],
   issuer: `https://${auth0Config.domain}/`,
-  credentialsRequired: true,
+  credentialsRequired: false,
   getToken: (req) => {
     return req.cookies?.access_token || null;
   },
