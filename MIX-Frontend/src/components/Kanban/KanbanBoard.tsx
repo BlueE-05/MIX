@@ -5,6 +5,10 @@ import { Task } from './types';
 import './KanbanBoard.css';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+interface KanbanBoardProps {
+  data: Task[];
+}
+
 const columnColors: { [key: string]: string } = {
   'Prospecting': 'bg-sky-300',
   'Initial Contact': 'bg-cyan-300',
@@ -14,19 +18,35 @@ const columnColors: { [key: string]: string } = {
   'Cancelled': 'bg-red-300',
 };
 
-const KanbanBoard: React.FC = () => {
-  const [columns, setColumns] = useState<{ [key: string]: Task[] }>();
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
+  const [columns, setColumns] = useState<{ [key: string]: Task[] }>(() => {
+    const grouped: { [key: string]: Task[] } = {
+      'Prospecting': [],
+      'Initial Contact': [],
+      'Proposal': [],
+      'Negotiation': [],
+      'Closing': [],
+      'Cancelled': [],
+    };
+
+    data.forEach(task => {
+      if (grouped[task.column]) {
+        grouped[task.column].push(task);
+      }
+    });
+
+    return grouped;
+  });
+
   const [currentPage, setCurrentPage] = useState(0);
-  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3); // Define initial number of visible columns
+  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3);
   const boardRef = useRef<HTMLDivElement>(null);
 
-  // Calculate visible columns based on board width
   useEffect(() => {
     const calculateVisibleColumns = () => {
       if (boardRef.current) {
         const boardWidth = boardRef.current.offsetWidth;
-        // Assuming approximate column width of 300px + gap
-        const columnWidth = 300 + 24; // 24 is the gap (gap-6 = 1.5rem = 24px)
+        const columnWidth = 300 + 24; // column width + gap
         const count = Math.max(1, Math.floor(boardWidth / columnWidth));
         setVisibleColumnsCount(count);
       }
@@ -40,10 +60,10 @@ const KanbanBoard: React.FC = () => {
   const columnGroups = React.useMemo(() => {
     const columnNames = Object.keys(columns);
     const groups = [];
-    
+
     const orderedColumns = [
       'Prospecting',
-      'Initial Contact', 
+      'Initial Contact',
       'Proposal',
       'Negotiation',
       'Closing',
@@ -53,7 +73,7 @@ const KanbanBoard: React.FC = () => {
     for (let i = 0; i < orderedColumns.length; i += visibleColumnsCount) {
       groups.push(orderedColumns.slice(i, i + visibleColumnsCount));
     }
-    
+
     return groups;
   }, [columns, visibleColumnsCount]);
 
@@ -74,50 +94,47 @@ const KanbanBoard: React.FC = () => {
   const handleDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => {
     event.dataTransfer.setData('taskId', taskId.toString());
     event.dataTransfer.setData('fromColumn', fromColumn);
-    event.currentTarget.classList.add('dragging'); // Add class to dragged element (Card)
+    event.currentTarget.classList.add('dragging');
   }, []);
 
   const handleDragEnd = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.currentTarget.classList.remove('dragging'); // Remove class
+    event.currentTarget.classList.remove('dragging');
   }, []);
 
   const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>, toColumn: string) => {
-    event.preventDefault(); // Necessary to allow drop
+    event.preventDefault();
     const taskId = parseInt(event.dataTransfer.getData('taskId'), 10);
     const fromColumn = event.dataTransfer.getData('fromColumn');
 
     if (!taskId || !fromColumn || !toColumn || fromColumn === toColumn || !columns[fromColumn] || !columns[toColumn]) {
-      // Validate all required information is present
       console.warn("Invalid drop - Missing data or invalid columns");
       return;
     }
 
     setColumns(prevColumns => {
       const taskToMove = prevColumns[fromColumn].find(task => task.id === taskId);
-      if (!taskToMove) return prevColumns; // Task not found (rare but safe)
+      if (!taskToMove) return prevColumns;
 
       const newColumns = { ...prevColumns };
       newColumns[fromColumn] = newColumns[fromColumn].filter(task => task.id !== taskId);
       newColumns[toColumn] = [...newColumns[toColumn], taskToMove];
       return newColumns;
     });
-  }, [columns]); // Depends on columns to find the task
+  }, [columns]);
 
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Necessary to allow drop
+    event.preventDefault();
   }, []);
 
   return (
     <div className="min-h-screen p-4 sm:p-6">
       <div className="max-w-full mx-auto" ref={boardRef}>
-        {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
           </div>
         </div>
 
-        {/* Board Container with pagination controls */}
         <div className="relative">
           {columnGroups.length > 1 && (
             <div className="flex items-center justify-between mb-4">

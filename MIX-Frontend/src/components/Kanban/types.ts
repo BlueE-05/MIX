@@ -1,12 +1,11 @@
 // types.ts
 export interface Task {
-    id: number,
-    ContactName: string,
-    Enterprise: string,
-    TotalProducts: number,
-    TotalSale: number,
-    TotalComission: number
-  }
+  id: number;
+  title: string;
+  description?: string;
+  column: string; // <- esta es la propiedad que faltaba
+}
+
   
   export interface ColumnData {
     title: string;
