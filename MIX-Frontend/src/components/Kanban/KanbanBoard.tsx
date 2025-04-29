@@ -14,34 +14,8 @@ const columnColors: { [key: string]: string } = {
   'Cancelled': 'bg-red-300',
 };
 
-const initialColumns: { [key: string]: Task[] } = {
-  'Prospecting': [
-    { id: 1, ContactName: "Petunia", Enterprise: 'FEMSA', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-    { id: 2, ContactName: "Eduardo", Enterprise: 'Pepsico', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
-  ],
-  'Initial Contact': [
-    { id: 3, ContactName: "Maximo", Enterprise: 'BMV', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
-  ],
-  'Proposal': [
-    { id: 4, ContactName: "Dana", Enterprise: 'Ferrari', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-    { id: 5, ContactName: "MasterChief", Enterprise: 'Fresa', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
-  ],
-  'Negotiation': [
-    { id: 6, ContactName: "Daniel", Enterprise: 'Bugati', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-    { id: 7, ContactName: "Estefania", Enterprise: 'Pepinillo', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
-  ],
-  'Closing': [
-    { id: 8, ContactName: "Sandino", Enterprise: 'Maseca', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-    { id: 9, ContactName: "Esteban", Enterprise: 'Hambre', TotalProducts: 20, TotalSale: 7, TotalComission: 5 }
-  ],
-  'Cancelled': [
-    { id: 10, ContactName: "Fatima", Enterprise: 'Trebol', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-    { id: 11, ContactName: "Carlos", Enterprise: 'Comida', TotalProducts: 20, TotalSale: 7, TotalComission: 5 },
-  ],
-};
-
 const KanbanBoard: React.FC = () => {
-  const [columns, setColumns] = useState<{ [key: string]: Task[] }>(initialColumns);
+  const [columns, setColumns] = useState<{ [key: string]: Task[] }>();
   const [currentPage, setCurrentPage] = useState(0);
   const [visibleColumnsCount, setVisibleColumnsCount] = useState(3); // Define initial number of visible columns
   const boardRef = useRef<HTMLDivElement>(null);
@@ -62,6 +36,7 @@ const KanbanBoard: React.FC = () => {
     window.addEventListener('resize', calculateVisibleColumns);
     return () => window.removeEventListener('resize', calculateVisibleColumns);
   }, []);
+
   const columnGroups = React.useMemo(() => {
     const columnNames = Object.keys(columns);
     const groups = [];
@@ -78,6 +53,7 @@ const KanbanBoard: React.FC = () => {
     for (let i = 0; i < orderedColumns.length; i += visibleColumnsCount) {
       groups.push(orderedColumns.slice(i, i + visibleColumnsCount));
     }
+    
     return groups;
   }, [columns, visibleColumnsCount]);
 
@@ -140,6 +116,7 @@ const KanbanBoard: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
           </div>
         </div>
+
         {/* Board Container with pagination controls */}
         <div className="relative">
           {columnGroups.length > 1 && (
@@ -163,6 +140,7 @@ const KanbanBoard: React.FC = () => {
               </button>
             </div>
           )}
+
           <div className="overflow-x-auto">
             <div className="flex gap-6 min-w-max">
               {visibleColumns.map(columnName => (

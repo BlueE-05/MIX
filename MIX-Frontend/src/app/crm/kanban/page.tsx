@@ -1,9 +1,13 @@
 'use client'
 import KanbanBoard from "@/components/Kanban/KanbanBoard";
 import { useState } from "react";
+import { fetchKanbanData } from "@/hooks/kanban/fetchKanbanData";
+import { updateKanbanCard } from "@/hooks/kanban/updateKanbanCard";
 
 export default function KanbanPage() {
   const [showTooltip, setShowTooltip] = useState(false);
+  const { kanbanData, loading, error } = fetchKanbanData();
+  const { updateCardColumn } = updateKanbanCard();
 
   const phasesInfo = {
     'Prospecting': 'Initial phase where potential prospects are identified',
@@ -14,16 +18,23 @@ export default function KanbanPage() {
     'Cancelled': 'Canceled or lost opportunity'
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <main className="flex justify-center items-center min-h-screen">
       <div className="flex gap-4 p-8">
-        <KanbanBoard />
+        <KanbanBoard 
+          data={kanbanData} 
+          onCardMove={updateCardColumn}
+        />
       </div>
       
-<<<<<<< HEAD
-=======
-      {/* Botón de ayuda fijo en esquina inferior derecha */}
->>>>>>> origin/pruebanewmerge_sales_report
       <div className="fixed bottom-6 right-6">
         <button 
           className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300 transition-colors text-xl shadow-md"
@@ -33,10 +44,7 @@ export default function KanbanPage() {
           ?
         </button>
         
-<<<<<<< HEAD
         {/* Info Icon */}
-=======
->>>>>>> origin/pruebanewmerge_sales_report
         {showTooltip && (
           <div className="absolute bottom-14 right-0 bg-white p-4 rounded-lg shadow-lg w-64 z-10 border border-gray-200">
             <h3 className="font-bold mb-2">Kanban Phases</h3>

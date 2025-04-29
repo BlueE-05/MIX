@@ -26,11 +26,9 @@ const Card: React.FC<CardProps> = ({ task, onDragStart, onDragEnd }) => {
         <div>
           <h3 className="font-medium text-gray-800 break-words mr-6">{Enterprise}</h3>
           {ContactName && (
-
             <p className="text-sm text-gray-600">Contact: {ContactName}</p>
           )}
         </div>
-
       </div>
 
       <div className="grid grid-cols-2 gap-2 mt-3">

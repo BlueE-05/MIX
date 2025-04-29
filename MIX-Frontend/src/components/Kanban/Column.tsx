@@ -3,7 +3,6 @@ import React from 'react';
 import Card from './Card'; 
 import { Task } from './types';
 
-
 interface ColumnProps {
   title: string;
   tasks: Task[];
