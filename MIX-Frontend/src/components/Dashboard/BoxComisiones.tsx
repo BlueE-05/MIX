@@ -1,24 +1,7 @@
 'use client';
-<<<<<<< HEAD
-
-interface BoxComisionesProps {
-  comisiones?: number;
-  numberSize?: string;
-}
-
-export default function BoxComisiones({ comisiones, numberSize = "text-3xl" }: BoxComisionesProps = {}) {
-  // Valor por defecto si no se pasa la prop
-  const amount = comisiones ?? 12500;
-  
-  return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">Commissions</h3>
-      <p className={`text-3xl font-bold text-green-600 flex items-center justify-center ${numberSize}`}>${amount.toLocaleString()}</p>
-=======
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-//endpoint
-import { HTTPURL } from '@/constants/utils';
+import { url } from '@/utils/constants';
 
 
 
@@ -31,10 +14,11 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
   
   const [comision, setComision] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 'ana.gomez@empresa.com'; // CAMBIAR ESTA VARIABLE DE ACUERDO AL USUARIO ACTUAL
 
   useEffect(() => {
-    axios.get(`${HTTPURL}/report/comisTotal`)
+    axios.get(`${url}/report/comisTotal`, {
+      withCredentials: true,
+    })
       .then((response) => {
         console.log('Respuesta del backend:', response.data);
         const valor = response.data[0].TotalCommission;
@@ -70,7 +54,6 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-2">Commissions</h3>
       {renderComision()}
->>>>>>> origin/pruebanewmerge_sales_report
     </div>
   );
 }

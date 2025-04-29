@@ -1,32 +1,12 @@
-<<<<<<< HEAD
-"use client";
-=======
 'use client';
 import { useEffect, useState } from 'react';
-//endoint
-import {HTTPURL} from "@/constants/utils";
->>>>>>> origin/pruebanewmerge_sales_report
 import BoxClosed from "@/components/Dashboard/BoxClosed";
 import PieChart from "@/components/Dashboard/PieChart";
 import BoxComisiones from "@/components/Dashboard/BoxComisiones";
 import CustomTable from "@/components/Tables/CustomTable";
 import AwardsBox from "@/components/Dashboard/Awards";
+import { url } from '@/utils/constants';
 
-<<<<<<< HEAD
-const currentUser = {
-  team: "Marketing",
-  position: "Especialista de Contenido",
-};
-
-const DashboardPage = () => {
-  const headers = ["REF", "Contact Name", "Status", "Start Day", "Total Sale", "Product Num"];
-  const data = [
-    [1, "Tarea 1", "En progreso", "2025-03-13"],
-    [2, "Tarea 2", "Completada", "2025-03-12"],
-    [3, "Tarea 3", "Pendiente", "2025-03-11"],
-    [4, "Tarea 4", "En progreso", "2025-03-10"],
-  ];
-=======
 
 interface TopSale {
   SaleID: number;
@@ -70,7 +50,7 @@ const DashboardPage = () => {
     const fetchTopSales = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${HTTPURL}/sale/TopSales`);
+        const response = await fetch(`${url}/sale/TopSales`, { credentials: "include" });
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -95,7 +75,7 @@ const DashboardPage = () => {
     const fetchTeamPos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${HTTPURL}/report/TeamPos`);
+        const response = await fetch(`${url}/report/TeamPos`, { credentials: "include" });
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -121,7 +101,7 @@ const DashboardPage = () => {
     const fetchAward = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(`${HTTPURL}/report/Award`);
+        const response = await fetch(`${url}/report/Award`, { credentials: "include" });
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -167,41 +147,10 @@ const DashboardPage = () => {
       ];
     });
   };
->>>>>>> origin/pruebanewmerge_sales_report
 
   return (
     <main className="min-h-screen bg-gray-100 p-6">
       {/* Header */}
-<<<<<<< HEAD
-        <div className="mb-8 flex justify-between items-start flex-col md:flex-row gap-4">
-          {/* Título (se mantiene igual) */}
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
-          </div>
-          
-          {/* Tarjetas Modificadas - ¡Clave! */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            {/* Team Card */}
-            <div className="bg-white p-4 rounded-lg w-full sm:w-60 transition-all duration-300">
-              <label className="block text-sm font-medium text-green-700 mb-1">Team</label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-                value={currentUser.team}
-                readOnly
-              />
-            </div>
-            
-            {/* Position Card */}
-            <div className="bg-white p-4 rounded-lg w-full sm:w-60 transition-all duration-300">
-              <label className="block text-sm font-medium text-blue-700 mb-1">Position</label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-                value={currentUser.position}
-                readOnly
-              />
-=======
       <div className="mb-8 flex justify-between items-start flex-col md:flex-row gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-800">Dashboard</h1>
@@ -261,50 +210,10 @@ const DashboardPage = () => {
                   includeSearch={false} 
                 />
               )}
->>>>>>> origin/pruebanewmerge_sales_report
             </div>
           </div>
         </div>
   
-<<<<<<< HEAD
-      {/* Resto del contenido */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white p-6 rounded-xl shadow-md">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Recent sales
-            </h2>
-            <div className="overflow-x-auto">
-              <CustomTable headers={headers} data={data} includeSearch={false} />
-            </div>
-          </div>
-        </div>
-  
-        {/* Right Column*/}
-        <div className="h-full flex flex-col gap-4">
-
-          <div>
-            <AwardsBox award={"UwU"}/>
-          </div>
-  
-          <div className="p-6 bg-white rounded-xl shadow-md flex flex-col items-center justify-center">
-            <h2 className="text-xl font-semibold text-gray-700 mb-4">
-              Sales Distribution
-            </h2>
-            <div className="h-[280px] w-full flex items-center justify-center">
-              <PieChart compact={true} />
-            </div>
-          </div>
-          
-          {/* Closed Deals y Comisiones - Ambos centrados */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white p-3 rounded-xl shadow-md flex items-center justify-center">
-              <BoxClosed  numberSize="text-7xl"/>
-            </div>
-            <div className="bg-white p-3 rounded-xl shadow-md flex items-center justify-center">
-              <BoxComisiones numberSize="text-5xl"/>
-=======
         {/* Right Column*/}
         <div className="h-full flex flex-col gap-4">
           <div>
@@ -327,7 +236,6 @@ const DashboardPage = () => {
             </div>
             <div className="bg-white p-6 rounded-xl shadow-md flex items-center justify-center">
               <BoxComisiones />
->>>>>>> origin/pruebanewmerge_sales_report
             </div>
           </div>
         </div>
@@ -336,10 +244,6 @@ const DashboardPage = () => {
   );
 };
 
-<<<<<<< HEAD
-export default DashboardPage;
-=======
 export default DashboardPage;
 
 
->>>>>>> origin/pruebanewmerge_sales_report

@@ -1,24 +1,7 @@
 'use client';
-<<<<<<< HEAD
-
-interface BoxClosedProps {
-  closedDeals?: number;
-  numberSize?: string;
-}
-
-export default function BoxClosed({ closedDeals, numberSize = "text-3xl"}: BoxClosedProps = {}) {
-  // Valor por defecto si no se pasa la prop
-  const deals = closedDeals ?? 1000;
-  
-  return (
-    <div className="p-4">
-      <h3 className="text-lg font-semibold mb-2 flex items-center justify-center">Closed Deals</h3>
-      <p className={`font-bold text-blue-600 flex items-center justify-center ${numberSize}`}>{deals}</p>
-=======
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-//endpoint
-import { HTTPURL } from '@/constants/utils';
+import { url } from '@/utils/constants';
 
 interface BoxClosedProps {
   closedDeals?: number;
@@ -28,12 +11,11 @@ interface BoxClosedProps {
 export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
-  const iduser = 'ana.gomez@empresa.com'; // Ajusta esto dinámicamente si lo necesitas
-
-  //const deals = closedDeals ?? 42;
 
   useEffect(() => {
-    axios.get(`${HTTPURL}/report/allCierre`)
+    axios.get(`${url}/report/allCierre`, {
+      withCredentials: true,
+    })
       .then((response) => {
         const valor = response.data[0].TotalCierre;
         setCierres(Number(valor));
@@ -66,7 +48,6 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
     <div className="p-4">
       <h3 className="text-lg font-semibold mb-2">Closed Sales</h3>
       {renderCierres()}
->>>>>>> origin/pruebanewmerge_sales_report
     </div>
   );
 }

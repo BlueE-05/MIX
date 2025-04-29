@@ -1,31 +1,14 @@
 'use client';
-<<<<<<< HEAD
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-=======
 import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 import axios from 'axios';
-//endpoint
-import { HTTPURL } from "@/constants/utils";
->>>>>>> origin/pruebanewmerge_sales_report
+import { url } from "@/utils/constants";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface PieChartProps {
   distribution?: number[];
-<<<<<<< HEAD
-  compact?: boolean; // Nueva prop para modo compacto
-}
-
-export default function PieChart({ distribution, compact = false }: PieChartProps = {}) {
-  const defaultData = [35, 25, 20, 15, 5];
-  const data = {
-    labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Others'],
-    datasets: [{
-      data: distribution || defaultData,
-=======
   compact?: boolean;
 }
 
@@ -54,26 +37,10 @@ const initialData = {
     {
       label: 'Total',
       data: [0, 0, 0],
->>>>>>> origin/pruebanewmerge_sales_report
       backgroundColor: [
         'rgba(255, 99, 132, 0.7)',
         'rgba(54, 162, 235, 0.7)',
         'rgba(255, 206, 86, 0.7)',
-<<<<<<< HEAD
-        'rgba(75, 192, 192, 0.7)',
-        'rgba(153, 102, 255, 0.7)',
-      ],
-      borderWidth: 1,
-    }],
-  };
-
-  return (
-    <div className={`w-full ${compact ? 'h-[250px]' : 'h-full min-h-[300px]'} flex items-center justify-center`}>
-      <Pie 
-        data={data} 
-        className="w-full h-full"
-      />
-=======
       ],
       borderWidth: 1,
     },
@@ -91,9 +58,15 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
         
         
         const [cierreResponse, activeResponse, prospectoResponse] = await Promise.all([
-          axios.get(`${HTTPURL}/report/allCierre`),
-          axios.get(`${HTTPURL}/report/allActive`),
-          axios.get(`${HTTPURL}/report/allCancelled`)
+          axios.get(`${url}/report/allCierre`, {
+            withCredentials: true,
+          }),
+          axios.get(`${url}/report/allActive`, {
+            withCredentials: true,
+          }),
+          axios.get(`${url}/report/allCancelled`, {
+            withCredentials: true,
+          })
         ]);
 
         // Extraer los datos de las respuestas
@@ -145,7 +118,6 @@ export default function PieChart({ distribution, compact = false }: PieChartProp
   return (
     <div className={`w-full ${compact ? 'h-[250px]' : 'h-full min-h-[300px]'} flex items-center justify-center`}>
       <Pie data={chartData} options={options} />
->>>>>>> origin/pruebanewmerge_sales_report
     </div>
   );
 }

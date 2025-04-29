@@ -1,16 +1,7 @@
 'use client'
-<<<<<<< HEAD
-import { ContactData } from '@/types/ContactTypes'
-import { ChangeEvent, ReactNode, useState } from 'react'
-import { Article, SaleItem } from '@/types/Sales'
-import { SaleDetailCardProps } from '@/types/DetailCards';
-
-=======
-//endpoint
-import { HTTPURL } from '@/constants/utils'
-import { ContactData } from '@/components/Forms/ContactsForms'
-import { ChangeEvent, ReactNode, useState, useEffect } from 'react'
-import { Article, SaleItem } from '@/types/Sales'
+import { url } from '@/utils/constants';
+import { ContactData } from '@/types/ContactTypes';
+import { ChangeEvent, ReactNode, useState, useEffect } from 'react';
 import { SaleDetailCardProps } from '@/types/DetailCards';
 
 interface Phase {
@@ -25,7 +16,6 @@ interface Product {
   Quantity: number;
 }
 
->>>>>>> origin/pruebanewmerge_sales_report
 export default function SaleDetailCard({
   sale,
   onClose,
@@ -37,8 +27,6 @@ export default function SaleDetailCard({
   deleteButtonText = 'Delete'
 }: SaleDetailCardProps) {
   const [isEditing, setIsEditing] = useState(false);
-<<<<<<< HEAD
-=======
   const [isDeleting, setIsDeleting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -47,63 +35,18 @@ export default function SaleDetailCard({
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [selectedPhaseId, setSelectedPhaseId] = useState<number | null>(null);
->>>>>>> origin/pruebanewmerge_sales_report
   
-  const articleOptions: Article[] = [
-    { id: '1', name: 'Laptop', price: 999.99 },
-    { id: '2', name: 'Smartphone', price: 699.99 },
-    { id: '3', name: 'Monitor', price: 249.99 },
-    { id: '4', name: 'Keyboard', price: 49.99 },
-    { id: '5', name: 'Mouse', price: 29.99 },
-  ];
-
-<<<<<<< HEAD
-  // Inicializar items con un array vacío si sale.items es undefined
-  const [items, setItems] = useState<SaleItem[]>(sale.items || []);
-
-=======
->>>>>>> origin/pruebanewmerge_sales_report
   const normalizeStatus = (status: ReactNode | string): string => {
     if (typeof status === 'string') return status;
     return 'In Progress';
   };
 
-<<<<<<< HEAD
-  // Asegurar que editedSale.items nunca sea undefined
-=======
->>>>>>> origin/pruebanewmerge_sales_report
   const [editedSale, setEditedSale] = useState({
     ...sale,
     status: normalizeStatus(sale.status),
     items: sale.items || []
   });
 
-<<<<<<< HEAD
-  const renderStatus = () => {
-    const statusString = normalizeStatus(sale.status)
-    const color = statusString === 'Closed' ? 'green' : 
-                 statusString === 'In Progress' ? 'blue' : 'yellow'
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium 
-        ${color === 'green' ? 'bg-green-100 text-green-800' :
-          color === 'blue' ? 'bg-blue-100 text-blue-800' :
-            'bg-yellow-100 text-yellow-800'}`}>
-        {statusString}
-      </span>
-    )
-  }
-
-  const handleEdit = () => {
-    setIsEditing(true)
-  }
-
-  const handleSave = () => {
-    onSave({
-      ...editedSale,
-      items: items.filter(item => item.article !== '')
-    });
-    setIsEditing(false);
-=======
   // Fetch phases and products from API
   useEffect(() => {
     const fetchData = async () => {
@@ -112,7 +55,7 @@ export default function SaleDetailCard({
       
       try {
         // Fetch phases
-        const phasesResponse = await fetch(`${HTTPURL}/newsale/Phases`);
+        const phasesResponse = await fetch(`${url}/newsale/Phases`, { credentials: "include" });
         if (!phasesResponse.ok) throw new Error('Failed to fetch phases');
         const phasesData = await phasesResponse.json();
         setPhases(phasesData);
@@ -124,7 +67,7 @@ export default function SaleDetailCard({
         }
 
         // Fetch products
-        const productsResponse = await fetch(`${HTTPURL}/report/ProdInfo/${sale.id}`);
+        const productsResponse = await fetch(`${url}/report/ProdInfo/${sale.id}`, { credentials: "include" });
         if (!productsResponse.ok) throw new Error('Failed to fetch products');
         const productsData = await productsResponse.json();
         setProducts(productsData);
@@ -150,11 +93,12 @@ export default function SaleDetailCard({
     try {
       if (selectedPhaseId !== null) {
         // Update the phase using the PUT endpoint
-        const response = await fetch(`${HTTPURL}/sale/${sale.id}/${selectedPhaseId}`, {
+        const response = await fetch(`${url}/sale/${sale.id}/${selectedPhaseId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
+          credentials: "include"
         });
 
         if (!response.ok) {
@@ -179,25 +123,12 @@ export default function SaleDetailCard({
       console.error('Error updating sale phase:', error);
       setErrorMessage('Failed to update sale phase. Please try again.');
     }
->>>>>>> origin/pruebanewmerge_sales_report
   }
 
   const handleCancel = () => {
     setEditedSale({
       ...sale,
       status: normalizeStatus(sale.status),
-<<<<<<< HEAD
-      items: sale.items || [] // Asegurar que no sea undefined
-    });
-    setItems(sale.items ? [...sale.items] : []); // Manejar el caso undefined
-    setIsEditing(false);
-  };
-
-  const handleDelete = () => {
-    if (window.confirm('Are you sure you want to delete this contact?')) {
-      onDelete(sale.id)
-      onClose()
-=======
       items: sale.items || []
     });
     // Reset selected phase to original
@@ -215,11 +146,12 @@ export default function SaleDetailCard({
     setErrorMessage(null);
     
     try {
-      const response = await fetch(`${HTTPURL}/sale/${sale.id}`, {
+      const response = await fetch(`${url}/sale/${sale.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: "include"
       });
 
       if (!response.ok) {
@@ -233,7 +165,6 @@ export default function SaleDetailCard({
       setErrorMessage('Failed to delete sale. Please try again.');
     } finally {
       setIsDeleting(false);
->>>>>>> origin/pruebanewmerge_sales_report
     }
   }
 
@@ -244,60 +175,6 @@ export default function SaleDetailCard({
     }))
   }
 
-<<<<<<< HEAD
-  const handleAddItem = () => {
-    setItems([...items, { article: '', quantity: 1, price: 0 }]);
-  };
-
-  const handleArticleChange = (index: number, articleId: string) => {
-    const newItems = [...items];
-    const selectedArticle = articleOptions.find(a => a.id === articleId);
-    
-    newItems[index] = {
-      ...newItems[index],
-      article: articleId,
-      price: selectedArticle ? selectedArticle.price * newItems[index].quantity : 0
-    };
-    
-    setItems(newItems);
-  };
-
-  const handleQuantityChange = (index: number, quantity: number) => {
-    const newItems = [...items];
-    const article = articleOptions.find(a => a.id === newItems[index].article);
-    
-    newItems[index] = {
-      ...newItems[index],
-      quantity: quantity > 0 ? quantity : 1,
-      price: article ? article.price * (quantity > 0 ? quantity : 1) : 0
-    };
-    
-    setItems(newItems);
-  };
-
-  const removeItem = (index: number) => {
-    const newItems = [...items];
-    newItems.splice(index, 1);
-    setItems(newItems);
-  };
-
-  const [contactData, setContactData] = useState<ContactData>({
-    Name: "",
-    LastName: "",
-    EnterpriseName: sale.enterprise || "", // Inicializar con el valor de la venta
-    PhoneNumber: "",
-    Email: "",
-  });
-  
-  const enterprises = ["EcoLogix", "TechNova", "AgroVida", "FinanPlus"];
-  
-  const handleChangeContact = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ): void => {
-    setContactData({ ...contactData, [e.target.name]: e.target.value });
-    handleChange('enterprise', e.target.value);
-  };
-=======
   const handlePhaseChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const phaseId = parseInt(e.target.value);
     setSelectedPhaseId(phaseId);
@@ -310,13 +187,12 @@ export default function SaleDetailCard({
   };
 
   const [contactData, setContactData] = useState<ContactData>({
-    name: "",
-    lastName: "",
-    enterprise: sale.enterprise || "",
-    phone: "",
-    email: "",
+    Name: "",
+    LastName: "",
+    EnterpriseName: sale.enterprise || "",
+    PhoneNumber: "",
+    Email: "",
   });
->>>>>>> origin/pruebanewmerge_sales_report
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -333,8 +209,6 @@ export default function SaleDetailCard({
           </button>
         </div>
         
-<<<<<<< HEAD
-=======
         {errorMessage && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
             {errorMessage}
@@ -364,7 +238,6 @@ export default function SaleDetailCard({
           </div>
         )}
         
->>>>>>> origin/pruebanewmerge_sales_report
         <div className="space-y-4">
           <div className="mb-4 border-b pb-2">
             <div className="flex">
@@ -373,110 +246,13 @@ export default function SaleDetailCard({
               </label>
               <span className="font-bold text-md text-red-600">*</span>
             </div>
-<<<<<<< HEAD
-            {isEditing ? (
-              <select
-                name="enterprise"
-                value={contactData.EnterpriseName}
-                onChange={handleChangeContact}
-                required
-                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-stone-900"
-              >
-                <option value="">Select Enterprise</option>
-                {enterprises.map((enterprise, index) => (
-                  <option key={index} value={enterprise}>
-                    {enterprise}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <p className="text-gray-700">{contactData.EnterpriseName}</p>
-            )}
-=======
-            <p className="text-gray-700">{contactData.enterprise}</p>
->>>>>>> origin/pruebanewmerge_sales_report
+            <p className="text-gray-700">{contactData.EnterpriseName}</p>
           </div>
           
           {/* Articles Section */}
           <div className="border-b pb-4">
             <h3 className="text-lg font-semibold text-gray-700 mb-3">Articles</h3>
             
-<<<<<<< HEAD
-            {items.map((item, index) => (
-              <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 items-end">
-                <div>
-                  <label htmlFor={`article-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Article {index + 1}
-                  </label>
-                  {isEditing ? (
-                    <select
-                      id={`article-${index}`}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      value={item.article}
-                      onChange={(e) => handleArticleChange(index, e.target.value)}
-                    >
-                      <option value="">Select article</option>
-                      {articleOptions.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {option.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p className="text-gray-700">
-                      {articleOptions.find(a => a.id === item.article)?.name || 'Not selected'}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      id={`quantity-${index}`}
-                      min="1"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      value={item.quantity}
-                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
-                    />
-                  ) : (
-                    <p className="text-gray-700">{item.quantity}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor={`price-${index}`} className="block text-sm font-medium text-gray-700 mb-1">
-                    Price
-                  </label>
-                  <p className="text-gray-700">${item.price.toFixed(2)}</p>
-                </div>
-
-                {isEditing && items.length > 1 && (
-                  <div>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(index)}
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-
-            {isEditing && (
-              <button
-                type="button"
-                onClick={handleAddItem}
-                className="mt-2 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
-              >
-                Add Another Article
-              </button>
-=======
             {loadingProducts ? (
               <p>Loading products...</p>
             ) : (
@@ -516,7 +292,6 @@ export default function SaleDetailCard({
               ) : (
                 <p className="text-gray-500">No products in this sale</p>
               )
->>>>>>> origin/pruebanewmerge_sales_report
             )}
           </div>
           
@@ -528,19 +303,6 @@ export default function SaleDetailCard({
           <div className="border-b pb-2">
             <h3 className="font-semibold text-gray-500">Status</h3>
             {isEditing ? (
-<<<<<<< HEAD
-              <select
-                value={typeof editedSale.status === 'string' ? editedSale.status : ''}
-                onChange={(e) => handleChange('status', e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="In Progress">In Progress</option>
-                <option value="Closed">Closed</option>
-                <option value="Pending">Pending</option>
-              </select>
-            ) : (
-              <div className="mt-1">{renderStatus()}</div>
-=======
               loadingPhases ? (
                 <p>Loading phases...</p>
               ) : (
@@ -567,7 +329,6 @@ export default function SaleDetailCard({
                   {typeof editedSale.status === 'string' ? editedSale.status : 'In Progress'}
                 </span>
               </div>
->>>>>>> origin/pruebanewmerge_sales_report
             )}
           </div>
           
@@ -588,16 +349,11 @@ export default function SaleDetailCard({
               </button>
               <div className="flex gap-2">
                 <button 
-<<<<<<< HEAD
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
-=======
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={isDeleting}
                   className={`px-4 py-2 text-white rounded-md transition-colors ${
                     isDeleting ? 'bg-red-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'
                   }`}
->>>>>>> origin/pruebanewmerge_sales_report
                 >
                   {deleteButtonText}
                 </button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 //endpoint
-import { HTTPURL } from "@/constants/utils";
+import { url } from "@/utils/constants";
 
 import {
   Chart as ChartJS,
@@ -44,7 +44,9 @@ export default function LinesChart() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${HTTPURL}/report/DailyClosedSalesByTeam`);
+        const response = await fetch(`${url}/report/DailyClosedSalesByTeam`, {
+          credentials: "include",
+        });
         
         if (!response.ok) {
           throw new Error('Error loading data');

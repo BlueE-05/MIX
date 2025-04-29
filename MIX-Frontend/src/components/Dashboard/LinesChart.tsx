@@ -1,13 +1,7 @@
-<<<<<<< HEAD
-import React from "react";
-import { Line } from "react-chartjs-2";
-=======
 import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-//endpoint
-import { HTTPURL } from "@/constants/utils";
+import { url } from "@/utils/constants";
 
->>>>>>> origin/pruebanewmerge_sales_report
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,36 +10,6 @@ import {
   LineElement,
   Title,
   Tooltip,
-<<<<<<< HEAD
-  Legend
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-interface LinesChartProps {
-  salesData: number[];
-  reportType: 'team' | 'individual';
-}
-
-export default function LinesChart({ salesData, reportType }: LinesChartProps) {
-  const data = {
-    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-    datasets: [
-      {
-        label: 'Sales',
-        data: salesData,
-        borderColor: reportType === 'team' ? 'rgb(75, 192, 192)' : 'rgb(153, 102, 255)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        tension: 0.1
-=======
   Legend,
   Filler
 } from 'chart.js';
@@ -78,7 +42,9 @@ export default function LinesChart() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${HTTPURL}/report/ClosedDayUser`);
+        const response = await fetch(`${url}/report/ClosedDayUser`, {
+          credentials: "include",
+        });
         
         if (!response.ok) {
           throw new Error('Error loading data');
@@ -114,7 +80,6 @@ export default function LinesChart() {
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
         borderWidth: 2
->>>>>>> origin/pruebanewmerge_sales_report
       }
     ]
   };
@@ -129,11 +94,6 @@ export default function LinesChart() {
     },
   };
 
-<<<<<<< HEAD
-  return (
-    <div className="w-full h-full">
-      <Line data={data} options={options} />
-=======
   if (loading) {
     return <div className="text-white text-center py-8">Cargando datos de ventas...</div>;
   }
@@ -149,7 +109,6 @@ export default function LinesChart() {
   return (
     <div className="w-full h-full">
       <Line data={chartData} options={options} />
->>>>>>> origin/pruebanewmerge_sales_report
     </div>
   );
 }

@@ -53,7 +53,7 @@ class NewSaleService {
     try {
         const pool = await this.pool;
         const request = pool.request();
-        const result = await request.query('select Name, ID as IDPhase from Phase;');
+        const result = await request.query('select Name, ID as IDPhase from Phase');
         return result.recordset;
     } catch (error) {
         console.error('Error en getAllCierre:', error);
@@ -72,46 +72,6 @@ class NewSaleService {
         throw new Error('Error al obtener productos');
     }
   }
-
-
-   
-    async createSale(iduser: string, data: { idcont: number; idphase: number}) {
-        try {
-            const pool = await this.pool;
-            const result = await pool.request()
-                .input('iduser', sql.VarChar, iduser)  
-                .input('idcont', sql.Int, data.idcont)  
-                .input('idphase', sql.Int, data.idphase)
-                .query('INSERT INTO Sale (IDUser, IDContact, IDPhase)VALUES (@iduser, @idcont, @idphase)');
-        } catch (error) {
-            console.error('Error en createSale', error);
-            throw new Error('Error al crear venta');
-        }
-    }
-
-    //Prueba de nueva venta con un solo producto
-    //FUNCIONA
-    async createSaleONE(iduser: string, data: { idcont:number, idphase:number, idprod:string, quant:number }) {
-        try {
-        const pool = await this.pool;
-      const result = await pool.request()
-          .input('iduser', sql.VarChar, iduser)  
-          .input('idcont', sql.Int, data.idcont)  
-          .input('idphase', sql.Int, data.idphase)
-          .input('idprod', sql.VarChar, data.idprod)
-          .input('quant', sql.Int, data.quant)
-          .query(`EXEC sp_CreateNewSale 
-                  @UserID = @iduser,
-                  @ContactID = @idcont,
-                  @PhaseID = @idphase,
-                  @ProductID = @idprod,
-                  @Quantity = @quant`);
-        } catch (error) {
-            console.error('Error en createSaleONE', error);
-            throw new Error('Error al crear venta');
-        }
-    }
-
 
     //Crear una nueva venta con multiples productos
     //NO FUNCIONA /REVISAR
