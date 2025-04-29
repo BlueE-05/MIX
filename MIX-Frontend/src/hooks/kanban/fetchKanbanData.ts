@@ -1,15 +1,11 @@
-import { KanbanCard } from '@/types/KanbanTypes'; 
+import { SaleFromAPI } from './useKanban';
 import { url } from '@/utils/constants';
 
-export const fetchKanbanData = async (): Promise<KanbanCard[]> => {
-    try {
-        const response = await fetch(`${url}/api/AllSales`, { credentials: "include" });
-        if (!response.ok) throw new Error("Error fetching all sales for kanban data");
+export const fetchKanbanData = async (): Promise<SaleFromAPI[]> => {
+  const response = await fetch(`${url}/sale/AllSales`, { credentials: 'include' });
+  
+  if (!response.ok) throw new Error('Error fetching kanban data');
 
-        const kanbanData: KanbanCard[] = await response.json();
-        return kanbanData;
-    } catch (error) {
-        console.error("Error fetching kanban data:", error);
-        throw error;
-    }
-}
+  const data: SaleFromAPI[] = await response.json();
+  return data;
+};

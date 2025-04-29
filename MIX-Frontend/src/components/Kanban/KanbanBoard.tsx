@@ -1,8 +1,7 @@
 'use client';
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Column from './Column';
-import { Task } from './types';
-import './KanbanBoard.css';
+import { Task } from '@/types/KanbanTypes';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface KanbanBoardProps {
@@ -10,16 +9,21 @@ interface KanbanBoardProps {
 }
 
 const columnColors: { [key: string]: string } = {
-  'Prospecting': 'bg-sky-300',
-  'Initial Contact': 'bg-cyan-300',
-  'Proposal': 'bg-teal-300',
-  'Negotiation': 'bg-emerald-300',
-  'Closing': 'bg-lime-300',
-  'Cancelled': 'bg-red-300',
+  'Prospecting': 'bg-sky-200',
+  'Initial Contact': 'bg-cyan-200',
+  'Proposal': 'bg-teal-200',
+  'Negotiation': 'bg-emerald-200',
+  'Closing': 'bg-lime-200',
+  'Cancelled': 'bg-red-200',
 };
 
 const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
-  const [columns, setColumns] = useState<{ [key: string]: Task[] }>(() => {
+  const [columns, setColumns] = useState<{ [key: string]: Task[] }>({});
+  const [currentPage, setCurrentPage] = useState(0);
+  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3);
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
     const grouped: { [key: string]: Task[] } = {
       'Prospecting': [],
       'Initial Contact': [],
@@ -35,39 +39,14 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
       }
     });
 
-    return grouped;
-  });
-
-  const [currentPage, setCurrentPage] = useState(0);
-  const [visibleColumnsCount, setVisibleColumnsCount] = useState(3);
-  const boardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const calculateVisibleColumns = () => {
-      if (boardRef.current) {
-        const boardWidth = boardRef.current.offsetWidth;
-        const columnWidth = 300 + 24; // column width + gap
-        const count = Math.max(1, Math.floor(boardWidth / columnWidth));
-        setVisibleColumnsCount(count);
-      }
-    };
-
-    calculateVisibleColumns();
-    window.addEventListener('resize', calculateVisibleColumns);
-    return () => window.removeEventListener('resize', calculateVisibleColumns);
-  }, []);
+    setColumns(grouped);
+  }, [data]);
 
   const columnGroups = React.useMemo(() => {
     const columnNames = Object.keys(columns);
     const groups = [];
-
     const orderedColumns = [
-      'Prospecting',
-      'Initial Contact',
-      'Proposal',
-      'Negotiation',
-      'Closing',
-      'Cancelled'
+      'Prospecting', 'Initial Contact', 'Proposal', 'Negotiation', 'Closing', 'Cancelled'
     ].filter(col => columnNames.includes(col));
 
     for (let i = 0; i < orderedColumns.length; i += visibleColumnsCount) {
@@ -79,100 +58,79 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ data }) => {
 
   const visibleColumns = columnGroups[currentPage] || [];
 
+  const handleDragStart = useCallback((e: React.DragEvent<HTMLDivElement>, id: number, from: string) => {
+    e.dataTransfer.setData('taskId', id.toString());
+    e.dataTransfer.setData('fromColumn', from);
+    e.currentTarget.classList.add('dragging');
+  }, []);
+
+  const handleDragEnd = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.currentTarget.classList.remove('dragging');
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>, toColumn: string) => {
+    e.preventDefault();
+    const taskId = parseInt(e.dataTransfer.getData('taskId'), 10);
+    const fromColumn = e.dataTransfer.getData('fromColumn');
+
+    if (!taskId || !fromColumn || fromColumn === toColumn) return;
+
+    setColumns(prev => {
+      const task = prev[fromColumn].find(t => t.id === taskId);
+      if (!task) return prev;
+
+      const updated = { ...prev };
+      updated[fromColumn] = updated[fromColumn].filter(t => t.id !== taskId);
+      updated[toColumn] = [...updated[toColumn], { ...task, column: toColumn }];
+      return updated;
+    });
+  }, []);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   const goToNextPage = () => {
-    if (currentPage < columnGroups.length - 1) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < columnGroups.length - 1) setCurrentPage(prev => prev + 1);
   };
 
   const goToPrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 0) setCurrentPage(prev => prev - 1);
   };
-
-  const handleDragStart = useCallback((event: React.DragEvent<HTMLDivElement>, taskId: number, fromColumn: string) => {
-    event.dataTransfer.setData('taskId', taskId.toString());
-    event.dataTransfer.setData('fromColumn', fromColumn);
-    event.currentTarget.classList.add('dragging');
-  }, []);
-
-  const handleDragEnd = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.currentTarget.classList.remove('dragging');
-  }, []);
-
-  const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>, toColumn: string) => {
-    event.preventDefault();
-    const taskId = parseInt(event.dataTransfer.getData('taskId'), 10);
-    const fromColumn = event.dataTransfer.getData('fromColumn');
-
-    if (!taskId || !fromColumn || !toColumn || fromColumn === toColumn || !columns[fromColumn] || !columns[toColumn]) {
-      console.warn("Invalid drop - Missing data or invalid columns");
-      return;
-    }
-
-    setColumns(prevColumns => {
-      const taskToMove = prevColumns[fromColumn].find(task => task.id === taskId);
-      if (!taskToMove) return prevColumns;
-
-      const newColumns = { ...prevColumns };
-      newColumns[fromColumn] = newColumns[fromColumn].filter(task => task.id !== taskId);
-      newColumns[toColumn] = [...newColumns[toColumn], taskToMove];
-      return newColumns;
-    });
-  }, [columns]);
-
-  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-  }, []);
 
   return (
     <div className="min-h-screen p-4 sm:p-6">
-      <div className="max-w-full mx-auto" ref={boardRef}>
+      <div ref={boardRef} className="max-w-full mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Kanban Board</h1>
         </div>
 
-        <div className="relative">
-          {columnGroups.length > 1 && (
-            <div className="flex items-center justify-between mb-4">
-              <button
-                onClick={goToPrevPage}
-                disabled={currentPage === 0}
-                className={`p-2 rounded-full ${currentPage === 0 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
-              >
-                <ChevronLeft size={24} />
-              </button>
-              <span className="text-gray-600">
-                Page {currentPage + 1} of {columnGroups.length}
-              </span>
-              <button
-                onClick={goToNextPage}
-                disabled={currentPage === columnGroups.length - 1}
-                className={`p-2 rounded-full ${currentPage === columnGroups.length - 1 ? 'text-gray-400' : 'text-gray-700 hover:bg-gray-200'}`}
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-          )}
+        {columnGroups.length > 1 && (
+          <div className="flex items-center justify-between mb-4">
+            <button onClick={goToPrevPage} disabled={currentPage === 0} className="p-2 rounded-full">
+              <ChevronLeft size={24} />
+            </button>
+            <span className="text-gray-600">Page {currentPage + 1} of {columnGroups.length}</span>
+            <button onClick={goToNextPage} disabled={currentPage === columnGroups.length - 1} className="p-2 rounded-full">
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        )}
 
-          <div className="overflow-x-auto">
-            <div className="flex gap-6 min-w-max">
-              {visibleColumns.map(columnName => (
-                <Column
-                  key={columnName}
-                  title={columnName}
-                  tasks={columns[columnName]}
-                  colorClass={columnColors[columnName] ?? 'bg-white'}
-                  onDragStart={handleDragStart}
-                  onDragEnd={handleDragEnd}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                />
-              ))}
-            </div>
+        <div className="overflow-x-auto">
+          <div className="flex gap-6 min-w-max">
+            {visibleColumns.map(columnName => (
+              <Column
+                key={columnName}
+                title={columnName}
+                tasks={columns[columnName]}
+                colorClass={columnColors[columnName] ?? 'bg-gray-100'}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+              />
+            ))}
           </div>
         </div>
       </div>
