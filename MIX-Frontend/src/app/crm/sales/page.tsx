@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { url } from '@/utils/constants';
 import RoundedButton from "@/components/Buttons/RoundedButton";
 import CustomTable from "@/components/Tables/CustomTable";
-import { CirclePlus } from "lucide-react";
+import { CirclePlus, LoaderCircle } from "lucide-react";
 import ArrowRightButton from "@/components/Buttons/ArrowRightButton";
 import Formulario from '@/components/Forms/SalesForms';
 import SaleDetailCard from '@/components/Cards/Tables/SaleDetailCard';
@@ -153,18 +153,17 @@ export default function SalesPage() {
     sale.actions,
   ]);
 
-  if (isLoading) {
-    return (
-      <main className="min-h-screen p-6 flex items-center justify-center">
-        <div>Loading sales data...</div>
-      </main>
-    );
+  function fetchSales() {
+    throw new Error('Function not implemented.');
   }
 
   return (
     <main className="min-h-screen p-6">
       {/* Title */}
-      <h1 className="font-bold text-3xl mb-5">Active Sales</h1>
+      <div className="flex justify-between items-center mb-5 mr-5">
+        <h1 className="font-bold text-3xl">Active Sales</h1>
+        {isLoading && <LoaderCircle className="animate-spin text-stone-900" />}
+      </div>
 
       {/* Error message */}
       {error && (
@@ -187,6 +186,7 @@ export default function SalesPage() {
           onClose={() => {
             setShowForm(false);
             setIsLoading(false);
+            fetchSales();
           }}
           onSubmit={(data) => {
             const adaptedData = {
@@ -205,7 +205,7 @@ export default function SalesPage() {
             ...selectedSale,
             status: selectedSale.status
           }}
-          onClose={() => setSelectedSale(null)}
+          onClose={() => { setSelectedSale(null); fetchSales(); }}
         />
       )}
 
