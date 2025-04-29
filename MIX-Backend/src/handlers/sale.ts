@@ -1,95 +1,107 @@
+// src/handlers/sales.ts
 import { Request, Response, NextFunction } from 'express';
-import SaleController from '../controllers/sale';
-//Importar IDUSer
-import { UserEmail } from '../getIDUser';
+import SaleController from '@/controllers/sale';
+import { AuthRequest } from '@/types/controller/auth0';
+import { Auth0Service } from '@/services/auth0.service';
 
+export default class SaleHTTPHandler {
+  private saleController: SaleController;
+  private auth0Service: Auth0Service;
 
-class SaleHTTPHandler {
-  private saleController: typeof SaleController;
+  constructor() {
+    this.saleController = new SaleController;
+    this.auth0Service = new Auth0Service();
+    this.getAllSales = this.getAllSales.bind(this);
+    this.getSaleByEnt = this.getSaleByEnt.bind(this);
+    this.getAllEnt = this.getAllEnt.bind(this);
+    this.getAllProd = this.getAllProd.bind(this);
+    this.getTopSales = this.getTopSales.bind(this);
+    this.updatePhaseSale = this.updatePhaseSale.bind(this);
+    this.deleteSale = this.deleteSale.bind(this);
+  }
 
-    constructor() {
-        this.saleController = SaleController;
-    }
-
-    getAllSales = async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const id = UserEmail;
-        const resultado = await this.saleController.getAllSales(id);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    };    
-
-
-    getSaleByEnt= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const ent = String(req.params.ent);
-        const iduser = UserEmail;  
-        const resultado = await this.saleController.getSaleByEnt(ent, iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-
-    getAllEnt= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const resultado = await this.saleController.getAllEnt();
-        res.json(resultado);
-      } catch (error) {
-      next(error);
-      }
-    };
-
-    getAllProd= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const resultado = await this.saleController.getAllProd();
-        res.json(resultado);
-      } catch (error) {
-      next(error);
-      }
-    };
-
-    getTopSales= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const iduser=UserEmail;
-        const resultado = await this.saleController.getTopSales(iduser);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-    updatePhaseSale= async (req: Request, res: Response, next: NextFunction) => {
-      try {
-        const idsale=Number(req.params.idsale);
-        const idphase=Number(req.params.idphase);
-        const resultado = await this.saleController.updatePhaseSale(idsale, idphase);
-        res.json(resultado);
-      } catch (error) {
-        next(error);
-      }
-    }; 
-
-
-
-  // En tu clase handler, cambia la declaración a arrow function:
-  deleteSale = async (req: Request, res: Response, next: NextFunction) => {
+  public async getAllSales(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const idsale = Number(req.params.idsale);
-      await this.saleController.deleteSale(idsale);
+      const sub = (req as AuthRequest).auth?.sub;
+      if (!sub) {
+        res.status(400).json({ error: "Token without sub" });
+        return;
+      }
+      const { email } = await this.auth0Service.getUserBySub(sub);
+      const sales = await this.saleController.getAllSales(email);
+      res.json(sales);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getSaleByEnt(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const sub = (req as AuthRequest).auth?.sub;
+      if (!sub) {
+        res.status(400).json({ error: "Token without sub" });
+        return;
+      }
+      const { email } = await this.auth0Service.getUserBySub(sub);
+      const enterpriseName = req.params.ent;
+      const sales = await this.saleController.getSaleByEnt(enterpriseName, email);
+      res.json(sales);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getAllEnt(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const enterprises = await this.saleController.getAllEnt();
+      res.json(enterprises);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getAllProd(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const products = await this.saleController.getAllProd();
+      res.json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async getTopSales(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const sub = (req as AuthRequest).auth?.sub;
+      if (!sub) {
+        res.status(400).json({ error: "Token without sub" });
+        return;
+      }
+      const { email } = await this.auth0Service.getUserBySub(sub);
+      const topSales = await this.saleController.getTopSales(email);
+      res.json(topSales);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async updatePhaseSale(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const saleID = Number(req.params.idsale);
+      const phaseID = Number(req.params.idphase);
+      await this.saleController.updatePhaseSale(saleID, phaseID);
+      res.json({ message: 'Sale phase updated successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  public async deleteSale(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const saleID = Number(req.params.idsale);
+      await this.saleController.deleteSale(saleID);
       res.json({ message: 'Sale deleted successfully' });
     } catch (error) {
       next(error);
     }
-  };
-
-   
-    
-  
+  }
 }
-
-export default new SaleHTTPHandler();
-

@@ -1,40 +1,37 @@
-import SaleService from "../db/sale";
+// * Controller Sales
 
-class SaleController {
-  private saleService = new SaleService;
+import SaleService from '@/db/sale';
+import { Sale, Product } from '@/types/controller/Sale';
+import Enterprise from '@/types/controller/Enterprise';
 
-  async getAllSales(id: string) {
-    return this.saleService.getAllSales(id);
+export default class SaleController {
+  private service = new SaleService();
+
+  async getAllSales(userID: string): Promise<Sale[]> {
+    return this.service.getAllSales(userID);
   }
 
-  async getSaleByEnt(ent: string, iduser: string) {
-    return this.saleService.getSaleByEnt(ent, iduser);
+  async getSaleByEnt(enterpriseName: string, userID: string): Promise<Sale[]> {
+    return this.service.getSaleByEnt(enterpriseName, userID);
   }
 
-  async deleteSale(idsale: number) {
-    return this.saleService.deleteSale(idsale);
+  async deleteSale(saleID: number): Promise<void> {
+    return this.service.deleteSale(saleID);
   }
 
-  async getAllEnt() {
-    return this.saleService.getAllEnt();
+  async getAllEnt(): Promise<Enterprise[]> {
+    return this.service.getAllEnt();
   }
 
-  async getAllProd() {
-    return this.saleService.getAllProd();
+  async getAllProd(): Promise<Product[]> {
+    return this.service.getAllProd();
   }
 
-  async getTopSales(iduser: string) {
-    return this.saleService.getTopSales(iduser);
+  async getTopSales(userID: string): Promise<Sale[]> {
+    return this.service.getTopSales(userID);
   }
 
-  async updatePhaseSale(idsale: number, idphase:number) {
-    return this.saleService.updatePhaseSale(idsale, idphase);
+  async updatePhaseSale(saleID: number, phaseID: number): Promise<void> {
+    return this.service.updatePhaseSale(saleID, phaseID);
   }
-
-  
-
 }
-
-export default new SaleController();
-
-

@@ -9,19 +9,19 @@ import EnterpriseDB from '@/types/db/EnterpriseDB';
 export default class ContactController {
     private service = new ContactService;
 
-    async getAllContacts(userID: string): Promise<Contact[]> {
+    async getAllContacts(userID: string): Promise<ContactDB[]> {
         return this.service.getAllContacts(userID);
     }
 
-    async getContactById(userID: string, contactID: number): Promise<Contact[]> {
+    async getContactById(userID: string, contactID: number): Promise<ContactDB[]> {
         return this.service.getContactById(userID, contactID);
     }
 
-    async getContactByName(userID: string, contactName: string): Promise<Contact[]> {
+    async getContactByName(userID: string, contactName: string): Promise<ContactDB[]> {
         return this.service.getContactByName(userID, contactName);
     }
 
-    async getContactByEnterprise(userID: string, enterprise: string): Promise<Contact[]> {
+    async getContactByEnterprise(userID: string, enterprise: string): Promise<ContactDB[]> {
         return this.service.getContactByEnterprise(userID, enterprise);
     }
 
@@ -29,7 +29,7 @@ export default class ContactController {
         return this.service.getEnterprise();
     }
 
-    async createContact(userID: string, data: ContactDB): Promise<void> {
+    async createContact(userID: string, data: Contact): Promise<void> {
         return this.service.createContact(userID, data);
     }
 

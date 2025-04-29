@@ -1,7 +1,8 @@
 // src/handlers/contacts.ts
 import { Request, Response, NextFunction } from 'express';
 import ContactController from '@/controllers/contacts';
-import Contact from '@/types/db/ContactDB';
+import ContactDB from '@/types/db/ContactDB';
+import Contact from '@/types/controller/Contact';
 import { AuthRequest } from '@/types/controller/auth0';
 import { Auth0Service } from '@/services/auth0.service';
 
