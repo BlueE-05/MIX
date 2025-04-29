@@ -15,11 +15,15 @@ const Card: React.FC<CardProps> = ({ task, onDragStart, onDragEnd }) => (
     onDragStart={onDragStart}
     onDragEnd={onDragEnd}
   >
-    <h3 className="text-base font-semibold text-gray-800 truncate">{task.Enterprise ?? 'No Company'}</h3>
+    <h3 className="text-base font-semibold text-gray-800 truncate">{task.Enterprise ?? 'No Company'} #{task.id}</h3>
 
     <div className="bg-gray-50 rounded-md p-3 mt-3 text-sm space-y-1">
       <div className="flex justify-between"><span>Sales</span><span>${task.TotalSale?.toFixed(2) ?? '0.00'}</span></div>
-      <div className="flex justify-between"><span>Commission</span><span>${task.TotalComission?.toFixed(2) ?? '0.00'}</span></div>
+      <div className="flex justify-between"><span>Creation Date</span><span>{new Date(task.createdAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })}</span></div>
     </div>
   </div>
 );

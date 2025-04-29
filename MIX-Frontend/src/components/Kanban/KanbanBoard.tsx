@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Column from './Column';
 import { Task } from '@/types/KanbanTypes';
@@ -22,12 +23,12 @@ const columnColors: { [key: string]: string } = {
 
 const columnNameToNumber = (name: string): number => {
   switch (name) {
-    case 'Prospecting': return 0;
-    case 'Initial Contact': return 1;
-    case 'Proposal': return 2;
-    case 'Negotiation': return 3;
-    case 'Closing': return 4;
-    case 'Cancelled': return 5;
+    case 'Prospecting': return 1;
+    case 'Initial Contact': return 2;
+    case 'Proposal': return 3;
+    case 'Negotiation': return 4;
+    case 'Closing': return 5;
+    case 'Cancelled': return 6;
     default: return 0;
   }
 };
@@ -92,7 +93,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ data, originalDataMap }) => {
       if (!taskId || !fromColumn || fromColumn === toColumn) return;
 
       setColumns(prev => {
-        const task = prev[fromColumn].find(t => t.id === taskId);
+        const task = prev[fromColumn]?.find(t => t.id === taskId);
         if (!task) return prev;
 
         const updated = { ...prev };
@@ -101,17 +102,16 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ data, originalDataMap }) => {
         return updated;
       });
 
-      // ✅ Persistencia al backend
       try {
-        const originalSale: SaleFromAPI | undefined = originalDataMap.get(taskId);
+        const originalSale = originalDataMap.get(taskId);
         if (originalSale) {
-          const newStatus = columnNameToNumber(toColumn);
-          await updateKanbanCard(originalSale, newStatus);
+          const newColumnNumber = columnNameToNumber(toColumn);
+          await updateKanbanCard(originalSale, newColumnNumber);
         } else {
-          console.warn(`Sale with ID ${taskId} not found in original data map`);
+          console.warn(`Sale with ID ${taskId} not found in originalDataMap`);
         }
       } catch (error) {
-        console.error('Error updating kanban card on backend:', error);
+        console.error('Error updating sale status on backend:', error);
       }
     },
     [originalDataMap]
