@@ -77,7 +77,7 @@ export default function LinesChart() {
       {
         label: 'Closed Sales',
         data: closedSales,
-        tension: 0.1,
+        tension: 0.4,
         fill: true,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
