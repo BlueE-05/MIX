@@ -7,10 +7,10 @@ import { url } from '@/utils/constants';
 
 interface BoxComisionesProps {
   comisiones?: number;
-  justify?: string;
+  numberSize?: string;
 }
 
-export default function BoxComisiones({ comisiones, justify }: BoxComisionesProps = {}) {
+export default function BoxComisiones({ comisiones, numberSize = "text-3xl" }: BoxComisionesProps = {}) {
   
   const [comision, setComision] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,7 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
       return <div className="text-center py-8 text-gray-500">No commissions</div>;
     } else if (comision !== null) {
       return (
-        <div className={`text-3xl font-bold text-blue-600 ${justify}`}> $ 
+        <div className={`text-3xl font-bold text-blue-600`}> $ 
         {typeof comision === 'number' ? comision.toFixed(2) : comision}
       </div>
       );
@@ -51,7 +51,7 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
   
   return (
     <div className="p-4">
-      <h3 className="text-lg font-semibold mb-2">Commissions</h3>
+      <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Commissions</h3>
       {renderComision()}
     </div>
   );

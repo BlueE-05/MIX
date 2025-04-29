@@ -5,10 +5,10 @@ import { url } from '@/utils/constants';
 
 interface BoxClosedProps {
   closedDeals?: number;
-  justify?: string;
+  numberSize?: string;
 }
 
-export default function BoxClosed({  justify }: BoxClosedProps = {}) {
+export default function BoxClosed({  numberSize = "text-3xl" }: BoxClosedProps = {}) {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +35,7 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
       return <div className="text-center py-8 text-gray-500">No yet</div>;
     } else if (cierres !== null) {
       return (
-        <div className={`text-3xl font-bold text-blue-600 ${justify}`}>
+        <div className={`text-3xl font-bold text-blue-600`}>
           {cierres}
         </div>
       );
@@ -46,7 +46,7 @@ export default function BoxClosed({  justify }: BoxClosedProps = {}) {
   
   return (
     <div className="p-4">
-      <h3 className="text-lg font-semibold mb-2">Closed Sales</h3>
+      <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Closed Sales</h3>
       {renderCierres()}
     </div>
   );
