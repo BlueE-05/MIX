@@ -22,13 +22,9 @@ export const useKanban = () => {
         const transformed: Task[] = saleData.map((sale) => ({
           id: sale.SaleID,
           title: sale.EnterpriseName,
-          description: `Venta creada el ${new Date(sale.CreationDate).toLocaleDateString()}`,
           column: sale.Status,
           createdAt: sale.CreationDate,
-          updatedAt: sale.CreationDate,
-          ContactName: '',
           Enterprise: sale.EnterpriseName,
-          TotalProducts: 0,
           TotalSale: sale.Total ?? 0,
           TotalComission: 0,
         }));
