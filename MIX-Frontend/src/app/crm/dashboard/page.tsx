@@ -112,13 +112,13 @@ const DashboardPage = () => {
         if (Array.isArray(data) && data.length > 0 && data[0]?.Name) {
           setCurrentAward({ nameaward: data[0].Name });
         } else {
-          setCurrentAward({ nameaward: 'Sin premio actual' });
+          setCurrentAward(null);
         }
   
         setError(null);
       } catch (err) {
         console.error("Error fetching current award:", err);
-        setCurrentAward({ nameaward: 'Sin premio actual' });
+        setCurrentAward(null);
         setError("Error loading data...");
         setTableData([]);
       } finally {
