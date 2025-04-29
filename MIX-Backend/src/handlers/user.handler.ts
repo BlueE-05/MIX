@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { userControllerPromise } from "@/factories/controllerFactory";
 
-
 export class UserHttpHandler {
   public async signup(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

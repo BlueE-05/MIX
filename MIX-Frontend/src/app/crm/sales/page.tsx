@@ -59,7 +59,6 @@ export default function SalesPage() {
     }
   };
 
-  const  iduser= 'ana.gomez@empresa.com'; //Cambiar para el usuario que se va a consultar
 
   useEffect(() => {
     const fetchSales = async () => {

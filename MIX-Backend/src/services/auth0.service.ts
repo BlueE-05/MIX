@@ -2,6 +2,8 @@ import axios from "axios";
 import { auth0Config } from "@/config/auth0";
 import { Auth0User } from "@/types/controller/auth0";
 
+const userCache = new Map<string, { email: string; email_verified: boolean }>();
+
 export class Auth0Service {
   private domain = auth0Config.domain;
   private clientId = auth0Config.clientId;
@@ -76,23 +78,33 @@ export class Auth0Service {
 
     return response.data; // access_token, id_token, etc.
   }
-  public async getUserBySub(sub: string): Promise<{ email: string; email_verified: boolean }> {
-    const token = await this.getAccessToken(this.managementAudience);
-  
-    const response = await axios.get(
-      `https://${this.domain}/api/v2/users/${sub}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
 
-    return { 
-      email: response.data.email,
-      email_verified: response.data.email_verified, 
-    };
+public async getUserBySub(sub: string): Promise<{ email: string; email_verified: boolean }> {
+  if (userCache.has(sub)) {
+    return userCache.get(sub)!;
   }
+
+  const token = await this.getAccessToken(this.managementAudience);
+
+  const response = await axios.get(
+    `https://${this.domain}/api/v2/users/${sub}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const userInfo = {
+    email: response.data.email,
+    email_verified: response.data.email_verified,
+  };
+
+  userCache.set(sub, userInfo);
+
+  return userInfo;
+}
+
 
   public async sendVerificationEmail(sub: string): Promise<void> {
     const token = await this.getAccessToken(this.managementAudience);

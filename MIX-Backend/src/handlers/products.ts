@@ -1,5 +1,3 @@
-//* 2. Handler Products
-
 import { Request, Response, NextFunction } from 'express';
 import ProductController from '@/controllers/products';
 

@@ -1,6 +1,6 @@
 import ReportService from "../db/report";
 
-class ReportController {
+export default class ReportController {
   private reportService = new ReportService;
 
   async getAllCierre(iduser: string) {
@@ -64,10 +64,4 @@ class ReportController {
     return this.reportService.getDailyClosedSalesByMember(IDUser);
   }
 
-  async getPieChartInfoByUser(IDUser: string) {
-    return this.reportService.getPieChartInfoByUser(IDUser);
-  }
-
 }
-
-export default new ReportController();

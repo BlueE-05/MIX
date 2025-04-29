@@ -1,6 +1,6 @@
 import NewSaleService from "../db/newsale";
 
-class NewSaleController {
+export default class NewSaleController {
   private newsaleService = new NewSaleService;
 
   async getAllContactByUser(IDUser: string) {
@@ -19,15 +19,6 @@ class NewSaleController {
   async getAllProd() {
     return this.newsaleService.getAllProd();
   }
-  
-
-  async createSale(iduser: string, data: { idcont: number; idphase: number}) {
-    return this.newsaleService.createSale(iduser,data);
-  } 
-
-  async createSaleONE(iduser: string, data: {idcont:number, idphase:number, idprod:string, quant:number }) {
-    return this.newsaleService.createSaleONE(iduser,data);
-  } 
 
   
   async createSaleMULT(
@@ -60,5 +51,3 @@ class NewSaleController {
     return this.newsaleService.createSaleMULT(saleData);
 }
 }
-
-export default new NewSaleController();

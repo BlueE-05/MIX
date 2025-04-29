@@ -9,6 +9,8 @@ import BoxComisionesReport from '@/components/Dashboard/BoxComisionesReport';
 import BoxClosedReport from '@/components/Dashboard/BoxClosedReport';
 import BoxComisiones from '@/components/Dashboard/BoxComisiones';
 import BoxClosed from '@/components/Dashboard/BoxClosed';
+import { useFullProfile } from '@/hooks/useFullProfile';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export default function Dashboard() {
   const [reportType, setReportType] = useState<'team' | 'individual'>('team');
@@ -27,7 +29,9 @@ export default function Dashboard() {
     Equipo: string
   }[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const isAdmin = true;
+    const { profile, loading } = useFullProfile();
+    const [isAdmin, setIsAdmin] = useState(false);
+
 
   // Obtener datos del equipo y miembros
   useEffect(() => {
@@ -102,6 +106,16 @@ export default function Dashboard() {
 
   // Verificar si se debe mostrar el estado "no seleccionado"
   const showNoSelection = reportType === 'individual' && !selectedUserId && !isLoading;
+
+    useEffect(() => {
+      if (!loading && profile) {
+        setIsAdmin(profile.isAdmin);
+      }
+    }, [loading, profile]);
+  
+  
+    if (loading || !profile) return <LoadingSpinner />;
+    
 
   return (
     <main className="p-6 sm:pt-10">

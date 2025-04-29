@@ -1,24 +1,26 @@
 import { Router } from 'express';
 import ReportHTTPHandler from '../handlers/report';
+import { jwtCheckFromCookie, tryRefreshTokenMiddleware } from '@/middleware/auth0';
 
 const router = Router();
+router.use(jwtCheckFromCookie, tryRefreshTokenMiddleware);
+const handler = new ReportHTTPHandler();
 
-router.get('/allCierre', ReportHTTPHandler.getAllCierre);
-router.get('/allActive', ReportHTTPHandler.getAllActive);
-router.get('/allCancelled', ReportHTTPHandler.getAllCancelled);
-router.get('/comisTotal', ReportHTTPHandler.getTotalComissions);
-router.get('/Award', ReportHTTPHandler.getAward);
-router.get('/TeamPos', ReportHTTPHandler.getTeamPos);
-router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
-router.get('/ClosedDayUser', ReportHTTPHandler.getEveryDayClosedByUser);
-router.get('/ProdInfo/:idprod', ReportHTTPHandler.getProdInfo);
-router.get('/SalesTeam', ReportHTTPHandler.getTotalSalesByTeam);
-router.get('/ComissionTeam', ReportHTTPHandler.getTotalComissionByTeam);
-router.get('/SalesTeamMember', ReportHTTPHandler.getTotalSalesByMember);
-router.get('/SalesInfoMember', ReportHTTPHandler.getSalesInfoByMember);
-router.get('/DaysMonth', ReportHTTPHandler.getDaysCurrentMonth);
-router.get('/DailyClosedSalesByTeam', ReportHTTPHandler.getDailyClosedSalesByTeam);
-router.get('/DailyClosedSalesByMember', ReportHTTPHandler.getDailyClosedSalesByMember);
-router.get('/PieChartInfoByUser', ReportHTTPHandler.getPieChartInfoByUser);
+router.get('/allCierre', handler.getAllCierre);
+router.get('/allActive', handler.getAllActive);
+router.get('/allCancelled', handler.getAllCancelled);
+router.get('/comisTotal', handler.getTotalComissions);
+router.get('/Award', handler.getAward);
+router.get('/TeamPos', handler.getTeamPos);
+router.get('/DaysMonth', handler.getDaysCurrentMonth);
+router.get('/ClosedDayUser', handler.getEveryDayClosedByUser);
+router.get('/ProdInfo/:idprod', handler.getProdInfo);
+router.get('/SalesTeam', handler.getTotalSalesByTeam);
+router.get('/ComissionTeam', handler.getTotalComissionByTeam);
+router.get('/SalesTeamMember', handler.getTotalSalesByMember);
+router.get('/SalesInfoMember', handler.getSalesInfoByMember);
+router.get('/DaysMonth', handler.getDaysCurrentMonth);
+router.get('/DailyClosedSalesByTeam', handler.getDailyClosedSalesByTeam);
+router.get('/DailyClosedSalesByMember', handler.getDailyClosedSalesByMember);
 
 export default router;

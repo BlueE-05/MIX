@@ -1,4 +1,3 @@
-// src/handlers/sales.ts
 import { Request, Response, NextFunction } from 'express';
 import SaleController from '@/controllers/sale';
 import { AuthRequest } from '@/types/controller/auth0';

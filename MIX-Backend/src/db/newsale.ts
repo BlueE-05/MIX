@@ -104,7 +104,6 @@ class NewSaleService {
                         @ContactID = @contactID,
                         @PhaseID = @phaseID,
                         @ProductsJSON = @productsJSON`);
-                   console.log(result);
             // Get the new sale ID from the result
             if (!result.recordset[0]?.NewSaleID) {
                 throw new Error('Failed to get new sale ID');

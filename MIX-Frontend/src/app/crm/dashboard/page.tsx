@@ -102,24 +102,33 @@ const DashboardPage = () => {
       setIsLoading(true);
       try {
         const response = await fetch(`${url}/report/Award`, { credentials: "include" });
-        
+  
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+  
         const data: Award[] = await response.json();
-        setCurrentAward({ nameaward: data[0].Name});
-        setError(null); // Limpiar error si la solicitud es exitosa
+  
+        if (Array.isArray(data) && data.length > 0 && data[0]?.Name) {
+          setCurrentAward({ nameaward: data[0].Name });
+        } else {
+          setCurrentAward({ nameaward: 'Sin premio actual' });
+        }
+  
+        setError(null);
       } catch (err) {
         console.error("Error fetching current award:", err);
+        setCurrentAward({ nameaward: 'Sin premio actual' });
         setError("Error loading data...");
-        setTableData([]); // Limpiar datos si hay error
+        setTableData([]);
       } finally {
         setIsLoading(false);
       }
     };
-
+  
     fetchAward();
   }, []);
+  
 
 
 
@@ -167,7 +176,7 @@ const DashboardPage = () => {
               type="text"
               id="team-display"
               className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-              value={currentUser?.team}
+              value={currentUser?.team ?? ''}
               readOnly
             />
           </div>
@@ -181,7 +190,7 @@ const DashboardPage = () => {
               type="text"
               id="position-display"
               className="w-full px-3 py-2 rounded-md text-gray-700 cursor-not-allowed focus:outline-none"
-              value={currentUser?.position}
+              value={currentUser?.position ?? ''}
               readOnly
             />
           </div>

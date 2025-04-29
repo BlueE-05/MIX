@@ -20,7 +20,6 @@ export default function BoxComisiones({ comisiones, justify }: BoxComisionesProp
       withCredentials: true,
     })
       .then((response) => {
-        console.log('Respuesta del backend:', response.data);
         const valor = response.data[0].TotalCommission;
         setComision(Number(valor));
       })
