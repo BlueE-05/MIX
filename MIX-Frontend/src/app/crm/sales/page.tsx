@@ -194,6 +194,7 @@ export default function SalesPage() {
               startDate: null,   
             };
             handleNewSale(adaptedData);
+            fetchSales();
           }}
         />
       )}
