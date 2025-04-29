@@ -8,7 +8,7 @@ export default function InfoPage() {
         <iframe
           width="100%"
           height="400"
-          src="https://dandanmini.itch.io/trivia-game-crmraydev?secret=P1CbL1qAq6V06Y2YnX4pjBl0Q/embed"
+          src="https://dandanmini.itch.io/trivia-game-crmraydev/embed"
           title="Juego de Unity"
           allowFullScreen
         ></iframe>
