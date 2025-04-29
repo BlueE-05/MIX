@@ -41,7 +41,7 @@ export default function SalesPage() {
   const [error, setError] = useState<string | null>(null);
 
   const getStatusColor = (status: string) => {
-    switch(status) {
+    switch (status) {
       case 'Prospecting':
         return { bg: 'bg-orange-100', text: 'text-orange-800' };
       case 'Initial Contact':
@@ -60,61 +60,62 @@ export default function SalesPage() {
   };
 
 
-  useEffect(() => {
-    const fetchSales = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(`${url}/sale/AllSales`, { credentials: "include" });
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const apiData: SaleFromAPI[] = await response.json();
-        
-        const transformedData = apiData.map(sale => {
-          const { bg, text } = getStatusColor(sale.Status);
-          
-          return {
-            id: sale.SaleID,
-            refNumber: `#${sale.SaleID}`,
-            enterprise: sale.EnterpriseName,
-            amount: sale.Total ? `$${sale.Total.toFixed(2)}` : '$0.00',
-            status: (
-              <span
-                key={`status-${sale.SaleID}`}
-                className={`px-2 py-1 rounded-full text-xs font-medium ${bg} ${text}`}
-              >
-                {sale.Status}
-              </span>
-            ),
-            creationDate: new Date(sale.CreationDate).toLocaleDateString("en-US"),
-            actions: <ArrowRightButton 
-                       color='#0C43A8'
-                       key={`arrow-${sale.SaleID}`} 
-                       onClick={() => setSelectedSale({
-                         id: sale.SaleID,
-                         refNumber: `#${sale.SaleID}`,
-                         enterprise: sale.EnterpriseName,
-                         amount: sale.Total ? `$${sale.Total.toFixed(2)}` : '$0.00',
-                         status: sale.Status,
-                         creationDate: new Date(sale.CreationDate).toLocaleDateString("en-US"),
-                         actions: <ArrowRightButton />
-                       })}
-                     />,
-          };
-        });
-        
-        setSalesData(transformedData);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching sales:", err);
-        setError("Failed to load sales data. Please try again later.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Coloca esto fuera del useEffect
+  const fetchSales = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${url}/sale/AllSales`, { credentials: "include" });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const apiData: SaleFromAPI[] = await response.json();
+
+      const transformedData = apiData.map(sale => {
+        const { bg, text } = getStatusColor(sale.Status);
+
+        return {
+          id: sale.SaleID,
+          refNumber: `#${sale.SaleID}`,
+          enterprise: sale.EnterpriseName,
+          amount: sale.Total ? `$${sale.Total.toFixed(2)}` : '$0.00',
+          status: (
+            <span
+              key={`status-${sale.SaleID}`}
+              className={`px-2 py-1 rounded-full text-xs font-medium ${bg} ${text}`}
+            >
+              {sale.Status}
+            </span>
+          ),
+          creationDate: new Date(sale.CreationDate).toLocaleDateString("en-US"),
+          actions: <ArrowRightButton
+            color='#0C43A8'
+            key={`arrow-${sale.SaleID}`}
+            onClick={() => setSelectedSale({
+              id: sale.SaleID,
+              refNumber: `#${sale.SaleID}`,
+              enterprise: sale.EnterpriseName,
+              amount: sale.Total ? `$${sale.Total.toFixed(2)}` : '$0.00',
+              status: sale.Status,
+              creationDate: new Date(sale.CreationDate).toLocaleDateString("en-US"),
+              actions: <ArrowRightButton />
+            })}
+          />,
+        };
+      });
+
+      setSalesData(transformedData);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching sales:", err);
+      setError("Failed to load sales data. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchSales();
   }, []);
 
@@ -153,10 +154,6 @@ export default function SalesPage() {
     sale.actions,
   ]);
 
-  function fetchSales() {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <main className="min-h-screen p-6">
       {/* Title */}
@@ -173,11 +170,11 @@ export default function SalesPage() {
       )}
 
       {/* Sales Table */}
-      <CustomTable 
-        headers={salesHeaders} 
-        data={salesDataForTable} 
+      <CustomTable
+        headers={salesHeaders}
+        data={salesDataForTable}
         color="#0C43A8"
-        
+
       />
 
       {/* Modal Form */}
@@ -191,7 +188,7 @@ export default function SalesPage() {
           onSubmit={(data) => {
             const adaptedData = {
               ...data,
-              startDate: null,   
+              startDate: null,
             };
             handleNewSale(adaptedData);
             fetchSales();
