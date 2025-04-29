@@ -6,12 +6,17 @@ export default function InfoPage() {
       <div className="w-full max-w-2xl">
         {/* Juego de Unity embebido desde Itch.io */}
         <iframe
-          width="100%"
-          height="400"
-          src="https://dandanmini.itch.io/trivia-game-crmraydev/embed"
-          title="Juego de Unity"
+          frameBorder="0"
+          src="https://itch.io/embed-upload/13527603?color=333333"
           allowFullScreen
-        ></iframe>
+          width="900"
+          height="620"
+          title="Juego de Unity"
+        >
+          <a href="https://dandanmini.itch.io/trivia-game-crmraydev">
+            Play Trivia Game CRMRayDev on itch.io
+          </a>
+        </iframe>
       </div>
     </div>
   );
