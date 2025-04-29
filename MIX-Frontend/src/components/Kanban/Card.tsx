@@ -16,12 +16,8 @@ const Card: React.FC<CardProps> = ({ task, onDragStart, onDragEnd }) => (
     onDragEnd={onDragEnd}
   >
     <h3 className="text-base font-semibold text-gray-800 truncate">{task.Enterprise ?? 'No Company'}</h3>
-    {task.ContactName && (
-      <p className="text-sm text-gray-500 truncate">Contact: {task.ContactName}</p>
-    )}
 
     <div className="bg-gray-50 rounded-md p-3 mt-3 text-sm space-y-1">
-      <div className="flex justify-between"><span>Products</span><span>{task.TotalProducts ?? 0}</span></div>
       <div className="flex justify-between"><span>Sales</span><span>${task.TotalSale?.toFixed(2) ?? '0.00'}</span></div>
       <div className="flex justify-between"><span>Commission</span><span>${task.TotalComission?.toFixed(2) ?? '0.00'}</span></div>
     </div>

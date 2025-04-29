@@ -22,7 +22,7 @@ export default function KanbanPage() {
   return (
     <main className="flex justify-center items-center min-h-screen">
       <div className="flex gap-4 p-8">
-        <KanbanBoard data={tasks} />
+        <KanbanBoard data={tasks} originalDataMap={new Map()} />
       </div>
              {/* Botón de ayuda fijo en esquina inferior derecha */}
              <div className="fixed bottom-6 right-6">
