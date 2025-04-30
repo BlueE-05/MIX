@@ -1,4 +1,5 @@
 'use client';
+
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { useUserSalesInfo } from '@/hooks/useUserSaleInfo';
@@ -6,10 +7,9 @@ import { useUserSalesInfo } from '@/hooks/useUserSaleInfo';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Props {
-  compact?: boolean;
+  selectedUserEmail: string;
   isAdmin?: boolean;
-  selectedUserEmail?: string;
-  distribution?: number[];
+  compact?: boolean;
 }
 
 const chartColors = [
@@ -18,31 +18,19 @@ const chartColors = [
   'rgba(75, 192, 192, 0.7)',
 ];
 
-export default function PieChartReport({
-  compact = false,
-  isAdmin = false,
+export default function PieChartIndividual({
   selectedUserEmail,
-  distribution,
-}: Props = {}) {
-  const shouldUseSelectedUser =
-    isAdmin && selectedUserEmail !== undefined && selectedUserEmail !== '';
-
-  // Debug log
-  console.log('PieChartReport - Selected User Email:', selectedUserEmail);
-  console.log('PieChartReport - shouldUseSelectedUser:', shouldUseSelectedUser);
-
-  const { cerradas, activas, canceladas, loading, error } = useUserSalesInfo(
-    shouldUseSelectedUser ? selectedUserEmail : undefined
-  );
-
-  const dataArray = distribution ?? [canceladas, activas, cerradas];
+  isAdmin = false,
+  compact = false,
+}: Props) {
+  const { cerradas, activas, canceladas, loading, error } = useUserSalesInfo(selectedUserEmail, isAdmin);
 
   const chartData = {
     labels: ['Canceladas', 'Activas', 'Cerradas'],
     datasets: [
       {
         label: 'Distribución de ventas',
-        data: dataArray,
+        data: [canceladas, activas, cerradas],
         backgroundColor: chartColors,
         borderWidth: 1,
       },

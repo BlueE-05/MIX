@@ -26,14 +26,20 @@ export const jwtCheckFromCookie = jwt({
 });
 
 
-export const tryRefreshTokenMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const tryRefreshTokenMiddleware = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.auth) return next();
 
   const refreshToken = req.cookies?.refresh_token;
   if (!refreshToken) return next();
 
   try {
-    const response = await axios.post(`https://${auth0Config.domain}/oauth/token`, {
+    const tokenUrl = `https://${auth0Config.domain}/oauth/token`;
+
+    const response = await axios.post(tokenUrl, {
       grant_type: "refresh_token",
       client_id: auth0Config.clientIdFront,
       client_secret: auth0Config.clientSecretFront,
@@ -42,14 +48,15 @@ export const tryRefreshTokenMiddleware = async (req: AuthRequest, res: Response,
 
     const { access_token, refresh_token: newRefreshToken } = response.data;
 
-    setAuthCookies(res, { 
-      access_token, 
-      refresh_token: newRefreshToken || refreshToken 
+    setAuthCookies(res, {
+      access_token,
+      refresh_token: newRefreshToken || refreshToken,
     });
 
     return next();
   } catch (error: any) {
-    console.error("Failed to refresh token:", error.response?.data || error.message);
+    const errMsg = error.response?.data || error.message;
+    console.error("Failed to refresh token:", errMsg);
     return next();
   }
-}
+};

@@ -60,4 +60,17 @@ export default class ReportController {
     return this.reportService.getDailyClosedSalesByTeam(IDUser);
   }
 
+
+  async getSalesInfoByEmail(email: string): Promise<any> {
+    return this.reportService.getSalesInfoByEmail(email);
+  }
+
+  async getDailyClosedSalesByEmail(email: string) {
+    return this.reportService.getDailyClosedSalesByEmail(email);
+  }
+
+  async getSalesInfoTeam(email: string) {
+    return this.reportService.getSalesInfoTeam(email);
+  }
+  
 }

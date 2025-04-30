@@ -1,15 +1,13 @@
 'use client';
+
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { useUserSalesInfo } from '@/hooks/useUserSaleInfo';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface Props {
+  distribution: number[];
   compact?: boolean;
-  isAdmin?: boolean;
-  selectedUserEmail?: string;
-  distribution?: number[];
 }
 
 const chartColors = [
@@ -18,31 +16,13 @@ const chartColors = [
   'rgba(75, 192, 192, 0.7)',
 ];
 
-export default function PieChartReport({
-  compact = false,
-  isAdmin = false,
-  selectedUserEmail,
-  distribution,
-}: Props = {}) {
-  const shouldUseSelectedUser =
-    isAdmin && selectedUserEmail !== undefined && selectedUserEmail !== '';
-
-  // Debug log
-  console.log('PieChartReport - Selected User Email:', selectedUserEmail);
-  console.log('PieChartReport - shouldUseSelectedUser:', shouldUseSelectedUser);
-
-  const { cerradas, activas, canceladas, loading, error } = useUserSalesInfo(
-    shouldUseSelectedUser ? selectedUserEmail : undefined
-  );
-
-  const dataArray = distribution ?? [canceladas, activas, cerradas];
-
+export default function PieChartTeam({ distribution, compact = false }: Props) {
   const chartData = {
     labels: ['Canceladas', 'Activas', 'Cerradas'],
     datasets: [
       {
         label: 'Distribución de ventas',
-        data: dataArray,
+        data: distribution,
         backgroundColor: chartColors,
         borderWidth: 1,
       },
@@ -68,20 +48,6 @@ export default function PieChartReport({
       },
     },
   };
-
-  if (loading)
-    return (
-      <div className={`w-full ${compact ? 'h-[250px]' : 'min-h-[300px]'} flex items-center justify-center`}>
-        <p className="text-gray-500">Cargando distribución...</p>
-      </div>
-    );
-
-  if (error)
-    return (
-      <div className={`w-full ${compact ? 'h-[250px]' : 'min-h-[300px]'} flex items-center justify-center`}>
-        <p className="text-red-500">Error: {error}</p>
-      </div>
-    );
 
   return (
     <div className={`w-full ${compact ? 'h-[250px]' : 'min-h-[300px]'} flex items-center justify-center`}>

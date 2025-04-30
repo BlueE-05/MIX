@@ -1,20 +1,9 @@
 'use client';
-import { useUserSalesInfo } from '@/hooks/useUserSaleInfo';
 
-interface Props {
-  selectedUserEmail?: string;
-  numberSize?: string;
-  isAdmin?: boolean;
-}
+import { useTeamSalesInfo } from '@/hooks/useTeamSalesInfo';
 
-export default function BoxComisionesReport({
-  selectedUserEmail = '',
-  numberSize = 'text-3xl',
-  isAdmin = false,
-}: Props) {
-  const { comisiones, loading, error } = useUserSalesInfo(
-    isAdmin && selectedUserEmail ? selectedUserEmail : undefined
-  );
+export default function BoxComisionesTeam() {
+  const { comisiones, loading, error } = useTeamSalesInfo();
 
   const getTextSize = (amount: number) => {
     const len = Math.floor(amount).toString().length;
@@ -27,9 +16,9 @@ export default function BoxComisionesReport({
 
   return (
     <div className="p-4 items-center text-center">
-      <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Comisiones</h3>
+      <h3 className="text-lg font-semibold mb-2">Comisiones (Team)</h3>
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <div className="text-center py-8 text-gray-500">Cargando...</div>
       ) : error ? (
         <div className="text-red-700 px-4 py-3">Error: {error}</div>
       ) : (

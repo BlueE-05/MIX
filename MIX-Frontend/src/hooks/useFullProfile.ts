@@ -29,7 +29,7 @@ const fetchFullProfile = async (): Promise<ProfileData> => {
       ? "Unassigned"
       : data.JobPositionName,
     profilePic: data.ProfilePic || null,
-    isAdmin: data.isAdmin,
+    isAdmin: data.isAdmin ?? false,
   };
 };
 
@@ -38,6 +38,7 @@ export function useFullProfile() {
     revalidateOnMount: true,
     shouldRetryOnError: false,
   });
+  
 
   return {
     profile: data,

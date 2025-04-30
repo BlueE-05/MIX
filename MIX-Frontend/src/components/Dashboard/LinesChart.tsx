@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import { url } from "@/utils/constants";
-
+'use client';
+import { useEffect, useState } from 'react';
+import { Line } from 'react-chartjs-2';
+import { url } from '@/utils/constants';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 } from 'chart.js';
 
 ChartJS.register(
@@ -26,89 +26,85 @@ ChartJS.register(
 );
 
 interface SaleData {
-  Fecha: string;
-  VentasCerradas: number;
   DiaDelMes: number;
-  DiaSemana: string;
+  VentasCerradas: number;
 }
 
 export default function LinesChart() {
+  const [days, setDays] = useState<number[]>([]);
+  const [sales, setSales] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [days, setDays] = useState<number[]>([]);
-  const [closedSales, setClosedSales] = useState<number[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        const response = await fetch(`${url}/report/ClosedDayUser`, {
-          credentials: "include",
-        });
-        
-        if (!response.ok) {
-          throw new Error('Error loading data');
-        }
-        
-        const data: SaleData[] = await response.json();
-        
-        
-        const daysArray = data.map(item => item.DiaDelMes);
-        const salesArray = data.map(item => item.VentasCerradas);
-        
-        setDays(daysArray);
-        setClosedSales(salesArray);
-        setLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
+        const res = await fetch(`${url}/report/ClosedDayUser`, { credentials: 'include' });
+        if (!res.ok) throw new Error('Error al cargar datos personales');
+        const data: SaleData[] = await res.json();
+        const sorted = data.sort((a, b) => a.DiaDelMes - b.DiaDelMes);
+        setDays(sorted.map(d => d.DiaDelMes));
+        setSales(sorted.map(d => d.VentasCerradas));
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
-  
   const chartData = {
     labels: days,
     datasets: [
       {
-        label: 'Closed Sales',
-        data: closedSales,
-        tension: 0.1,
+        label: 'Mis ventas cerradas',
+        data: sales,
+        tension: 0.3,
         fill: true,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderWidth: 2
-      }
-    ]
+        borderWidth: 2,
+      },
+    ],
   };
 
-  const options = {
+  const chartOptions: any = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          stepSize: 1,
+          callback: (value: number) => (Number.isInteger(value) ? value.toString() : '')
+        },
+        title: {
+          display: true,
+          text: 'Ventas Cerradas'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Día del mes'
+        }
+      }
+    },
     plugins: {
       legend: {
-        position: 'top' as const,
-      },
-    },
+        position: 'top'
+      }
+    }
   };
 
-  if (loading) {
-    return <div className="text-white text-center py-8">Cargando datos de ventas...</div>;
-  }
-
-  if (error) {
-    return <div className="text-red-500 text-center py-8">Error: {error}</div>;
-  }
-
-  if (days.length === 0 || closedSales.length === 0) {
-    return <div className="text-gray-400 text-center py-8">No hay datos de ventas disponibles</div>;
-  }
+  if (loading) return <div className="text-center text-gray-500 py-8">Cargando tus datos de ventas...</div>;
+  if (error) return <div className="text-center text-red-500 py-8">Error: {error}</div>;
+  if (!sales.length) return <div className="text-center text-gray-400 py-8">No hay datos disponibles</div>;
 
   return (
     <div className="w-full h-full">
-      <Line data={chartData} options={options} />
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 }
