@@ -24,10 +24,16 @@ export default function PieChartReport({
   selectedUserEmail,
   distribution,
 }: Props = {}) {
+  const shouldUseSelectedUser =
+    isAdmin && selectedUserEmail !== undefined && selectedUserEmail !== '';
+
+  // Debug log
+  console.log('PieChartReport - Selected User Email:', selectedUserEmail);
+  console.log('PieChartReport - shouldUseSelectedUser:', shouldUseSelectedUser);
+
   const { cerradas, activas, canceladas, loading, error } = useUserSalesInfo(
-    isAdmin && selectedUserEmail ? selectedUserEmail : undefined
+    shouldUseSelectedUser ? selectedUserEmail : undefined
   );
-  
 
   const dataArray = distribution ?? [canceladas, activas, cerradas];
 
