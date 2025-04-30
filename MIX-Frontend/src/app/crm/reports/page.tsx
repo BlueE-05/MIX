@@ -19,13 +19,12 @@ export default function Dashboard() {
   const [teamComissionsData, setTeamComissionsData] = useState<{TeamID: number, TeamName: string, ComisionTotal: number}[]>([]);
   const [teamMembersData, setTeamMembersData] = useState<{
     UsuarioID: string,
+    Email: string,
     NombreCompleto: string,
-    Telefono: string,
     TotalComisiones: number,
+    VentasCerradas: number,
     Activas:number,
     Canceladas: number,
-    VentasCerradas: number,
-    TotalVentas: number,
     Equipo: string
   }[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -176,7 +175,7 @@ export default function Dashboard() {
               
             ) : isAdmin ? (
               
-              <LinesChartReport/>
+              <LinesChartReport compareUserEmail={selectedUserData?.Email}/>
               ) : (<LinesChart/> )}
           </div>
         </div>

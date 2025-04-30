@@ -130,58 +130,46 @@ class DbService {
 
   async getSalesInfoByMember(iduser: string) {
     const request = await this.pool.request();
-    const result = await request.input('iduser', sql.VarChar, iduser).query(`
-      DECLARE @UserEmail VARCHAR(255) = @iduser
-DECLARE @TeamID INT = (SELECT jp.IDTeam 
-                       FROM [User] u
-                       JOIN JobPosition jp ON u.IDJobPosition = jp.ID
-                       WHERE u.IDEmail = @UserEmail);
-
-IF @TeamID IS NULL
-BEGIN
-    SELECT 'Usuario no encontrado' AS Resultado;
-END
-ELSE
-BEGIN
-    SELECT 
-        u.IDEmail AS UsuarioID,
-        u.Name AS NombreCompleto,
-        u.PhoneNumber AS Telefono,
-        COALESCE(SUM(sa.Quantity * p.UnitaryPrice * p.Commission), 0) AS TotalComisiones,
-        COUNT(DISTINCT CASE WHEN s.IDPhase = 5 THEN s.ID END) AS VentasCerradas,
-        COUNT(DISTINCT CASE WHEN s.IDPhase IN (2, 3, 4) THEN s.ID END) AS Activas,
-        COUNT(DISTINCT CASE WHEN s.IDPhase = 6 THEN s.ID END) AS Canceladas,
-        COUNT(DISTINCT s.ID) AS TotalVentas,
-        (SELECT TeamName FROM Team WHERE ID = @TeamID) AS Equipo
-    FROM 
-        dbo.[User] u
-    JOIN JobPosition jp ON u.IDJobPosition = jp.ID
-    LEFT JOIN Sale s ON u.IDEmail = s.IDUser
-    LEFT JOIN SaleArticle sa ON s.ID = sa.IDSale
-    LEFT JOIN Product p ON sa.IDProduct = p.RefNum
-    WHERE 
-        jp.IDTeam = @TeamID
-    GROUP BY 
-        u.IDEmail, u.Name, u.PhoneNumber
-    ORDER BY 
-        TotalComisiones DESC;
-END;`);
+    const result = await request.input('iduser', sql.VarChar, iduser).query(
+      `DECLARE @UserEmail VARCHAR(255) = @iduser
+      DECLARE @TeamID INT = (SELECT jp.IDTeam 
+      FROM [User] u
+      JOIN JobPosition jp ON u.IDJobPosition = jp.ID
+      WHERE u.IDEmail = @UserEmail);
+      IF @TeamID IS NULL
+      BEGIN
+      SELECT 'Usuario no encontrado' AS Resultado;
+      END
+      ELSE
+      BEGIN
+      SELECT 
+      u.IDEmail AS UsuarioID,
+      u.Name + ' ' + u.LastName AS NombreCompleto,
+      COALESCE(SUM(sa.Quantity * p.UnitaryPrice * p.Commission), 0) AS TotalComisiones,
+      COUNT(DISTINCT CASE WHEN s.IDPhase = 5 THEN s.ID END) AS VentasCerradas,
+      COUNT(DISTINCT CASE WHEN s.IDPhase IN (2, 3, 4) THEN s.ID END) AS Activas,
+      COUNT(DISTINCT CASE WHEN s.IDPhase = 6 THEN s.ID END) AS Canceladas,
+      (SELECT TeamName FROM Team WHERE ID = @TeamID) AS Equipo
+      FROM 
+      dbo.[User] u
+      JOIN JobPosition jp ON u.IDJobPosition = jp.ID
+      LEFT JOIN Sale s ON u.IDEmail = s.IDUser
+      LEFT JOIN SaleArticle sa ON s.ID = sa.IDSale
+      LEFT JOIN Product p ON sa.IDProduct = p.RefNum
+      WHERE 
+      jp.IDTeam = @TeamID
+      GROUP BY 
+      u.IDEmail, u.Name,u.LastName, u.PhoneNumber
+      ORDER BY 
+      TotalComisiones DESC;
+      END;`);
     return result.recordset;
   }
-
- 
 
   async getDailyClosedSalesByTeam(iduser: string) {
     const request = await this.pool.request();
     const result = await request.input('iduser', sql.VarChar, iduser).query(`
       EXEC sp_GetDailyClosedSalesByTeam @UserEmail = @iduser`);
-    return result.recordset;
-  }
-
-  async getDailyClosedSalesByMember(iduser: string) {
-    const request = await this.pool.request();
-    const result = await request.input('iduser', sql.VarChar, iduser).query(`
-      EXEC sp_GetDailyClosedSalesByTeamMembers @UserEmail = @iduser`);
     return result.recordset;
   }
 }

@@ -194,8 +194,8 @@ export default class ReportHTTPHandler {
     try {
       const sub = (req as AuthRequest).auth?.sub;
       if (!sub) throw new Error('Token without sub');
-      const { email } = await this.auth0Service.getUserBySub(sub);
-      const products = await this.reportController.getDailyClosedSalesByMember(email);
+      const email_user = typeof req.query.email === 'string' ? req.query.email : "";
+      const products = await this.reportController.getEveryDayClosedByUser(email_user);
       res.json(products);
     } catch (error) {
       next(error);

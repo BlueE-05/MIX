@@ -60,8 +60,4 @@ export default class ReportController {
     return this.reportService.getDailyClosedSalesByTeam(IDUser);
   }
 
-  async getDailyClosedSalesByMember(IDUser: string) {
-    return this.reportService.getDailyClosedSalesByMember(IDUser);
-  }
-
 }
