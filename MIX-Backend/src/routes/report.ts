@@ -25,6 +25,7 @@ router.post('/DailyClosedSalesByMember', handler.getDailyClosedSalesByMember);
 router.post('/SalesInfoMemberByEmail', handler.getSalesInfoMemberByEmail);
 router.post('/ClosedDayUserByEmail', handler.getClosedDayUserByEmail);
 router.post('/DailyClosedSalesByEmail', handler.getDailyClosedSalesByEmail);
+router.get('/SalesInfoTeam', handler.getSalesInfoTeam)
 
 
 export default router;

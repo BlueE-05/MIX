@@ -28,6 +28,7 @@ export default class ReportHTTPHandler {
     this.getDailyClosedSalesByMember = this.getDailyClosedSalesByMember.bind(this);
     this.getSalesInfoMemberByEmail = this.getSalesInfoMemberByEmail.bind(this);
     this.getClosedDayUserByEmail = this.getClosedDayUserByEmail.bind(this);
+    this.getSalesInfoTeam = this.getSalesInfoTeam.bind(this);
   }
 
   public async getAllCierre(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -236,6 +237,17 @@ export default class ReportHTTPHandler {
       next(error);
     }
   }
-  
-   
+
+
+  public async getSalesInfoTeam(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const sub = (req as AuthRequest).auth?.sub;
+      if (!sub) throw new Error('Token without sub');
+      const { email } = await this.auth0Service.getUserBySub(sub);
+      const data = await this.reportController.getSalesInfoTeam(email);
+      res.json(data);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

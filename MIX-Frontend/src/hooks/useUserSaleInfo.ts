@@ -20,20 +20,22 @@ export function useUserSalesInfo(userEmail?: string, isAdmin: boolean = false) {
     const fetchSalesInfo = async () => {
       setLoading(true);
       try {
-        const endpoint = isAdmin && userEmail
+        const isCustomEmail = isAdmin && userEmail;
+        const endpoint = isCustomEmail
           ? `${url}/report/SalesInfoMemberByEmail`
           : `${url}/report/SalesInfoMember`;
 
         const res = await fetch(endpoint, {
-          method: userEmail ? 'POST' : 'GET',
+          method: isCustomEmail ? 'POST' : 'GET',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          ...(userEmail ? { body: JSON.stringify({ email: emailToUse }) } : {}),
+          ...(isCustomEmail ? { body: JSON.stringify({ email: emailToUse }) } : {}),
         });
 
         if (!res.ok) throw new Error('Error al obtener información de ventas');
+
         const json = await res.json();
-        const info = Array.isArray(json) ? json[0] : json;
+        const info = Array.isArray(json) && json.length ? json[0] : json ?? {};
 
         setData({
           canceladas: Number(info.Canceladas || 0),
@@ -49,7 +51,7 @@ export function useUserSalesInfo(userEmail?: string, isAdmin: boolean = false) {
     };
 
     fetchSalesInfo();
-  }, [userEmail, profile?.email]);
+  }, [userEmail, profile?.email, isAdmin]);
 
   return { ...data, loading, error };
 }

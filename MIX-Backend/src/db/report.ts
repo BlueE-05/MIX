@@ -263,8 +263,44 @@ class DbService {
     `);
     return result.recordset;
   }
+
+  async getSalesInfoTeam(email: string) {
+    try {
+      const request = await this.pool.request();
   
+      const result = await request
+        .input('Email', sql.VarChar, email)
+        .query(`
+          WITH UserTeam AS (
+            SELECT TOP 1 jp.IDTeam
+            FROM [User] u
+            JOIN JobPosition jp ON u.IDJobPosition = jp.ID
+            WHERE u.IDEmail = @Email
+          )
   
+          SELECT 
+            t.TeamName AS Equipo,
+            COALESCE(SUM(sa.Quantity * p.UnitaryPrice * p.Commission), 0) AS TotalComisiones,
+            COUNT(DISTINCT CASE WHEN s.IDPhase = 5 THEN s.ID END) AS VentasCerradas,
+            COUNT(DISTINCT CASE WHEN s.IDPhase IN (2, 3, 4) THEN s.ID END) AS Activas,
+            COUNT(DISTINCT CASE WHEN s.IDPhase = 6 THEN s.ID END) AS Canceladas
+          FROM [User] u
+          JOIN JobPosition jp ON u.IDJobPosition = jp.ID
+          JOIN UserTeam ut ON jp.IDTeam = ut.IDTeam
+          JOIN Team t ON jp.IDTeam = t.ID
+          LEFT JOIN Sale s ON u.IDEmail = s.IDUser
+          LEFT JOIN SaleArticle sa ON s.ID = sa.IDSale
+          LEFT JOIN Product p ON sa.IDProduct = p.RefNum
+          GROUP BY t.TeamName;
+        `);
+  
+      return result.recordset;
+    } catch (error) {
+      throw new Error('No se pudo obtener la información del equipo.');
+    }
+  }
+  
+
 }
 
 export default DbService;
