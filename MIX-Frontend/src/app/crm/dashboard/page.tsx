@@ -241,7 +241,7 @@ const DashboardPage = () => {
           {/* Closed Deals y Comisiones - Ambos centrados */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-xl shadow-md flex items-center justify-center">
-              <BoxClosed numberSize="text-7xl" />
+              <BoxClosed numberSize="text-7xl flex" />
             </div>
             <div className="bg-white p-6 rounded-xl shadow-md flex items-center justify-center">
               <BoxComisiones numberSize="text-5xl"/>

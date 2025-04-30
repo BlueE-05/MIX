@@ -45,7 +45,7 @@ export default function BoxClosed({  numberSize = "text-3xl" }: BoxClosedProps =
   };
   
   return (
-    <div className="p-4">
+    <div className="p-4 items-center text-center">
       <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Closed Sales</h3>
       {renderCierres()}
     </div>

@@ -3,15 +3,12 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { url } from '@/utils/constants';
 
-
-
 interface BoxComisionesProps {
   comisiones?: number;
   numberSize?: string;
 }
 
 export default function BoxComisiones({ comisiones, numberSize = "text-3xl" }: BoxComisionesProps = {}) {
-  
   const [comision, setComision] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,11 +24,18 @@ export default function BoxComisiones({ comisiones, numberSize = "text-3xl" }: B
         console.error('Error al obtener la comisión:', error);
       })
       .finally(() => {
-        setLoading(false); 
+        setLoading(false);
       });
-  },);
+  }, []);
 
- 
+  const getDynamicTextSize = (amount: number) => {
+    const length = Math.floor(amount).toString().length;
+    if (length <= 5) return 'text-3xl';
+    if (length === 6) return 'text-2xl';
+    if (length === 7) return 'text-xl';
+    if (length === 8) return 'text-lg';
+    return 'text-base';
+  };
 
   const renderComision = () => {
     if (loading) {
@@ -39,18 +43,19 @@ export default function BoxComisiones({ comisiones, numberSize = "text-3xl" }: B
     } else if (comision === 0) {
       return <div className="text-center py-8 text-gray-500">No commissions</div>;
     } else if (comision !== null) {
+      const dynamicSize = getDynamicTextSize(comision);
       return (
-        <div className={`text-3xl font-bold text-blue-600`}> $ 
-        {typeof comision === 'number' ? comision.toFixed(2) : comision}
-      </div>
+        <div className={`${dynamicSize} font-bold text-green-600 break-words`}>
+          ${comision.toFixed(2)}
+        </div>
       );
     } else {
       return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
     }
   };
-  
+
   return (
-    <div className="p-4">
+    <div className="p-4 items-center text-center">
       <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Commissions</h3>
       {renderComision()}
     </div>
