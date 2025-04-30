@@ -1,3 +1,4 @@
+
 'use client';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -8,17 +9,22 @@ interface BoxClosedProps {
   numberSize?: string;
 }
 
-export default function BoxClosed({  numberSize = "text-3xl" }: BoxClosedProps = {}) {
+export default function BoxClosed({ closedDeals, numberSize = 'text-3xl' }: BoxClosedProps) {
   const [cierres, setCierres] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`${url}/report/allCierre`, {
-      withCredentials: true,
-    })
+    if (closedDeals !== undefined) {
+      setCierres(closedDeals);
+      setLoading(false);
+      return;
+    }
+    axios
+      .get(`${url}/report/allCierre`, {
+        withCredentials: true,
+      })
       .then((response) => {
-        const valor = response.data[0].TotalCierre;
-        setCierres(Number(valor));
+        setCierres(Number(response.data[0]?.TotalCierre || 0));
       })
       .catch((error) => {
         console.error('Error al obtener cierres:', error);
@@ -26,28 +32,20 @@ export default function BoxClosed({  numberSize = "text-3xl" }: BoxClosedProps =
       .finally(() => {
         setLoading(false);
       });
-  }, );
+  }, [closedDeals]);
 
-  const renderCierres = () => {
-    if (loading) {
-      return <div className="text-center py-8 text-gray-500">Loading data...</div>;
-    } else if (cierres === 0) {
-      return <div className="text-center py-8 text-gray-500">No yet</div>;
-    } else if (cierres !== null) {
-      return (
-        <div className={`text-3xl font-bold text-blue-600`}>
-          {cierres}
-        </div>
-      );
-    } else {
-      return <div className="text-red-700 px-4 py-3">Error loading data...</div>;
-    }
-  };
-  
   return (
     <div className="p-4 items-center text-center">
       <h3 className={`text-lg font-semibold mb-2 ${numberSize}`}>Closed Sales</h3>
-      {renderCierres()}
+      {loading ? (
+        <div className="text-center py-8 text-gray-500">Loading data...</div>
+      ) : cierres === 0 ? (
+        <div className="text-center py-8 text-gray-500">No yet</div>
+      ) : cierres !== null ? (
+        <div className={`text-3xl font-bold text-blue-600`}>{cierres}</div>
+      ) : (
+        <div className="text-red-700 px-4 py-3">Error loading data...</div>
+      )}
     </div>
   );
 }

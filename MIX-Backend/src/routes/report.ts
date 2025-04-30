@@ -20,7 +20,11 @@ router.get('/ComissionTeam', handler.getTotalComissionByTeam);
 router.get('/SalesTeamMember', handler.getTotalSalesByMember);
 router.get('/SalesInfoMember', handler.getSalesInfoByMember);
 router.get('/DaysMonth', handler.getDaysCurrentMonth);
-router.get('/DailyClosedSalesByTeam', handler.getDailyClosedSalesByTeam);
-router.get('/DailyClosedSalesByMember', handler.getDailyClosedSalesByMember);
+router.post('/DailyClosedSalesByTeam', handler.getDailyClosedSalesByTeam);
+router.post('/DailyClosedSalesByMember', handler.getDailyClosedSalesByMember);
+router.post('/SalesInfoMemberByEmail', handler.getSalesInfoMemberByEmail);
+router.post('/ClosedDayUserByEmail', handler.getClosedDayUserByEmail);
+router.post('/DailyClosedSalesByEmail', handler.getDailyClosedSalesByEmail);
+
 
 export default router;
